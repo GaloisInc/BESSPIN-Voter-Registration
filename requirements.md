@@ -27,6 +27,8 @@ registration
 * must enable voter addresses to be flagged as private (so they are not
 revealed to anyone except properly authorized election officials)
 
+* must log all modifications to and queries of data in the system
+
 * must be completely open source, including all server and OS software
 underlying the system
 
