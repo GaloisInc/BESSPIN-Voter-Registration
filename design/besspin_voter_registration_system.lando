@@ -1,0 +1,35 @@
+system BESSPIN Voter Registration System (BVRS)
+indexing
+  owner: Dan Zimmerman <dmz@galois.com>
+  contributors: Galois
+  copyright: (C) 2020 Galois
+  license: TBD
+  
+// @note dmz A subsystem mentioned at the top level in a Lando
+// system specification is a direct child of the system
+
+// underlying infrastructure
+
+subsystem Entities
+subsystem Foundations
+subsystem Software Foundations
+subsystem Hardware Foundations
+subsystem Cryptography
+subsystem Government Furnished Equipment in the Cloud (cloudGFE)
+subsystem Logging
+subsystem Database
+subsystem Web Server
+subsystem Server
+subsystem Client
+
+// subsystem containment
+
+Software Foundations contains Cryptography
+Software Foundations contains Database
+Software Foundations contains Logging
+Software Foundations contains Web Server
+Hardware Foundations contains cloudGFE
+
+// background domain theory
+
+subsystem Elections
