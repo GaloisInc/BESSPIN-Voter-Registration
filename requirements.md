@@ -62,6 +62,8 @@ and UI functionality)
 
 * should be able to handle upload and storage of photo ID images
 * may store a list of the elections in which each voter voted
+* may store information about whether, and for which elections, ballots
+have been sent to (and received from) each voter by mail
 
 Notes
 ==
