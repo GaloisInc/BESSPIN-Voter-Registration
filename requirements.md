@@ -24,10 +24,8 @@ identification document, etc.), registration status (e.g., active,
 inactive), time of original registration, and time of last update to
 registration
 
-* must enable voter addresses to be flagged as private (so they are not
-revealed to anyone except properly authorized election officials)
-
-* must log all modifications to and queries of data in the system
+* must enable voter information to be flagged as confidential (so it is 
+not revealed to anyone except properly authorized election officials)
 
 * must be completely open source, including all server and OS software
 underlying the system
