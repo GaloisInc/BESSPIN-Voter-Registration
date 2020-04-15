@@ -17,19 +17,16 @@ subsystem Hardware Foundations
 subsystem Cryptography
 subsystem Government Furnished Equipment in the Cloud (cloudGFE)
 subsystem Logging
-subsystem Database
+subsystem Database Server
 subsystem Web Server
-subsystem Server
-subsystem Client
+subsystem BVRS Server
+subsystem BVRS Client
 
 // subsystem containment
 
 Software Foundations contains Cryptography
-Software Foundations contains Database
+Software Foundations contains Database Server
 Software Foundations contains Logging
 Software Foundations contains Web Server
 Hardware Foundations contains cloudGFE
 
-// background domain theory
-
-subsystem Elections

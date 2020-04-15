@@ -1,0 +1,24 @@
+subsystem BVRS Client
+The client side of the BESSPIN Voter Registration System.
+  
+// @note dmz the client side is a web browser; thus, this specification
+// will effectively describe the client side operations available to
+// voters and election officials
+
+component Voter Interface
+  What publicly available voter registration information matches this name 
+    and date of birth?
+  Register this voter!
+  Unregister this voter!
+  To register or unregister a voter, full name, address(es), date of birth,
+    and identifying information is required.  
+  
+component Election Official Interface
+  Authenticate with this username and password!
+  What registered voters match this partial voter information?
+  Register this voter!
+  Unregister this voter!
+  Update this voter's participation information for this election!
+  Update this voter's mailed ballot information for this election!
+  All queries and commands other than authentication are unavailable 
+    when authentication has not yet taken place.

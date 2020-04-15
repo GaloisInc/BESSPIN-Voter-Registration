@@ -1,0 +1,24 @@
+subsystem Database Server
+All database functionality necessary for the BVRS.
+
+// @note dmz we will use a standard SQL database, most likely SQLite,
+// so this serves essentially as very high level documentation of
+// the functionality we'll need; note that SQLite is not a "server"
+// in the traditional sense, and is compiled directly into applications
+// that use it, but behaves much like a "server" in terms of handling
+// SQL commands.
+
+component Database (DB)
+  What DB tables do you contain?
+  What data do you contain matching these complex (multiple DB table join) criteria?
+  Add this table!
+  Drop this table!
+  Begin this transaction!
+  Commit this transaction!
+  Abort this transaction!
+  Database server must be able to log all changes to the database.
+  
+component DB Table
+  What data do you contain matching these criteria?
+  Insert this row of data!
+  Delete rows of data matching these criteria!

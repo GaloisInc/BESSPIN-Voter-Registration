@@ -1,15 +1,13 @@
-subsystem Elections
-Concepts in the domain of elections that need to be concretized in 
+subsystem Entities
+Entities from the domain of elections that need to be concretized in 
 the BVRS. This is limited, consisting of only voter information 
 records and election officials that can access them.
-
-indexing
-  owner: Dan Zimmerman <dmz@galois.com>
   
 component Voter
   Last Name?
   Given Names?
-  Address?
+  Residence Address?
+  Mailing Address?
   Date of Birth?
   Identification Information?
   Registration Status?
@@ -17,6 +15,7 @@ component Voter
   Last Registration Update Time?
   List of Elections Voted? 
   Ballot Sent by Mail for Election E? 
+  Voter Information Confidential?
   
 component Election Official
   // @note dmz to keep things simple, we're going to assume only one level
