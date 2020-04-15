@@ -31,8 +31,7 @@ component Secure Log inherit Log
   Is this secure log verifiable wrt its security properties?
   Must stipulate what kinds of events are permitted in the log.
 
-// Here are the client relationships for this subsystem.  Note that
-// client relationships can be between components or subsystems.
+// Client relationships
 
 Log client Log Entry
 Secure Log client Secure Log Entry

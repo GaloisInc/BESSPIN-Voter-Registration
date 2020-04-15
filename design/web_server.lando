@@ -12,3 +12,7 @@ component Web Server (WS)
   WS and external program execution mechanism must support submission of forms 
     including attached files.
   WS must log all connections and connection attempts.
+
+// Client relationships
+
+Web Server client Cryptography
