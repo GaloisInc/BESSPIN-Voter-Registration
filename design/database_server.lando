@@ -6,7 +6,7 @@ All database functionality necessary for the BVRS.
 // the functionality we'll need; note that SQLite is not a "server"
 // in the traditional sense, and is compiled directly into applications
 // that use it, but behaves much like a "server" in terms of handling
-// SQL commands.
+// SQL commands, and that is what is specified here.
 
 component Database (DB)
   What DB tables do you contain?

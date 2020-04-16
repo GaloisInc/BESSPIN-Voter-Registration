@@ -2,7 +2,10 @@ subsystem Entities
 Entities from the domain of elections that need to be concretized in 
 the BVRS. This is limited, consisting of only voter information 
 records and election officials that can access them.
-  
+
+// @note dmz tracking of voted-in elections and tracking of mailed ballots
+// may not be implemented in the BVRS as realized in 2020
+
 component Voter
   Last Name?
   Given Names?
@@ -13,7 +16,7 @@ component Voter
   Registration Status?
   Initial Registration Time?
   Last Registration Update Time?
-  List of Elections Voted? 
+  List of Elections Voted In? 
   Ballot Sent by Mail for Election E? 
   Voter Information Confidential?
   

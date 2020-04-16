@@ -2,7 +2,7 @@ subsystem Logging
 A subsystem that supports the persistent logging of structured information.
 
 // @note dmz this may, in practice, be partially implemented by the logging 
-// functionality of whatever web server is used
+// functionality of whatever web server and database is used
 
 component Log Entry inherit String
   A structured set of linear data that is to be written to a log.

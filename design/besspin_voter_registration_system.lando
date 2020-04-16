@@ -6,7 +6,7 @@ indexing
   license: TBD
   
 // @note dmz A subsystem mentioned at the top level in a Lando
-// system specification is a direct child of the system
+// system specification is a direct child of the system. 
 
 // underlying infrastructure
 
@@ -29,4 +29,3 @@ Software Foundations contains Database Server
 Software Foundations contains Logging
 Software Foundations contains Web Server
 Hardware Foundations contains cloudGFE
-

@@ -1,8 +1,8 @@
 subsystem BVRS Server
 The server side of the BESSPIN Voter Registration System.
   
-// @note dmz the server side is a CGI script on a web server; thus, this 
-// specification will effectively describe the operations available to
+// @note dmz the server side is a process on a web server; thus, this 
+// specification is meant to describe the operations available to
 // be invoked by the client side
 
 component Voter Operations
@@ -10,15 +10,17 @@ component Voter Operations
   End this session!
   What publicly available voter registration information matches this name 
     and date of birth?
-  // @note dmz Register and unregister, below, are two-step operations -
+  // @note dmz Register, unregister, and update, below, are two-step operations -
   // an attempt to register/unregister and a confirmation thereof. The first starts
   // a database transaction, the second commits or aborts it.
   Register this voter or report an error!
   Unregister this voter or report an error!
+  Update this voter's information or report an error!
   Confirm this operation!
   Cancel this operation!
-  To successfully register or unregister a voter, full name, address(es), 
-    date of birth, and identifying information is required.  
+  To register, unregister, or update information for a voter, full name, 
+    address(es), date of birth, and identifying information are required.
+  Voters can not update election participation or mailed ballot information.
   
 component Election Official Operations
   May I have a new authenticated session with this username and password?
@@ -29,6 +31,7 @@ component Election Official Operations
   // a database transaction, the second commits or aborts it.
   Register this voter or report an error!
   Unregister this voter or report an error!
+  Update this voter's information or report an error!
   Update this voter's participation information for this election!
   Update this voter's mailed ballot information for this election!
   Confirm this operation!
