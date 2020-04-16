@@ -1,0 +1,40 @@
+subsystem BVRS Server
+The server side of the BESSPIN Voter Registration System.
+  
+// @note dmz the server side is a process on a web server; thus, this 
+// specification is meant to describe the operations available to
+// be invoked by the client side
+
+component Voter Operations
+  May I have a new session?
+  End this session!
+  What publicly available voter registration information matches this name 
+    and date of birth?
+  // @note dmz Register, unregister, and update, below, are two-step operations -
+  // an attempt to register/unregister and a confirmation thereof. The first starts
+  // a database transaction, the second commits or aborts it.
+  Register this voter or report an error!
+  Unregister this voter or report an error!
+  Update this voter's information or report an error!
+  Confirm this operation!
+  Cancel this operation!
+  To register, unregister, or update information for a voter, full name, 
+    address(es), date of birth, and identifying information are required.
+  Voters can not update election participation or mailed ballot information.
+  
+component Election Official Operations
+  May I have a new authenticated session with this username and password?
+  End this authenticated session!
+  What registered voters match this partial voter information?
+  // @note dmz Register, unregister, and update(s), below, are two-step operations -
+  // an attempt to change the database and a confirmation thereof. The first starts
+  // a database transaction, the second commits or aborts it.
+  Register this voter or report an error!
+  Unregister this voter or report an error!
+  Update this voter's information or report an error!
+  Update this voter's participation information for this election!
+  Update this voter's mailed ballot information for this election!
+  Confirm this operation!
+  Cancel this operation!
+  All queries and commands other than authentication are unavailable 
+    when authentication has not yet taken place.
