@@ -7,5 +7,5 @@ also the voting-related application that will later be adapted to
 demonstrations at Black Hat and the ERI Summit.
 
 The high-level requirements for the SSITH Voter Registration System are
-in [requirements.md](requirements.md). The system design will be in 
+in [requirements.md](requirements.md). The system design is in 
 the [design](design) directory.
