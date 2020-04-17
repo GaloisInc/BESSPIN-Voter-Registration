@@ -27,6 +27,8 @@ registration
 * must enable voter information to be flagged as confidential (so it is 
 not revealed to anyone except properly authorized election officials)
 
+* must prevent duplicate voter registrations
+
 * must log all transactions in a tamper-evident fashion
 
 * must be completely open source, including all server and OS software
