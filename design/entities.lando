@@ -20,10 +20,21 @@ component Voter
   Ballot Sent by Mail for Election E? 
   Voter Information Confidential?
   The list of elections voted in may not include any elections that took 
-    place before the initial registration time.
+    place before the initial registration time or that start after the current time.
+  A ballot cannot be sent by mail to a voter for an election before the earliest
+    ballot mailing date of that election.
   
 component Election Official
   // @note dmz to keep things simple, we're going to assume only one level
   // of access for election officials: full access to everything
   Name? 
   Authentication Information? 
+
+component Election
+  // @note dmz this is optional, if we choose to implement election participation
+  // tracking and/or ballot tracking; note that this is not storing the races,
+  // issues, etc., but just the dates and name of an election on the calendar
+  Name?
+  Date?
+  Earliest ballot mailing date?
+  Early voting start date?
