@@ -24,8 +24,11 @@ identification document, etc.), registration status (e.g., active,
 inactive), time of original registration, and time of last update to
 registration
 
-* must enable voter information to be flagged as confidential (so it is 
-not revealed to anyone except properly authorized election officials)
+* must enable voter information to be flagged as confidential (so it is
+not revealed to, and not changeable by, anyone except properly
+authorized election officials)
+
+* must prevent duplicate voter registrations
 
 * must log all transactions in a tamper-evident fashion
 
