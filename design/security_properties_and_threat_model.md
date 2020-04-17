@@ -11,8 +11,8 @@ Security Properties
 
 - _communication confidentiality_: all communications on public networks must be encrypted in transit
 - _data integrity_: the data store must not be modified by the BVRS server software in ways that are not authorized; if it is so modified externally (as, for example, by direct editing of the database or log files outside of the system's normal mode of operation), the modifications should be detectable
-- _voter private data confidentiality_: a voter's private data must remain confidential to that voter and election officials (EOs); note that publicly available information like name, birth date, and address is not considered "private data" for this purpose (but see below)
-- _"confidential voter" data confidentiality_: _all_ data about voters marked "confidential" must remain confidential to everyone except EOs; i.e., the public interface of the BVRS must report that there is no matching record for a confidential voter registration, regardless of how much of that voter's correct information is provided
+- _voter private data confidentiality_: a voter's private data must remain confidential to that voter and election officials (EOs); note that publicly available information like name, birth date, and address is not considered "private data" for this purpose (with the exception of "confidential" voters, see below)
+- _"confidential" voter data confidentiality_: _all_ data about voters marked "confidential" must remain confidential to everyone except EOs; i.e., the public interface of the BVRS must report that there is no matching record for a confidential voter registration, regardless of how much of that voter's correct information is provided
 - _voter data update authorization_: existing voter registration data may only be changed or deleted by EOs, unless the correct private data used for the initial registration is provided
 - _voter participation/ballot information update authorization_: election participation information (if implemented) and ballot tracking information (if implemented) may only be modified by EOs
 
