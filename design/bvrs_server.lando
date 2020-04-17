@@ -21,6 +21,7 @@ component Voter Operations
   To register, unregister, or update information for a voter, full name, 
     address(es), date of birth, and identifying information are required.
   Voters can not update election participation or mailed ballot information.
+  Confidential voters can not update their own information or unregister themselves.
   
 component Election Official Operations
   May I have a new authenticated session with this username and password?
