@@ -19,6 +19,8 @@ component Voter
   List of Elections Voted In? 
   Ballot Sent by Mail for Election E? 
   Voter Information Confidential?
+  The list of elections voted in may not include any elections that took 
+    place before the initial registration time.
   
 component Election Official
   // @note dmz to keep things simple, we're going to assume only one level
