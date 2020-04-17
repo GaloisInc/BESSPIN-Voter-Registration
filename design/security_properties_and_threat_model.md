@@ -17,6 +17,7 @@ Security Properties
 - _voter participation/ballot information update authorization_: election participation information (if implemented) and ballot tracking information (if implemented) may only be modified by EOs
 
 Notes:
+=
 
 It is explicitly _not_ a requirement for this implementation that an entity with administrative privileges on the BVRS server machine cannot violate data confidentiality; the encryption and key management associated with protecting the data at rest from privileged access on the server machine have significant overhead that is likely not reasonable for the FPGA-based implementation platform or the FETT competition. 
 
