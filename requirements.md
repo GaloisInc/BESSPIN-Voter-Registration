@@ -1,8 +1,8 @@
-SSITH Voting Registration System Requirements
+BESSPIN Voting Registration System Requirements
 ===
 
 The following are the mandatory and secondary requirements imposed upon
-the SSITH Voting Registration System.
+the BESSPIN Voting Registration System.
 
 Mandatory Requirements
 ==
