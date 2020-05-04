@@ -78,7 +78,9 @@ static void
 sendindex(struct kreq *r)
 {
 	http_open(r, KHTTP_200);
-	/*  khttp_body, khttp_puts, khttp_free ... */
+	khttp_puts(r, "Hello world!");
+	khttp_free(r);
+	/*   khttp_puts, khttp_free ... */
 }
 
 
@@ -99,6 +101,7 @@ main(void)
 	}
 
 	while ( khttp_fcgi_parse(fcgi, &r) == KCGI_OK ) {
+		printf("Got one...\n");
 		/*
 		 * Front line of defence: make sure we're a proper method, make
 		 * sure we're a page, make sure we're a JSON file.
@@ -112,12 +115,6 @@ main(void)
 			khttp_puts(&r, "Page not found.");
 			khttp_free(&r);
 			return EXIT_SUCCESS;
-		}
-
-		if (r.arg == NULL) {
-			http_open(&r, KHTTP_500);
-			khttp_free(&r);
-			continue;
 		}
 
 		//Get session? Bail Otherwise?
