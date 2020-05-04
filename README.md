@@ -9,3 +9,11 @@ demonstrations at Black Hat and the ERI Summit.
 The high-level requirements for the BESSPIN Voter Registration System are
 in [requirements.md](requirements.md). The system design is in 
 the [design](design) directory.
+
+Building
+===
+
+1. Fetch dependencies: `./sources/getdeps.sh`
+2. Build dependencies 
+    -  for host: `./sources/builddeps.sh` 
+    -  for riscv target: `BVRS_RISCV=1 ./sources/builddeps.sh`
