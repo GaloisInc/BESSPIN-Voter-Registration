@@ -41,6 +41,7 @@ struct voter {
   field givennames text limit gt 0 comment "Given names";
   field resaddress text limit gt 0 comment "Residence address";
   field mailaddress text limit gt 0 comment "Mailing address";
+  field registeredparty text limit gt 0 comment "Registered party";
   field birthdate date limit gt 0 comment "Birth date";
   field idinfo blob limit gt 0 comment "Identification information.";
   field status enum regstatus comment "Registration status.";
