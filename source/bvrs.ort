@@ -87,6 +87,8 @@ struct electionofficial {
   field id int rowid comment "Unique identifier in the database.";
   field username text unique limit gt 0 comment "Username";
   field hash password limit gt 6 comment "Password (hashed)";
+  comment "An election official account.";
+
   search username, hash:
     name credentials
     comment "Search for an election official by username/password.";
