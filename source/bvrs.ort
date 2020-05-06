@@ -62,6 +62,7 @@ struct voter {
 
   update lastname, givennames, resaddress, mailaddress, birthdate, idinfo, status,
          lastupdatetime, confidential:
+         id:
     name info
     comment "Update a voter registration record by id";
 };
