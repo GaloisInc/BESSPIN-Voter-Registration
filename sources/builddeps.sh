@@ -7,7 +7,7 @@ BVRS_RISCV=${BVRS_RISCV:-0}
 BVRS_OS=${BVRS_OS:-linux}
 SQLITE_HOST=""
 
-if [ -"${BVRS_RISCV}" -eq 1 ]; then
+if [ "${BVRS_RISCV}" -eq 1 ]; then
     TARGET_BUILD=${DIR}/../build/target
     PREFIX=riscv64-unknown-${BVRS_OS}-gnu
     export CC=${PREFIX}-gcc
@@ -37,7 +37,7 @@ if [ -z ${HAVE_SQLITE+x} ]; then
     mkdir build
     cd build
     ../configure --disable-tcl --prefix=${TARGET_BUILD} --enable-fts3 ${SQLITE_HOST}
-    make sqlite3.c && make install
+    make sqlite3.c
     popd
 fi
 
