@@ -78,6 +78,7 @@ struct voterupdatesession {
 
   search id, token: name updatecreds;
     comment "Find the session by ID/Token"
+
   delete id, token: name votersession
     comment "Delete the session explicitly.";
 };
