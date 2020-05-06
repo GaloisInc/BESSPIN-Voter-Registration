@@ -75,6 +75,9 @@ struct voterupdatesession {
   field token int comment "Random cookie.";
   field ctime epoch comment "Creation time.";
   comment "A voter record update session.";
+
+  search id, token: name updatecreds;
+    comment "Find the session by ID/Token"
 };
 
 # an election official record
