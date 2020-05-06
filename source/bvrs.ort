@@ -1,0 +1,96 @@
+# BESSPIN Voter Registration System (BVRS)
+# Copyright (C) 2020 Galois
+
+# This is a high-level description of the BVRS data model in the language of
+# openradtool ("ort"), https://kristaps.bsd.lv/openradtool/, an open source 
+# RAD tool that generates front-end JavaScript/TypeScript and back-end SQL and
+# C from a data model configuration. This has several benefits, including the
+# ability to specify (at a high level) enumerated types and reasonable handling
+# for passwords.
+
+# enumerated types
+
+# the registration status
+enum regstatus {
+  item ACTIVE comment "Active" jslabel "Active";
+  item INACTIVE comment "Inactive" jslabel "Active";
+};
+
+# the voting method used
+enum votingmethod {
+  item INPERSON comment "In Person" jslabel "In Person";
+  item MAIL comment "By Mail" jslabel "By Mail";
+  item OTHER comment "Other" jslabel "Other";
+};
+
+# the status of a mailed ballot
+enum ballotstatus {
+  item SENT comment "Sent" jslabel "Sent";
+  item RETURNED comment "Returned" jslabel "Returned";
+  item CANCELED comment "Canceled" jslabel "Canceled";
+  item LOST comment "Lost" jslabel "Lost";
+};
+
+
+# core structures
+
+# a voter record
+struct voter {
+  field id int rowid comment "Unique identifier in the database.";
+  field lastname text limit gt 0 comment "Last name";
+  field givennames text limit gt 0 comment "Given names";
+  field resaddress text limit gt 0 comment "Residence address";
+  field mailaddress text limit gt 0 comment "Mailing address";
+  field birthdate date limit gt 0 comment "Birth date";
+  field idinfo blob limit gt 0 comment "Identification information.";
+  field status enum regstatus comment "Registration status.";
+  field initialregtime date limit gt 0 comment "Initial registration time.";
+  field lastupdatetime date limit gt 0 comment "Last record update time.";
+  field confidential bit comment "Flag for voter confidentiality.";
+  comment "A registered voter.";
+  search lastname like, givennames like, birthdate, confidential: 
+    limit 1
+    name checkregistration
+    comment "Search for a registered voter by name/birth date/confidential flag.";
+  search lastname like, givennames like, resaddress like, mailaddress like, 
+         birthdate, idinfo, confidential:
+    limit 1 
+    name findregistrationforupdate
+    comment "Search for matching data to update a registration.";
+  update lastname, givennames, resaddress, mailaddress, birthdate, idinfo, status,
+         lastupdatetime, confidential:
+    limit 1
+    name updateregistration
+    commment "Update a voter registration record."
+};
+
+# a voter update session
+struct voterupdatesession {
+  field id int rowid comment "Unique identifier in the database.";
+  field voter struct userid comment "Voter attached to session.";
+  field userid:voter.id int comment "Voter identifier attached to session.";
+  field token int comment "Random cookie.";
+  field ctime epoch comment "Creation time.";
+  comment "A voter record update session.";
+};
+
+# an election official record
+struct electionofficial {
+  field id int rowid comment "Unique identifier in the database.";
+  field username text unique limit gt 0 comment "Username";
+  field hash password limit gt 6 comment "Password (hashed)";
+  search username, hash:
+    name credentials
+    comment "Search for an election official by username/password.";
+};
+
+# an election official session
+struct electionofficialsession {
+  field id int rowid comment "Unique identifier in the database.";
+  field electionofficial struct userid comment "Election official attached to session.";
+  field userid:electionofficial.id int 
+    comment "Election official identifier attached to session.";
+  field token int comment "Random cookie.";
+  field ctime epoch comment "Creation time.";
+  comment "Authenticated election official session.";
+};
