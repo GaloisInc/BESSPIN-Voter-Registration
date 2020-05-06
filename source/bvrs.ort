@@ -103,4 +103,7 @@ struct electionofficialsession {
   field token int comment "Random cookie.";
   field ctime epoch comment "Creation time.";
   comment "Authenticated election official session.";
+
+  search id, token: name officialcreds;
+    comment "Find the session by ID/Token"
 };
