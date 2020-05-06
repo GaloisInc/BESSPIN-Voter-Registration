@@ -48,20 +48,22 @@ struct voter {
   field lastupdatetime date limit gt 0 comment "Last record update time.";
   field confidential bit comment "Flag for voter confidentiality.";
   comment "A registered voter.";
-  search lastname like, givennames like, birthdate, confidential: 
+
+  search lastname like, givennames like, birthdate, confidential:
     limit 1
-    name checkregistration
+    name registration
     comment "Search for a registered voter by name/birth date/confidential flag.";
-  search lastname like, givennames like, resaddress like, mailaddress like, 
+
+  search lastname like, givennames like, resaddress like, mailaddress like,
          birthdate, idinfo, confidential:
-    limit 1 
-    name findregistrationforupdate
+    limit 1
+    name registrationforupdate
     comment "Search for matching data to update a registration.";
+
   update lastname, givennames, resaddress, mailaddress, birthdate, idinfo, status,
          lastupdatetime, confidential:
-    limit 1
-    name updateregistration
-    commment "Update a voter registration record."
+    name info
+    comment "Update a voter registration record by id";
 };
 
 # a voter update session
