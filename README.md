@@ -17,4 +17,6 @@ Building
 2. Build dependencies 
     -  for host: `./sources/builddeps.sh` 
     -  for riscv target: `BVRS_RISCV=1 ./sources/builddeps.sh`
-3. Build BVRS CGI Handler: `cd sources/src && make`
+3. Build BVRS CGI Handler: 
+    - for host: `cd sources/src && make`
+    - for host: `cd sources/src && BVRS_RISCV=1 make`
