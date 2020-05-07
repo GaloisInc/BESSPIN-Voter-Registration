@@ -61,6 +61,8 @@ struct voter {
     name registrationforupdate
     comment "Search for matching data to update a registration.";
 
+  insert;
+
   update lastname, givennames, resaddress, mailaddress, birthdate, idinfo, status,
          lastupdatetime, confidential:
          id:
