@@ -50,6 +50,10 @@ struct voter {
   field confidential bit comment "Flag for voter confidentiality.";
   comment "A registered voter.";
 
+  # We probably shouldn't have two voters in the database with the same PII,
+  # since we aren't keeping around old registration data.
+  unique idinfo;
+
   search lastname like, givennames like, birthdate, confidential:
     limit 1
     name registration
