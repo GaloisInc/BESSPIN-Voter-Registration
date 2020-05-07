@@ -43,16 +43,12 @@ struct voter {
   field mailaddress text limit gt 0 comment "Mailing address";
   field registeredparty text limit gt 0 comment "Registered party";
   field birthdate date limit gt 0 comment "Birth date";
-  field idinfo blob limit gt 0 comment "Identification information.";
+  field idinfo blob limit gt 0 unique comment "Identification information.";
   field status enum regstatus comment "Registration status.";
   field initialregtime date limit gt 0 comment "Initial registration time.";
   field lastupdatetime date limit gt 0 comment "Last record update time.";
   field confidential bit comment "Flag for voter confidentiality.";
   comment "A registered voter.";
-
-  # We probably shouldn't have two voters in the database with the same PII,
-  # since we aren't keeping around old registration data.
-  unique idinfo;
 
   search lastname like, givennames like, birthdate, confidential:
     limit 1
