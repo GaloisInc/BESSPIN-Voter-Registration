@@ -80,6 +80,8 @@ struct voterupdatesession {
   search id, token: name updatecreds;
     comment "Find the session by ID/Token"
 
+  insert;
+
   delete id, token: name votersession
     comment "Delete the session explicitly.";
 };
@@ -108,6 +110,8 @@ struct electionofficialsession {
 
   search id, token: name officialcreds;
     comment "Find the session by ID/Token"
+
+  insert;
 
   delete id, token: name officialsession
     comment "Delete the session explicitly.";
