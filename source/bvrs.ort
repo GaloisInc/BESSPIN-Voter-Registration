@@ -77,8 +77,8 @@ struct voterupdatesession {
   field ctime epoch comment "Creation time.";
   comment "A voter record update session.";
 
-  search id, token: name updatecreds;
-    comment "Find the session by ID/Token"
+  search id, token: name updatecreds
+    comment "Find the session by ID/Token";
 
   insert;
 
@@ -108,8 +108,8 @@ struct electionofficialsession {
   field ctime epoch comment "Creation time.";
   comment "Authenticated election official session.";
 
-  search id, token: name officialcreds;
-    comment "Find the session by ID/Token"
+  search id, token: name officialcreds
+    comment "Find the session by ID/Token";
 
   insert;
 
