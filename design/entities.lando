@@ -16,6 +16,7 @@ component Voter
   Registration Status?
   Initial Registration Time?
   Last Registration Update Time?
+  Registered Party?
   List of Elections Voted In? 
   Ballot Sent by Mail for Election E? 
   Voter Information Confidential?
