@@ -43,7 +43,7 @@ Secondary Requirements
 #### Usability:
 
 * should be trivial to use for non-technical users
-* should incorporate all appropriate web usablility design principles
+* should incorporate all appropriate web usability design principles
 * should have reasonable response times on SSITH hardware
 
 #### Security:
