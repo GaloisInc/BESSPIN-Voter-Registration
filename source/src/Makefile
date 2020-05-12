@@ -1,4 +1,5 @@
 ifeq ($(BVRS_RISCV),1)
+	# Some defaults to get going
 	PREFIX = ../../build/target
 	BVRS_OS ?= linux
 	ARCH_STR = riscv64-unknown-${BVRS_OS}-gnu
@@ -9,13 +10,16 @@ else
 	PREFIX = ../../build/host
 endif
 
-OBJS		  = main.o
+ORT_PREFIX = ../../build/host/bin/ort
+OBJS		  = db.o main.o
 CFLAGS += -I $(PREFIX)/include
-LFLAGS += -L $(PREFIX)/lib -l:libsqlite3.a -l:libkcgi.a -l:libz.a
+LFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libz.a -ldl -lpthread -lcrypt
 
 all: bvrs
 
 clean:
+	rm -f db.h
+	rm -f db.c
 	rm -f $(OBJS)
 	rm -f bvrs 
 
@@ -25,5 +29,11 @@ distclean: clean
 %.o: %.c
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-bvrs: $(OBJS)
+db.h: bvrs.ort
+	$(ORT_PREFIX)-c-header bvrs.ort > db.h
+
+db.c: bvrs.ort
+	$(ORT_PREFIX)-c-source bvrs.ort > db.c
+
+bvrs: db.h $(OBJS)
 	$(CC) -o $@ $(OBJS) $(LFLAGS)
