@@ -11,6 +11,8 @@ if [ "${BVRS_RISCV}" -eq 1 ]; then
     TARGET_BUILD=${DIR}/../build/target
     PREFIX=riscv64-unknown-${BVRS_OS}-gnu
     export CC=${PREFIX}-gcc
+    export CFLAGS="-I ${TARGET_BUILD}/include"
+    export LFLAGS="-L ${TARGET_BUILD}/lib"
     export LD=${PREFIX}-ld
     export AR=${PREFIX}-ar
     SQLITE_HOST="--host=riscv64-unknown-${BVRS_OS}"
@@ -37,7 +39,15 @@ if [ -z ${HAVE_SQLITE+x} ]; then
     mkdir build
     cd build
     ../configure --disable-tcl --prefix=${TARGET_BUILD} --enable-fts3 ${SQLITE_HOST}
-    make sqlite3.c
+    make && make install
+    popd
+fi
+
+# 3. Build sqlbox
+if [ -z ${HAVE_SQLBOX+x} ]; then
+    pushd ext/sqlbox-0.1.12
+    ./configure PREFIX=${TARGET_BUILD}
+    bmake && bmake install
     popd
 fi
 

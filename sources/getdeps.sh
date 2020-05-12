@@ -6,6 +6,7 @@ SQLITE_VERSION=3.22.0
 ZLIB_URL="https://www.zlib.net/zlib-1.2.11.tar.gz"
 SQLITE_URL="https://www.sqlite.org/src/tarball/sqlite.tar.gz"
 KCGI_URL="https://github.com/kristapsdz/kcgi/archive/VERSION_0_12_0.tar.gz"
+SQLBOX_URL="https://kristaps.bsd.lv/sqlbox/snapshots/sqlbox.tar.gz"
 ### Fetch sources ###
 
 echo "****"
@@ -23,6 +24,15 @@ echo "****"
 curl -L -G -d "r=version-${SQLITE_VERSION}" ${SQLITE_URL} --output ext/sqlite.tar.gz
 if [ $? -ne 0 ]; then
     echo "Error fetching sqlite sources"
+    exit 1
+fi
+
+echo "****"
+echo "Fetching sqlbox"
+echo "****"
+curl -L -G ${SQLBOX_URL} -o ext/sqlbox.tar.gz
+if [ $? -ne 0 ]; then
+    echo "Error fetching sqlbox sources"
     exit 1
 fi
 
@@ -49,6 +59,12 @@ fi
 tar -xzvf sqlite.tar.gz
 if [ $? -ne 0 ]; then
     echo "Error extracting sqlite"
+    exit 1
+fi
+
+tar -xzvf sqlbox.tar.gz
+if [ $? -ne 0 ]; then
+    echo "Error extracting sqlbox"
     exit 1
 fi
 
