@@ -65,7 +65,16 @@ lookup_voter_information(bvrs_ctxt_t *ctxt,
 
 status_t
 register_voter(bvrs_ctxt_t *ctxt,
-               struct voter *the_voter)
+               char *lastname,
+               char *givennames,
+               char *resaddress,
+               char *mailaddress,
+               char *registeredparty,
+               time_t birthdate,
+               void *idinfo,
+               size_t idinfo_sz,
+               int64_t confidential,
+               int64_t *out_id)
 {
     return ERROR;
 }
