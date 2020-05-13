@@ -15,7 +15,7 @@ OBJS		  = db.o backend.o
 CFLAGS += -I $(PREFIX)/include -g
 LFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libz.a -ldl -lpthread -lcrypt
 
-TESTS = test0 test1
+TESTS = test0 test1 test2 test3 test4
 
 all: bvrs
 
@@ -50,3 +50,5 @@ test%: $(OBJS) bvrs.sql
 	sqlite3 out/testdb.db < bvrs.sql
 	$(CC)  $(OBJS) tests/$@.c -I $(PWD) $(CFLAGS) $(LFLAGS) -o out/$@
 	./out/$@ out/testdb.db
+
+testsuite: $(TESTS)
