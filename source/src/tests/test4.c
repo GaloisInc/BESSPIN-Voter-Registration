@@ -59,11 +59,11 @@ main(int argc, char **argv)
     struct voter *voters;
     size_t n_voters;
 
-    status_t lookupok = lookup_voter_information(ctxt, "lastname", "firstname", now, 0, &voters, &n_voters);
+    status_t lookupok = lookup_voter_information(ctxt, "lastname", "firstname", now, &data[0], sizeof(data), 0, &voters, &n_voters);
     assert(lookupok == OK);
     assert(n_voters == 0);
 
-    status_t lookupok2 = lookup_voter_information(ctxt, "lastname2", "firstname2", now, 0, &voters, &n_voters);
+    status_t lookupok2 = lookup_voter_information(ctxt, "lastname2", "firstname2", now, &data[0], sizeof(data), 0, &voters, &n_voters);
     assert(lookupok2 == OK);
     assert(n_voters == 1);
     assert(voters[0].id == id);

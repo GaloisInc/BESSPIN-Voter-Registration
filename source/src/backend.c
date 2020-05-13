@@ -55,6 +55,8 @@ lookup_voter_information(bvrs_ctxt_t *ctxt,
                          const char *lastname,
                          const char *givenname,
                          time_t birthdate,
+                         void *idinfo,
+                         size_t idinfo_sz,
                          int64_t condiential,
                          struct voter **voters,
                          size_t        *n_voters)
