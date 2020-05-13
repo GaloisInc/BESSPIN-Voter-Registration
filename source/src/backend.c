@@ -72,7 +72,8 @@ unregister_voter(bvrs_ctxt_t *ctxt,
 
 status_t
 update_voter_information(bvrs_ctxt_t *ctxt,
-                         struct voter *the_voter)
+                         struct voterupdatesession *the_session,
+                         struct voter              *the_voter)
 {
     return ERROR;
 }

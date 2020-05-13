@@ -51,7 +51,8 @@ unregister_voter(bvrs_ctxt_t *ctxt,
 
 status_t
 update_voter_information(bvrs_ctxt_t *ctxt,
-                         struct voter *the_voter);
+                         struct voterupdatesession *the_session,
+                         struct voter              *the_new_voter);
 
 // @todo Not clear what the actual input to this will be:
 // raw SQL?
