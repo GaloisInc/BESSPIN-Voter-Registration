@@ -55,10 +55,22 @@ lookup_voter_information(bvrs_ctxt_t *ctxt,
                          const char *lastname,
                          const char *givenname,
                          time_t birthdate,
-                         int64_t condiential,
+                         int64_t confidential,
                          struct voter_q **voters)
 {
-    return ERROR;
+    struct voter_q *some_voters;
+
+    some_voters = db_voter_list_registration(ctxt,
+                                             lastname,
+                                             givenname,
+                                             birthdate,
+                                             confidential);
+    if (NULL != some_voters) {
+        *voters = some_voters;
+    } else {
+        *voters = NULL;
+    }
+    return OK;
 }
 
 status_t
