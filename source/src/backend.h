@@ -25,7 +25,14 @@ close_db(bvrs_ctxt_t *ctxt);
 // Voter Operations
 status_t
 new_voter_session(bvrs_ctxt_t *ctxt,
-                  struct voter *the_voter,
+                  const char *lastname,
+                  const char *givenname,
+                  const char *resaddr,
+                  const char *mailaddr,
+                  time_t birthdate,
+                  void *idinfo,
+                  size_t idinfo_sz,
+                  int64_t confidential,
                   struct voterupdatesession **new_session);
 
 status_t
