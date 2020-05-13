@@ -11,7 +11,7 @@ else
 endif
 
 ORT_PREFIX = ../../build/host/bin/ort
-OBJS		  = db.o main.o
+OBJS		  = db.o backend.o main.o
 CFLAGS += -I $(PREFIX)/include
 LFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libz.a -ldl -lpthread -lcrypt
 
@@ -26,6 +26,7 @@ clean:
 distclean: clean
 	rm -f config.log config.h Makefile.configure
 
+%.o: db.h
 %.o: %.c
 	$(CC) -c -o $@ $(CFLAGS) $<
 
