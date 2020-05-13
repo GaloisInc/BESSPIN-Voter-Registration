@@ -86,7 +86,27 @@ register_voter(bvrs_ctxt_t *ctxt,
                int64_t confidential,
                int64_t *out_id)
 {
-    return ERROR;
+    time_t now;
+    time(&now);
+    int64_t id = db_voter_insert(ctxt,
+                                 lastname,
+                                 givennames,
+                                 resaddress,
+                                 mailaddress,
+                                 registeredparty,
+                                 birthdate,
+                                 idinfo_sz,
+                                 idinfo,
+                                 REGSTATUS_ACTIVE,
+                                 now,
+                                 now,
+                                 confidential);
+    if (id < 0) {
+        return ERROR;
+    } else {
+        *out_id = id;
+        return OK;
+    }
 }
 
 status_t
