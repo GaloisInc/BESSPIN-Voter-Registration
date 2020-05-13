@@ -2,6 +2,27 @@
 
 typedef struct ort bvrs_ctxt;
 
+status_t
+open_db(const char *dbname, bvrs_ctxt_t **ctxt)
+{
+    bvrs_ctxt_t *lctxt;
+
+    lctxt = db_open(dbname);
+    if (NULL == lctxt) {
+        return ERROR;
+    }
+
+    *ctxt = lctxt;
+    return OK;
+}
+
+status_t
+close_db(bvrs_ctxt_t *ctxt)
+{
+    db_close(ctxt);
+    return OK;
+}
+
 /* Each of the following corresponds to a command or query from the Lando
  * specification of the BVRS, and hence forms the backend server API
  */

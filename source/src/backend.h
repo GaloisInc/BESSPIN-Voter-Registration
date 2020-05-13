@@ -16,6 +16,11 @@ typedef struct ort bvrs_ctxt_t;
 /* Each of the following corresponds to a command or query from the Lando
  * specification of the BVRS, and hence forms the backend server API
  */
+status_t
+open_db(const char *dbname, bvrs_ctxt_t **ctxt);
+
+status_t
+close_db(bvrs_ctxt_t *ctxt);
 
 // Voter Operations
 status_t
