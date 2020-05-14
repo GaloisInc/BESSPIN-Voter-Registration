@@ -44,15 +44,16 @@ main(int argc, char **argv)
     assert(sessionok == OK);
 
     status_t updateok = update_voter_information(ctxt,
-                                                 the_session,
+                                                 the_session->voterid,
                                                  "lastname2",
                                                  "firstname2",
                                                  "addr",
                                                  "addr2",
-                                                 "not whig",
+                                                 "not_whig",
                                                  now,
                                                  &data[0],
                                                  sizeof(data),
+                                                 REGSTATUS_ACTIVE,
                                                  0);
     assert(updateok == OK);
 
