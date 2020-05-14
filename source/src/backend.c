@@ -79,10 +79,10 @@ new_voter_session(bvrs_ctxt_t *ctxt,
 
 status_t
 end_voter_session(bvrs_ctxt_t *ctxt,
-                  int64_t voter_id,
+                  int64_t session_id,
                   int64_t token)
 {
-    int status = db_voterupdatesession_delete_votersession(ctxt, voter_id, token);
+    int status = db_voterupdatesession_delete_votersession(ctxt, session_id, token);
     if (status == 0) {
         return ERROR;
     }
