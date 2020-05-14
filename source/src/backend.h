@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <time.h>
+#include <sys/queue.h>
 #include "db.h"
 
 typedef enum status {
@@ -45,11 +46,8 @@ lookup_voter_information(bvrs_ctxt_t *ctxt,
                          const char *lastname,
                          const char *givenname,
                          time_t birthdate,
-                         void *idinfo,
-                         size_t idinfo_sz,
                          int64_t condiential,
-                         struct voter **voters,
-                         size_t        *n_voters);
+                         struct voter_q **voters);
 
 status_t
 register_voter(bvrs_ctxt_t *ctxt,
@@ -82,8 +80,7 @@ update_voter_information(bvrs_ctxt_t *ctxt,
 // raw SQL?
 status_t
 query_voter_database(bvrs_ctxt_t *ctxt,
-                     struct voter **the_voters,
-                     size_t n_voters);
+                     struct voter_q **the_voters);
 
 // Election Official Operations
 status_t
