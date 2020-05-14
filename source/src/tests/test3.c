@@ -30,7 +30,8 @@ main(int argc, char **argv)
                                     &id);
     assert(regok == OK);
 
-    struct voterupdatesession *the_session;
+    int64_t sid, tok;
+    struct voter *voter;
     status_t sessionok = new_voter_session(ctxt,
                                            "lastname",
                                            "firstname",
@@ -40,10 +41,12 @@ main(int argc, char **argv)
                                            &data[0],
                                            sizeof(data),
                                            0,
-                                           &the_session);
+                                           &voter,
+                                           &sid,
+                                           &tok);
     assert(sessionok == OK);
 
-    status_t endsessionok = end_voter_session(ctxt, the_session);
+    status_t endsessionok = end_voter_session(ctxt, id, tok);
     assert(endsessionok == OK);
 
     status_t closeok = close_db(ctxt);
