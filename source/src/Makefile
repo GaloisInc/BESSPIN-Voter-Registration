@@ -28,8 +28,7 @@ clean:
 distclean: clean
 	rm -f config.log config.h Makefile.configure
 
-%.o: db.h
-%.o: %.c
+%.o: %.c db.h
 	$(CC) -c -o $@ $(CFLAGS) $<
 
 db.h: bvrs.ort
