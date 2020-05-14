@@ -1,4 +1,5 @@
 #include "backend.h"
+#include <stdlib.h>
 
 typedef struct ort bvrs_ctxt;
 
@@ -38,16 +39,55 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   void *idinfo,
                   size_t idinfo_sz,
                   int64_t confidential,
-                  struct voterupdatesession **new_session)
+                  struct voter **the_voter,
+                  int64_t *the_session_id,
+                  int64_t *the_token)
 {
+    struct voter *a_voter;
+
+    a_voter = db_voter_get_registrationforupdate(ctxt,
+                                                 lastname,
+                                                 givenname,
+                                                 resaddr,
+                                                 mailaddr,
+                                                 birthdate,
+                                                 idinfo_sz,
+                                                 idinfo,
+                                                 confidential);
+    if (NULL != a_voter) {
+        time_t ctime;
+        int64_t a_token;
+        int64_t a_session_id;
+
+        ctime = time(NULL);
+        a_token = random();
+
+        a_session_id = db_voterupdatesession_insert(ctxt,
+                                                    a_voter->id,
+                                                    a_token,
+                                                    ctime);
+        if (a_session_id > 0) {
+            *the_session_id = a_session_id;
+            *the_token = a_token;
+            *the_voter = a_voter;
+            return OK;
+        }
+    }
+
     return ERROR;
 }
 
 status_t
 end_voter_session(bvrs_ctxt_t *ctxt,
-                  struct voterupdatesession *the_session)
+                  int64_t voter_id,
+                  int64_t token)
 {
-    return ERROR;
+    int status = db_voterupdatesession_delete_votersession(ctxt, voter_id, token);
+    if (status == 0) {
+        return ERROR;
+    }
+
+    return OK;
 }
 
 status_t

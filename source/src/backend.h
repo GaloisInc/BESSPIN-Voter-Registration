@@ -37,11 +37,14 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   void *idinfo,
                   size_t idinfo_sz,
                   int64_t confidential,
-                  struct voterupdatesession **new_session);
+                  struct voter **the_voter,
+                  int64_t *the_session_id,
+                  int64_t *the_token);
 
 status_t
 end_voter_session(bvrs_ctxt_t *ctxt,
-                  struct voterupdatesession *the_session);
+                  int64_t the_session_id,
+                  int64_t the_token);
 
 /* Free the pointers with db_voter_free(). */
 status_t
