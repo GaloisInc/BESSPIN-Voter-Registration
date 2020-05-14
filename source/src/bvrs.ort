@@ -50,8 +50,7 @@ struct voter {
   field confidential bit comment "Flag for voter confidentiality.";
   comment "A registered voter.";
 
-  search lastname like, givennames like, birthdate, idinfo, confidential:
-    limit 1
+  list lastname like, givennames like, birthdate, confidential:
     name registration
     comment "Search for a registered voter by name/birth date/confidential flag.";
 
