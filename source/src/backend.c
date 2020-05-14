@@ -82,15 +82,14 @@ register_voter(bvrs_ctxt_t *ctxt,
 }
 
 status_t
-unregister_voter(bvrs_ctxt_t *ctxt,
-                 struct voter *the_voter)
+unregister_voter(bvrs_ctxt_t *ctxt, int64_t voter_id)
 {
     return ERROR;
 }
 
 status_t
 update_voter_information(bvrs_ctxt_t *ctxt,
-                         struct voterupdatesession *the_session,
+                         int64_t voter_id,
                          char *lastname,
                          char *givennames,
                          char *resaddress,
@@ -99,6 +98,7 @@ update_voter_information(bvrs_ctxt_t *ctxt,
                          time_t birthdate,
                          void *idinfo,
                          size_t idinfo_sz,
+                         enum regstatus status,
                          int64_t confidential)
 {
     return ERROR;

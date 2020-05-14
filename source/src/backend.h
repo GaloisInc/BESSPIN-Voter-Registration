@@ -65,12 +65,8 @@ register_voter(bvrs_ctxt_t *ctxt,
                int64_t *out_id);
 
 status_t
-unregister_voter(bvrs_ctxt_t *ctxt,
-                 struct voter *the_voter);
-
-status_t
 update_voter_information(bvrs_ctxt_t *ctxt,
-                         struct voterupdatesession *the_session,
+                         int64_t voter_id,
                          char *lastname,
                          char *givennames,
                          char *resaddress,
@@ -79,6 +75,7 @@ update_voter_information(bvrs_ctxt_t *ctxt,
                          time_t birthdate,
                          void *idinfo,
                          size_t idinfo_sz,
+                         enum regstatus status,
                          int64_t confidential);
 
 // @todo Not clear what the actual input to this will be:
@@ -98,5 +95,10 @@ new_official_session(bvrs_ctxt_t *ctxt,
 status_t
 end_official_session(bvrs_ctxt_t *ctxt,
                      struct electionofficialsession *the_session);
+
+// This is for convenience, as it is implementable
+// via update_voter_information
+status_t
+unregister_voter(bvrs_ctxt_t *ctxt, int64_t voter_id);
 
 #endif //__BACKEND__

@@ -63,7 +63,7 @@ struct voter {
 
   insert;
 
-  update lastname, givennames, resaddress, mailaddress, birthdate, idinfo, status,
+  update lastname, givennames, resaddress, mailaddress, registeredparty, birthdate, idinfo, status,
          lastupdatetime, confidential:
          id:
     name info
