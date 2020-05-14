@@ -8,9 +8,10 @@ Mandatory Requirements
 ==
 
 * must have a web interface that allows new voter registration, checking
-of existing registration status given voter personal identifying
-information (PII), and updating of existing registration given voter
-PII
+of existing registration status for non-confidential voters given public 
+information (voter name, date of birth), and updating of existing 
+registration for non-confidential voters given voter personal identifying
+information (PII).
 
 * must have a web interface that allows election officials to perform
 maintenance tasks on the registration database (e.g. update registration
