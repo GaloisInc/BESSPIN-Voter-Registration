@@ -12,7 +12,7 @@ endif
 
 ORT_PREFIX = ../../build/host/bin/ort
 OBJS		  = db.o backend.o
-CFLAGS += -I $(PREFIX)/include -g
+CFLAGS += -I $(PREFIX)/include -g -Werror
 LFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libz.a -ldl -lpthread -lcrypt
 
 TESTS = test0 test1 test2 test3 test4
