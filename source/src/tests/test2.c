@@ -30,18 +30,22 @@ main(int argc, char **argv)
                                     &id);
     assert(regok == OK);
 
-    struct voter *voters;
-    size_t n_voters;
-    status_t lookupok = lookup_voter_information(ctxt, "lastname", "firstname", now, &data[0], sizeof(data), 0, &voters, &n_voters);
+    struct voter_q *voters;
+    struct voter *voter;
+    status_t lookupok = lookup_voter_information(ctxt, "lastname", "firstname", now, 0, &voters);
     assert(lookupok == OK);
-    assert(n_voters == 1);
-    assert(id == voters[0].id);
 
-    db_voter_free(&voters[0]);
+    voter = TAILQ_FIRST(voters);
+    assert(voter != NULL);
+    assert(voter->id == id);
+    TAILQ_REMOVE(voters, voter, _entries);
+    assert(NULL == TAILQ_FIRST(voters));
+    db_voter_free(voter);
+    db_voter_freeq(voters);
 
-    status_t lookupok2 = lookup_voter_information(ctxt, "otherlastname", "firstname", now, &data[0], sizeof(data), 0, &voters, &n_voters);
+    status_t lookupok2 = lookup_voter_information(ctxt, "otherlastname", "firstname", now, 0, &voters);
     assert(lookupok2 == OK);
-    assert(n_voters == 0);
+    assert(NULL == TAILQ_FIRST(voters));
 
     status_t closeok = close_db(ctxt);
     assert(closeok == OK);
