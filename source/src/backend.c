@@ -102,6 +102,7 @@ new_session_info(int64_t *the_token, time_t *the_time)
 
     return OK;
 }
+
 // Voter Operations
 status_t
 new_voter_session(bvrs_ctxt_t *ctxt,
@@ -149,6 +150,8 @@ new_voter_session(bvrs_ctxt_t *ctxt,
         } else {
             retstatus = ERROR;
         }
+    } else {
+        retstatus = NOT_FOUND;
     }
 
     return retstatus;
@@ -219,7 +222,7 @@ register_voter(bvrs_ctxt_t *ctxt,
                                  now,
                                  confidential);
     if (id < 0) {
-        return ERROR;
+        return CONSTRAINT_VIOLATION;
     } else {
         *out_id = id;
         return OK;
@@ -334,6 +337,8 @@ new_official_session(bvrs_ctxt_t *ctxt,
             retstatus = ERROR;
         }
         db_electionofficial_free(official);
+    } else {
+        return NOT_FOUND;
     }
 
     return retstatus;
