@@ -64,7 +64,6 @@ main(int argc, char **argv)
     assert(NULL == TAILQ_FIRST(voters));
     db_voter_freeq(voters);
 
-    struct voter *voter;
     status_t lookupok2 = lookup_voter_information(ctxt, "lastname2", "firstname2", now, 0, &voters);
     assert(lookupok2 == OK);
     voter = TAILQ_FIRST(voters);
