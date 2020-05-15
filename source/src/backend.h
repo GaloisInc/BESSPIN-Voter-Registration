@@ -1,10 +1,16 @@
 #ifndef __BACKEND__
 #define __BACKEND__
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <stdint.h>
 #include <time.h>
 #include <sys/queue.h>
+
+#include <kcgi.h>
+#include <kcgijson.h>
 #include "db.h"
 
 typedef enum status {
