@@ -1,3 +1,13 @@
+#include <inttypes.h>
+#include <stdarg.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include <kcgi.h>
+#include <kcgijson.h>
 #include "backend.h"
 #include <stdlib.h>
 
@@ -169,7 +179,24 @@ update_voter_information(bvrs_ctxt_t *ctxt,
                          enum regstatus status,
                          int64_t confidential)
 {
-    return ERROR;
+    int updateok = db_voter_update_info(ctxt,
+                                        lastname,
+                                        givennames,
+                                        resaddress,
+                                        mailaddress,
+                                        registeredparty,
+                                        birthdate,
+                                        idinfo_sz,
+                                        idinfo,
+                                        status,
+                                        time(NULL),
+                                        confidential,
+                                        voter_id);
+    if (0 == updateok) {
+        return ERROR;
+    }
+
+    return OK;
 }
 
 // @todo Not clear what the actual input to this will be:
