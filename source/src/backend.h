@@ -23,6 +23,9 @@ open_db(const char *dbname, bvrs_ctxt_t **ctxt);
 status_t
 close_db(bvrs_ctxt_t *ctxt);
 
+status_t
+flush_old_sessions(bvrs_ctxt_t *ctxt);
+
 // Voter Operations
 status_t
 new_voter_session(bvrs_ctxt_t *ctxt,
