@@ -82,6 +82,11 @@ update_voter_information(bvrs_ctxt_t *ctxt,
                          enum regstatus status,
                          int64_t confidential);
 
+status_t
+update_voter_status(bvrs_ctxt_t *ctxt,
+                    int64_t voter_id,
+                    enum regstatus new_status);
+
 // @todo Not clear what the actual input to this will be:
 // raw SQL?
 status_t
@@ -98,10 +103,5 @@ new_official_session(bvrs_ctxt_t *ctxt,
 status_t
 end_official_session(bvrs_ctxt_t *ctxt,
                      struct electionofficialsession *the_session);
-
-// This is for convenience, as it is implementable
-// via update_voter_information
-status_t
-unregister_voter(bvrs_ctxt_t *ctxt, int64_t voter_id);
 
 #endif //__BACKEND__

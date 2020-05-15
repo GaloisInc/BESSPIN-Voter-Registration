@@ -216,9 +216,17 @@ register_voter(bvrs_ctxt_t *ctxt,
 }
 
 status_t
-unregister_voter(bvrs_ctxt_t *ctxt, int64_t voter_id)
+update_voter_status(bvrs_ctxt_t *ctxt,
+                    int64_t voter_id,
+                    enum regstatus new_status)
 {
-    return ERROR;
+    int update_ok = db_voter_update_status(ctxt, new_status, time(NULL), voter_id);
+    if (update_ok) {
+        return OK;
+    } else {
+        return ERROR;
+    }
+
 }
 
 status_t
