@@ -98,7 +98,8 @@ status_t
 new_official_session(bvrs_ctxt_t *ctxt,
                      const char *username,
                      const char *password,
-                     struct electionofficialsession **the_session);
+                     int64_t *session_id,
+                     int64_t *token);
 
 status_t
 end_official_session(bvrs_ctxt_t *ctxt,

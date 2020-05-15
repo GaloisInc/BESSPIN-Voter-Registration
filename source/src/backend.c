@@ -94,6 +94,14 @@ flush_old_sessions(bvrs_ctxt_t *ctxt,
  * specification of the BVRS, and hence forms the backend server API
  */
 
+status_t
+new_session_info(int64_t *the_token, time_t *the_time)
+{
+    *the_time = time(NULL);
+    *the_token = random();
+
+    return OK;
+}
 // Voter Operations
 status_t
 new_voter_session(bvrs_ctxt_t *ctxt,
@@ -110,6 +118,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t *the_token)
 {
     struct voter *a_voter;
+    status_t retstatus = ERROR;
 
     a_voter = db_voter_get_registrationforupdate(ctxt,
                                                  lastname,
@@ -125,22 +134,24 @@ new_voter_session(bvrs_ctxt_t *ctxt,
         int64_t a_token;
         int64_t a_session_id;
 
-        ctime = time(NULL);
-        a_token = random();
+        if (OK == new_session_info(&a_token, &ctime)) {
 
-        a_session_id = db_voterupdatesession_insert(ctxt,
-                                                    a_voter->id,
-                                                    a_token,
-                                                    ctime);
-        if (a_session_id > 0) {
-            *the_session_id = a_session_id;
-            *the_token = a_token;
-            *the_voter = a_voter;
-            return OK;
+            a_session_id = db_voterupdatesession_insert(ctxt,
+                                                        a_voter->id,
+                                                        a_token,
+                                                        ctime);
+            if (a_session_id > 0) {
+                *the_session_id = a_session_id;
+                *the_token = a_token;
+                *the_voter = a_voter;
+                retstatus = OK;
+            }
+        } else {
+            retstatus = ERROR;
         }
     }
 
-    return ERROR;
+    return retstatus;
 }
 
 status_t
@@ -277,9 +288,35 @@ status_t
 new_official_session(bvrs_ctxt_t *ctxt,
                      const char *username,
                      const char *password,
-                     struct electionofficialsession **the_session)
+                     int64_t *session_id,
+                     int64_t *token)
 {
-    return ERROR;
+    struct electionofficial *official;
+    status_t retstatus = ERROR;
+
+    official = db_electionofficial_get_credentials(ctxt, username, password);
+
+    if (NULL != official) {
+        time_t ctime;
+        int64_t a_token;
+        int64_t a_session_id;
+
+        if (OK == new_session_info(&a_token, &ctime)) {
+
+            a_session_id = db_electionofficialsession_insert(ctxt, official->id, a_token, ctime);
+
+            if (a_session_id > 0) {
+                *session_id = a_session_id;
+                *token = a_token;
+                retstatus = OK;
+            }
+        } else {
+            retstatus = ERROR;
+        }
+        db_electionofficial_free(official);
+    }
+
+    return retstatus;
 }
 
 status_t
