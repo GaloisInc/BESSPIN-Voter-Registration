@@ -24,7 +24,7 @@ status_t
 close_db(bvrs_ctxt_t *ctxt);
 
 status_t
-flush_old_sessions(bvrs_ctxt_t *ctxt);
+flush_old_sessions(bvrs_ctxt_t *ctxt, time_t voter_session_length, time_t official_session_length);
 
 // Voter Operations
 status_t

@@ -34,6 +34,62 @@ close_db(bvrs_ctxt_t *ctxt)
     return OK;
 }
 
+status_t
+flush_voter_sessions(bvrs_ctxt_t *ctxt, time_t voter_cutoff)
+{
+    status_t ok = OK;
+    struct voterupdatesession_q *voter_sessions =
+        db_voterupdatesession_list_byctime(ctxt, voter_cutoff);
+    struct voterupdatesession *vsession;
+    TAILQ_FOREACH(vsession, voter_sessions, _entries) {
+        int del = db_voterupdatesession_delete_votersession(ctxt,
+                                                            vsession->id,
+                                                            vsession->token);
+        if (!del) {
+            ok = ERROR;
+        }
+    }
+    db_voterupdatesession_freeq(voter_sessions);
+
+    return ok;
+}
+
+status_t
+flush_official_sessions(bvrs_ctxt_t *ctxt, time_t official_cutoff)
+{
+    status_t ok = OK;
+    struct electionofficialsession_q *official_sessions =
+        db_electionofficialsession_list_byctime(ctxt, official_cutoff);
+    struct electionofficialsession *osession;
+    TAILQ_FOREACH(osession, official_sessions, _entries) {
+        int del = db_electionofficialsession_delete_officialsession(ctxt,
+                                                                    osession->id,
+                                                                    osession->token);
+        if (!del) {
+            ok = ERROR;
+        }
+    }
+    db_electionofficialsession_freeq(official_sessions);
+
+    return ok;
+}
+
+status_t
+flush_old_sessions(bvrs_ctxt_t *ctxt,
+                   time_t voter_session_length,
+                   time_t official_session_length)
+{
+    time_t now             = time(NULL);
+    /* assuming these won't overflow... */
+    time_t voter_cutoff    = now - voter_session_length;
+    time_t official_cutoff = now - official_session_length;
+
+    status_t del_voters    = flush_voter_sessions(ctxt, voter_cutoff);
+    status_t del_officials = flush_official_sessions(ctxt, voter_cutoff);
+
+    return (del_voters == OK && del_officials == OK) ? OK : ERROR;
+}
+
 /* Each of the following corresponds to a command or query from the Lando
  * specification of the BVRS, and hence forms the backend server API
  */

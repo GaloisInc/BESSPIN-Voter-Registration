@@ -81,6 +81,9 @@ struct voterupdatesession {
   search id, token: name updatecreds
     comment "Find the session by ID/Token";
 
+  list ctime lt: name byctime
+    comment "Find all sessions created before a given time";
+
   insert;
 
   delete id, token: name votersession
@@ -111,6 +114,9 @@ struct electionofficialsession {
 
   search id, token: name officialcreds
     comment "Find the session by ID/Token";
+
+  list ctime lt: name byctime
+    comment "Find all sessions created before a given time";
 
   insert;
 

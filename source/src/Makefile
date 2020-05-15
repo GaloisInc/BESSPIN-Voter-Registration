@@ -47,6 +47,7 @@ test%: $(OBJS) bvrs.sql
 	mkdir -p out
 	rm -f out/testdb.db
 	sqlite3 out/testdb.db < bvrs.sql
+	if [ -f tests/$@.sql ]; then sqlite3 out/testdb.db < tests/$@.sql; fi
 	$(CC)  $(OBJS) tests/$@.c -I $(PWD) $(CFLAGS) $(LFLAGS) -o out/$@
 	./out/$@ out/testdb.db
 
