@@ -33,12 +33,11 @@ do_test(const char *req, long code)
 static int
 parent(void *fp)
 {
-
   do_test("http://localhost:17123/voter_check_status.json?"
-                 "voter-lastname=%25&"
-                 "voter-givennames=%25&"
-                 "voter-birthdate=1986-02-04",
-                 200);
+          "voter-lastname=lastname2&"
+          "voter-givennames=firstname2&"
+          "voter-birthdate=1986-02-04",
+          200);
 
   return 1;
 }

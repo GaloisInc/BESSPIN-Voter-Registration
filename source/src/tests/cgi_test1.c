@@ -35,10 +35,9 @@ parent(void *fp)
 {
 
   do_test("http://localhost:17123/voter_check_status.json?"
-                 "voter-lastname=%25&"
                  "voter-givennames=%25&"
                  "voter-birthdate=1986-02-04",
-                 200);
+                 400);
 
   return 1;
 }
