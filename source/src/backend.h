@@ -87,10 +87,18 @@ update_voter_status(bvrs_ctxt_t *ctxt,
                     int64_t voter_id,
                     enum regstatus new_status);
 
-// @todo Not clear what the actual input to this will be:
-// raw SQL?
+/*  This is to help election officials search. Note that it does not include
+ *  the "confidentail" bit as an input, and that includes a lower and upper bound
+ *  on the birthdate field
+ */
 status_t
 query_voter_database(bvrs_ctxt_t *ctxt,
+                     const char *lastname,
+                     const char *givennames,
+                     const char *resaddress,
+                     const char *mailaddress,
+                     time_t birthdate_lower,
+                     time_t birthdate_upper,
                      struct voter_q **the_voters);
 
 // Election Official Operations

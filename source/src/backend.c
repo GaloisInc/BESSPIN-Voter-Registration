@@ -278,8 +278,28 @@ update_voter_information(bvrs_ctxt_t *ctxt,
 // raw SQL?
 status_t
 query_voter_database(bvrs_ctxt_t *ctxt,
+                     const char *lastname,
+                     const char *givennames,
+                     const char *resaddress,
+                     const char *mailaddress,
+                     time_t birthdate_lower,
+                     time_t birthdate_upper,
                      struct voter_q **the_voters)
 {
+    struct voter_q *some_voters;
+    some_voters = db_voter_list_officialsearch(ctxt,
+                                               lastname,
+                                               givennames,
+                                               resaddress,
+                                               mailaddress,
+                                               birthdate_lower,
+                                               birthdate_upper);
+
+    if (NULL != some_voters) {
+        *the_voters = some_voters;
+        return OK;
+    }
+
     return ERROR;
 }
 
