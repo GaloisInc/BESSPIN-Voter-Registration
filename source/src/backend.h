@@ -111,6 +111,7 @@ new_official_session(bvrs_ctxt_t *ctxt,
 
 status_t
 end_official_session(bvrs_ctxt_t *ctxt,
-                     struct electionofficialsession *the_session);
+                     int64_t the_session_id,
+                     int64_t the_token);
 
 #endif //__BACKEND__

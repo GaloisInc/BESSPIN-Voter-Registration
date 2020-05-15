@@ -341,7 +341,15 @@ new_official_session(bvrs_ctxt_t *ctxt,
 
 status_t
 end_official_session(bvrs_ctxt_t *ctxt,
-                     struct electionofficialsession *the_session)
+                     int64_t the_session_id,
+                     int64_t the_token)
 {
-    return ERROR;
+    int status = db_electionofficialsession_delete_officialsession(ctxt,
+                                                                   the_session_id,
+                                                                   the_token);
+    if (status == 0) {
+        return ERROR;
+    }
+
+    return OK;
 }
