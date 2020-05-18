@@ -126,7 +126,7 @@ get_str_param(struct kreq *r, enum valid_keys key, const char **str_val)
 }
 
 status_t
-get_blob_param(struct kreq *r, enum valid_keys key, char **buf, size_t *buf_sz)
+get_blob_param(struct kreq *r, enum valid_keys key, const char **buf, size_t *buf_sz)
 {
   if (NULL != r->fieldmap[key] && r->fieldmap[key]->valsz > 0) {
     *buf    = r->fieldmap[key]->val;
