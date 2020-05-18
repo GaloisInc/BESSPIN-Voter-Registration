@@ -41,6 +41,8 @@
 enum page {
   /*  unauthenticated status checking */
   PAGE_VOTER_CHECK_STATUS,
+  /*  register a new voter */
+  PAGE_VOTER_REGISTER,
   /*  get a new voter update session */
   PAGE_VOTER_UPDATE_LOGIN,
   /*  given a voter update session,
@@ -57,6 +59,7 @@ enum page {
 
 static const char *const pages[PAGE__MAX] = {
   "voter_check_status",
+  "voter_register",
   "voter_update_login",
   "voter_update_info",
   "official_login",
