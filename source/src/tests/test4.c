@@ -30,7 +30,8 @@ main(int argc, char **argv)
                                     &id);
     assert(regok == OK);
 
-    struct voterupdatesession *the_session;
+    struct voter *voter;
+    int64_t sid, tok;
     status_t sessionok = new_voter_session(ctxt,
                                            "lastname",
                                            "firstname",
@@ -40,11 +41,11 @@ main(int argc, char **argv)
                                            &data[0],
                                            sizeof(data),
                                            0,
-                                           &the_session);
+                                           &voter, &sid, &tok);
     assert(sessionok == OK);
 
     status_t updateok = update_voter_information(ctxt,
-                                                 the_session->voterid,
+                                                 voter->id,
                                                  "lastname2",
                                                  "firstname2",
                                                  "addr",
@@ -63,7 +64,6 @@ main(int argc, char **argv)
     assert(NULL == TAILQ_FIRST(voters));
     db_voter_freeq(voters);
 
-    struct voter *voter;
     status_t lookupok2 = lookup_voter_information(ctxt, "lastname2", "firstname2", now, 0, &voters);
     assert(lookupok2 == OK);
     voter = TAILQ_FIRST(voters);
@@ -72,7 +72,7 @@ main(int argc, char **argv)
     TAILQ_REMOVE(voters, voter, _entries);
     assert(NULL == TAILQ_FIRST(voters));
 
-    status_t endsessionok = end_voter_session(ctxt, the_session);
+    status_t endsessionok = end_voter_session(ctxt, sid, tok);
     assert(endsessionok == OK);
 
     status_t closeok = close_db(ctxt);

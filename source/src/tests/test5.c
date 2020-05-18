@@ -30,24 +30,17 @@ main(int argc, char **argv)
                                     &id);
     assert(regok == OK);
 
-    int64_t sid, tok;
-    struct voter *voter;
-    status_t sessionok = new_voter_session(ctxt,
-                                           "lastname",
-                                           "firstname",
-                                           "addr",
-                                           "addr2",
-                                           now,
-                                           &data[0],
-                                           sizeof(data),
-                                           0,
-                                           &voter,
-                                           &sid,
-                                           &tok);
-    assert(sessionok == OK);
 
-    status_t endsessionok = end_voter_session(ctxt, id, tok);
-    assert(endsessionok == OK);
+    status_t updateok = update_voter_status(ctxt, id, REGSTATUS_INACTIVE);
+    assert(updateok == OK);
+
+
+    struct voter_q *voters;
+    struct voter *voter;
+    status_t lookupok = lookup_voter_information(ctxt, "lastname", "firstname", now, 0, &voters);
+    assert(lookupok == OK);
+    voter = TAILQ_FIRST(voters);
+    assert(voter->status == REGSTATUS_INACTIVE);
 
     status_t closeok = close_db(ctxt);
     assert(closeok == OK);

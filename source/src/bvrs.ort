@@ -60,6 +60,11 @@ struct voter {
     name registrationforupdate
     comment "Search for matching data to update a registration.";
 
+  list lastname like, givennames like, resaddress like, mailaddress like,
+         birthdate gt, birthdate lt:
+    name officialsearch
+    comment "Search for a registered voter with ranges birthdate.";
+
   insert;
 
   update lastname, givennames, resaddress, mailaddress, registeredparty, birthdate, idinfo, status,
@@ -67,6 +72,10 @@ struct voter {
          id:
     name info
     comment "Update a voter registration record by id";
+
+  update status, lastupdatetime: id:
+    name status
+    comment "Update a voter registration status by id";
 };
 
 # a voter update session
@@ -80,6 +89,9 @@ struct voterupdatesession {
 
   search id, token: name updatecreds
     comment "Find the session by ID/Token";
+
+  list ctime lt: name byctime
+    comment "Find all sessions created before a given time";
 
   insert;
 
@@ -111,6 +123,9 @@ struct electionofficialsession {
 
   search id, token: name officialcreds
     comment "Find the session by ID/Token";
+
+  list ctime lt: name byctime
+    comment "Find all sessions created before a given time";
 
   insert;
 
