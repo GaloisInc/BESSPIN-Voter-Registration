@@ -170,7 +170,6 @@ voter_login_page(struct kreq *r)
                                                 &voter,
                                                 &sid,
                                                 &token);
-    printf("create=%d\n", session_create);
     if (OK == session_create) {
       /*  TODO: correct time */
       kutil_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
