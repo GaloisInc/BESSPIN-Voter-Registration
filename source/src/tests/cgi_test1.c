@@ -39,6 +39,7 @@ parent(void *fp)
                  "voter-birthdate=1986-02-04",
                  400);
 
+  printf("Test Passed.\n");
   return 1;
 }
 
