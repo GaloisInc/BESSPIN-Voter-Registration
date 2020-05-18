@@ -1,0 +1,76 @@
+body{
+	background-color: #DCDCDC;
+	font-family: Helvetica, sans-serif;
+}
+
+h1 {
+	text-align: center;
+}
+
+h2{
+	text-align: center;
+}
+
+label{
+	margin-top: 2px;
+	font-size: 10px;
+	text-align: right;
+}
+
+.dataFormOuter{
+	text-align: center;
+	padding-top: 50px
+}
+
+.dataFormInner{
+	display: inline-block;
+	text-align: left;
+	width:90%;
+	
+}
+
+.firstColInput {
+	position: relative;
+	float: left;
+	margin-left: 10px;
+	width: 200px;
+
+	border: 2px solid grey
+}
+
+.secondColInput {
+	float: left;
+	margin-left: 10px;
+	width: 100px;
+
+	border: 2px solid grey
+
+}
+
+.firstColLabel{
+	float:left;
+	width:30%;
+
+}
+
+.secondColLabel{
+	float: left;
+	width: 70px;
+	text-align: right;
+}
+
+.formButton {
+	position: relative;
+	float: left;
+	margin-left: 10px;
+}
+
+
+
+
+
+
+
+
+
+
