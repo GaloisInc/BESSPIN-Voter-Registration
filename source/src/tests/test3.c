@@ -1,13 +1,14 @@
 #include <backend.h>
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "db.h"
 
 int
 main(int argc, char **argv)
 {
-    char data[16];
+    char *data = "blob1";
     time_t now;
     bvrs_ctxt_t *ctxt;
 
@@ -20,12 +21,12 @@ main(int argc, char **argv)
     status_t regok = register_voter(ctxt,
                                     "lastname",
                                     "firstname",
-                                    "addr",
-                                    "addr2",
+                                    "1234 addr",
+                                    "1234 addr2",
                                     "whig",
                                     now,
-                                    &data[0],
-                                    sizeof(data),
+                                    data,
+                                    strlen(data),
                                     0,
                                     &id);
     assert(regok == OK);
@@ -35,11 +36,11 @@ main(int argc, char **argv)
     status_t sessionok = new_voter_session(ctxt,
                                            "lastname",
                                            "firstname",
-                                           "addr",
-                                           "addr2",
+                                           "1234 addr",
+                                           "1234 addr2",
                                            now,
-                                           &data[0],
-                                           sizeof(data),
+                                           data,
+                                           strlen(data),
                                            0,
                                            &voter,
                                            &sid,

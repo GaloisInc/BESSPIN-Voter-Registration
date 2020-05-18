@@ -7,7 +7,7 @@
 int
 main(int argc, char **argv)
 {
-    char data[16];
+    char data[16] = "blob";
     time_t now;
     bvrs_ctxt_t *ctxt;
 
