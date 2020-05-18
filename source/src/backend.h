@@ -129,13 +129,13 @@ lookup_voter_information(bvrs_ctxt_t *ctxt,
  */
 status_t
 register_voter(bvrs_ctxt_t *ctxt,
-               char *lastname,
-               char *givennames,
-               char *resaddress,
-               char *mailaddress,
-               char *registeredparty,
+               const char *lastname,
+               const char *givennames,
+               const char *resaddress,
+               const char *mailaddress,
+               const char *registeredparty,
                time_t birthdate,
-               void *idinfo,
+               const void *idinfo,
                size_t idinfo_sz,
                int64_t confidential,
                int64_t *out_id);
@@ -150,13 +150,13 @@ register_voter(bvrs_ctxt_t *ctxt,
 status_t
 update_voter_information(bvrs_ctxt_t *ctxt,
                          int64_t voter_id,
-                         char *lastname,
-                         char *givennames,
-                         char *resaddress,
-                         char *mailaddress,
-                         char *registeredparty,
+                         const char *lastname,
+                         const char *givennames,
+                         const char *resaddress,
+                         const char *mailaddress,
+                         const char *registeredparty,
                          time_t birthdate,
-                         void *idinfo,
+                         const void *idinfo,
                          size_t idinfo_sz,
                          enum regstatus status,
                          int64_t confidential);
@@ -215,5 +215,12 @@ status_t
 end_official_session(bvrs_ctxt_t *ctxt,
                      int64_t the_session_id,
                      int64_t the_token);
+#ifdef DEBUG
+#define DBG(...) fprintf(stderr, __VA_ARGS__)
+#else
+#define DBG(...)
+#endif
+
+#define DBG_STR(_s) DBG(#_s "=%s", _s);
 
 #endif //__BACKEND__
