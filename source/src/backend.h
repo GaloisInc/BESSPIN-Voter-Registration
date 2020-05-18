@@ -92,6 +92,19 @@ end_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t the_session_id,
                   int64_t the_token);
 
+/* Lookup a voter session and return the voter_id if found.
+ *
+ * Returns
+ *   OK on success
+ *   NOT_FOUND if this does not match a valid session
+ *   ERROR if some internal error occurs
+ */
+status_t
+lookup_voter_session(bvrs_ctxt_t *ctxt,
+                     int64_t the_session_id,
+                     int64_t the_token,
+                     int64_t *voter_id);
+
 /* Search for voters by lastname, givenname, birthdate, and whether or not
  * the voter is confidential.
  *

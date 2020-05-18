@@ -158,6 +158,26 @@ new_voter_session(bvrs_ctxt_t *ctxt,
 }
 
 status_t
+lookup_voter_session(bvrs_ctxt_t *ctxt,
+                     int64_t the_session_id,
+                     int64_t the_token,
+                     int64_t *voter_id)
+{
+    status_t ret = ERROR;
+    struct voterupdatesession *session;
+    session = db_voterupdatesession_get_updatecreds(ctxt, the_session_id, the_token);
+    if (NULL != session) {
+        *voter_id = session->voterid;
+        db_voterupdatesession_free(session);
+        ret = OK;
+    } else {
+        ret = NOT_FOUND;
+    }
+
+    return ret;
+}
+
+status_t
 end_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t session_id,
                   int64_t token)
