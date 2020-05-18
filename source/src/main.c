@@ -143,23 +143,19 @@ get_blob_param(struct kreq *r, enum valid_keys key, char **buf, size_t *buf_sz)
  * Or always create a new one?
  * */
 static void
-voterlogin(struct kreq *r)
+voter_login_page(struct kreq *r)
 {
-  struct kjsonreq req;
   char buf[64];
   time_t birthdate;
   size_t idinfo_sz;
-  const char *lastname, *givennames, *resaddress, *mailaddress;
-  char *idinfo;
+  const char *lastname, *givennames, *resaddress, *mailaddress, *idinfo;
 
-  /*  1. Check that all of the fields have been provided */
   if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
        (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
        (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
        (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
        (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate)) &&
-       (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz))
-  ) {
+       (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz)) ) {
     int64_t sid, token;
     struct voter *voter;
     status_t session_create = new_voter_session(r->arg,
@@ -185,10 +181,7 @@ voterlogin(struct kreq *r)
                  "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
                  valid_keys[VALID_VOTERUPDATESESSION_ID].name, sid, "", buf);
       http_open(r, KHTTP_200);
-      kjson_open(&req, r);
-      kjson_obj_open(&req);
-      kjson_obj_close(&req);
-      kjson_close(&req);
+      empty_json(r);
       db_voter_free(voter);
     } else {
       http_open(r, KHTTP_401);
