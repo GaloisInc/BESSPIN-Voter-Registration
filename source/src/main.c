@@ -84,7 +84,7 @@ http_open(struct kreq *r, enum khttp code)
 }
 
 status_t
-get_int_param(struct kreq *r, enum valid_keys key, int *int_val)
+get_int_param(struct kreq *r, enum valid_keys key, int64_t *int_val)
 {
   if (NULL != r->fieldmap[key]) {
    *int_val = r->fieldmap[key]->parsed.i;
@@ -98,23 +98,91 @@ status_t
 get_str_param(struct kreq *r, enum valid_keys key, const char **str_val)
 {
   if (NULL != r->fieldmap[key]) {
-   *str_val = r->fieldmap[key]->parsed.s;
-   return OK;
+    if (r->fieldmap[key]->parsed.s) {
+     *str_val = r->fieldmap[key]->parsed.s;
+     return OK;
+    }
   }
 
   return NOT_FOUND;
 }
 
+status_t
+get_blob_param(struct kreq *r, enum valid_keys key, char **buf, size_t *buf_sz)
+{
+  if (NULL != r->fieldmap[key] && r->fieldmap[key]->valsz > 0) {
+    *buf    = r->fieldmap[key]->val;
+    *buf_sz = r->fieldmap[key]->valsz;
+    return OK;
+  }
+
+  return NOT_FOUND;
+}
+
+/*
+ * Should this just re-use an existing session if one is found?
+ * Or always create a new one?
+ * */
 static void
 voterlogin(struct kreq *r)
 {
- 
+  struct kjsonreq req;
+  char buf[64];
+  time_t birthdate;
+  size_t idinfo_sz;
+  const char *lastname, *givennames, *resaddress, *mailaddress;
+  char *idinfo;
+
+  /*  1. Check that all of the fields have been provided */
+  if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
+       (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
+       (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate)) &&
+       (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz))
+  ) {
+    int64_t sid, token;
+    struct voter *voter;
+    status_t session_create = new_voter_session(r->arg,
+                                                lastname,
+                                                givennames,
+                                                resaddress,
+                                                mailaddress,
+                                                birthdate,
+                                                idinfo,
+                                                idinfo_sz,
+                                                0 /*  not confidential */,
+                                                &voter,
+                                                &sid,
+                                                &token);
+    printf("create=%d\n", session_create);
+    if (OK == session_create) {
+      /*  TODO: correct time */
+      kutil_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
+      khttp_head(r, kresps[KRESP_SET_COOKIE],
+                 "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
+                 valid_keys[VALID_VOTERUPDATESESSION_TOKEN].name, token, "", buf);
+      khttp_head(r, kresps[KRESP_SET_COOKIE],
+                 "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
+                 valid_keys[VALID_VOTERUPDATESESSION_ID].name, sid, "", buf);
+      http_open(r, KHTTP_200);
+      kjson_open(&req, r);
+      kjson_obj_open(&req);
+      kjson_obj_close(&req);
+      kjson_close(&req);
+      db_voter_free(voter);
+    } else {
+      http_open(r, KHTTP_401);
+    }
+  } else {
+    http_open(r, KHTTP_400);
+  }
 }
 
 static void
 checkstatus(struct kreq *r)
 {
-  int birthddate;
+  time_t birthddate;
   const char *lastname, *givennames;
   struct voter_q *voters;
 
