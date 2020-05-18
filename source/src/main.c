@@ -138,6 +138,72 @@ get_blob_param(struct kreq *r, enum valid_keys key, char **buf, size_t *buf_sz)
   return NOT_FOUND;
 }
 
+
+status_t
+do_voter_updateinfo(struct kreq *r, int64_t voter_id)
+{
+  const char *lastname, *givennames,
+             *resaddress, *mailaddress,
+             *party, *idinfo;
+  time_t birthdate;
+  size_t idinfo_sz;
+  enum regstatus status;
+  int64_t status_int;
+  status_t ret = ERROR;
+
+  if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
+       (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
+       (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate))  &&
+       (OK == get_int_param(r, VALID_VOTER_STATUS, &status_int))  &&
+       (OK == get_str_param(r, VALID_VOTER_REGISTEREDPARTY, &party))   &&
+       (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz))  ) {
+    status = (enum regstatus)status_int; // This is safe as kcgi has validated it.
+    ret = update_voter_information(r->arg,
+                                   voter_id,
+                                   lastname,
+                                   givennames,
+                                   resaddress,
+                                   mailaddress,
+                                   party,
+                                   birthdate,
+                                   idinfo,
+                                   idinfo_sz,
+                                   status,
+                                   0 /*  not confidential */);
+  }
+
+  return ret;
+}
+
+static void
+voter_update_info_page(struct kreq *r)
+{
+  int64_t voterid;
+  status_t lookup;
+  int64_t sid;
+  int64_t token;
+
+  // 1. Check cookie
+  if ( (r->cookiemap[VALID_VOTERUPDATESESSION_ID] != NULL) &&
+       (r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN] != NULL) ) {
+    sid   = r->cookiemap[VALID_VOTERUPDATESESSION_ID]->parsed.i;
+    token = r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN]->parsed.i;
+    // 2. Get session
+    lookup = lookup_voter_session(r->arg, sid, token, &voterid);
+    if ( (OK == lookup) &&
+         // 3. Do the update
+         do_voter_updateinfo(r, voterid) ) {
+      http_open(r, KHTTP_200);
+      empty_json(r);
+      return;
+    }
+  }
+
+  http_open(r, KHTTP_403);
+  empty_json(r);
+}
 /*
  * Should this just re-use an existing session if one is found?
  * Or always create a new one?
@@ -274,10 +340,14 @@ main(int argc, char **argv)
       case PAGE_VOTER_CHECK_STATUS:
         voter_check_status_page(&r);
         break;
+      case PAGE_VOTER_REGISTER:
+        voter_register_page(&r);
         break;
       case PAGE_VOTER_UPDATE_LOGIN:
         voter_login_page(&r);
         break;
+      case PAGE_VOTER_UPDATE_INFO:
+        voter_update_info_page(&r);
         break;
       default:
         http_open(&r, KHTTP_404);
