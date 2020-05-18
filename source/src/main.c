@@ -138,6 +138,45 @@ get_blob_param(struct kreq *r, enum valid_keys key, const char **buf, size_t *bu
   return NOT_FOUND;
 }
 
+static void
+voter_register_page(struct kreq *r)
+{
+  const char *lastname, *givennames,
+             *resaddress, *mailaddress,
+             *party, *idinfo;
+  time_t birthdate;
+  size_t idinfo_sz;
+
+  if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
+       (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
+       (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate))  &&
+       (OK == get_str_param(r, VALID_VOTER_REGISTEREDPARTY, &party))   &&
+       (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz))  ) {
+    int64_t voter_id;
+    status_t reg_status = register_voter(r->arg,
+                                         lastname,
+                                         givennames,
+                                         resaddress,
+                                         mailaddress,
+                                         party,
+                                         birthdate,
+                                         idinfo,
+                                         idinfo_sz,
+                                         0,
+                                         &voter_id);
+    if (OK == reg_status) {
+      http_open(r, KHTTP_200);
+      empty_json(r);
+    } else {
+      http_open(r, KHTTP_400);
+    }
+  } else {
+    http_open(r, KHTTP_400);
+  }
+
+}
 
 status_t
 do_voter_updateinfo(struct kreq *r, int64_t voter_id)
