@@ -105,6 +105,7 @@ get_int_param(struct kreq *r, enum valid_keys key, int64_t *int_val)
    return OK;
   }
 
+  DBG("get_int_param: %s (%d) --> NOT_FOUND\n", valid_keys[key].name, key);
   return NOT_FOUND;
 }
 
@@ -115,9 +116,12 @@ get_str_param(struct kreq *r, enum valid_keys key, const char **str_val)
     if (r->fieldmap[key]->parsed.s) {
      *str_val = r->fieldmap[key]->parsed.s;
      return OK;
+    } else {
+      DBG("get_str_param: %s (%d) --> NULL (NOT_FOUND)\n", valid_keys[key].name, key);
     }
   }
 
+  DBG("get_str_param: %s (%d) --> NOT_FOUND\n", valid_keys[key].name, key);
   return NOT_FOUND;
 }
 
@@ -130,6 +134,7 @@ get_blob_param(struct kreq *r, enum valid_keys key, char **buf, size_t *buf_sz)
     return OK;
   }
 
+  DBG("get_blob_param: %s (%d) --> NOT_FOUND\n", valid_keys[key].name, key);
   return NOT_FOUND;
 }
 
@@ -238,15 +243,23 @@ main(int argc, char **argv)
 #endif
 
   if ( KCGI_OK !=
-     (err = khttp_fcgi_init(&fcgi, valid_keys, VALID__MAX, pages, PAGE__MAX, PAGE_VOTER_CHECK_STATUS)) ) {
+       (err = khttp_fcgi_initx(&fcgi, kmimetypes, KMIME__MAX,
+                               valid_keys, VALID__MAX,
+                               ksuffixmap, KMIME_TEXT_HTML,
+                               pages, PAGE__MAX,
+                               PAGE_VOTER_CHECK_STATUS,
+                               NULL,
+                               NULL,
+#ifdef DEBUG
+                               1,
+#else
+                               0,
+#endif
+                               NULL)) ) {
      return EXIT_FAILURE;
   }
 
   while ( (err = khttp_fcgi_parse(fcgi, &r)) == KCGI_OK ) {
-    /*
-     * Front line of defence: make sure we're a proper method, make
-     * sure we're a page, make sure we're a JSON file.
-     */
     if (r.method != KMETHOD_GET && r.method != KMETHOD_POST) {
       http_open(&r, KHTTP_405);
       khttp_free(&r);
