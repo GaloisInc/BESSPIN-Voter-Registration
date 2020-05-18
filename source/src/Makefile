@@ -12,6 +12,7 @@ endif
 
 ORT_PREFIX = ../../build/host/bin/ort
 OBJS		  = db.o backend.o
+# CFLAGS += -DDEBUG
 CFLAGS += -I $(PREFIX)/include -g -Werror
 LFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libkcgijson.a -l:libz.a
 LFLAGS += -ldl -lpthread -lcrypt -lresolv -lm
@@ -45,19 +46,20 @@ bvrs: main.o $(OBJS) db.h
 bvrs.sql: bvrs.ort
 	$(ORT_PREFIX)-sql bvrs.ort > bvrs.sql
 
-test%: $(OBJS) bvrs.sql
+tests/%: bvrs bvrs.sql
 	mkdir -p out
-	rm -f out/testdb.db
-	sqlite3 out/testdb.db < bvrs.sql
-	if [ -f tests/$@.sql ]; then sqlite3 out/testdb.db < tests/$@.sql; fi
-	$(CC)  $(OBJS) tests/$@.c -I $(PWD) $(CFLAGS) $(LFLAGS) $(LFLAGS_TEST) -o out/$@
-	./out/$@ out/testdb.db
+	rm -f out/$(@F).db
+	sqlite3 out/$(@F).db < bvrs.sql
+	if [ -f tests/$(@F).sql ]; then sqlite3 out/$(@F).db < tests/$(@F).sql; fi
+	$(CC)  $(OBJS) tests/$(@F).c -I $(PWD) $(CFLAGS) $(LFLAGS) $(LFLAGS_TEST) -o out/$(@F)
+	./out/$(@F) out/$(@F).db
 
-cgi_test%: bvrs bvrs.sql
-	mkdir -p out
-	rm -f out/$@.db
-	sqlite3 out/$@.db < tests/$@.sql
-	$(CC)  $(OBJS) tests/$@.c -I $(PWD) $(CFLAGS) $(LFLAGS) $(LFLAGS_TEST) -o out/$@
-	./out/$@ out/$@.db
+# cgi_test%: bvrs bvrs.sql
+# 	mkdir -p out
+# 	rm -f out/$@.db
+# 	sqlite3 out/testdb.db < bvrs.sql
+# 	if [ -f tests/$@.sql ]; then sqlite3 out/testdb.db < tests/$@.sql; fi
+# 	$(CC)  $(OBJS) tests/$@.c -I $(PWD) $(CFLAGS) $(LFLAGS) $(LFLAGS_TEST) -o out/$@
+# 	./out/$@ out/$@.db
 
 alltests: $(TESTS)
