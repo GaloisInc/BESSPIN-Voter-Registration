@@ -86,6 +86,17 @@ http_open(struct kreq *r, enum khttp code)
   /*  khttp_puts, khttp_free ... */
 }
 
+static void
+empty_json(struct kreq *r)
+{
+  struct kjsonreq req;
+
+  kjson_open(&req, r);
+  kjson_obj_open(&req);
+  kjson_obj_close(&req);
+  kjson_close(&req);
+}
+
 status_t
 get_int_param(struct kreq *r, enum valid_keys key, int64_t *int_val)
 {
