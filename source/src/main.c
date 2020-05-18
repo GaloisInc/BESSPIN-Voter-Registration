@@ -276,7 +276,8 @@ main(int argc, char **argv)
         break;
         break;
       case PAGE_VOTER_UPDATE_LOGIN:
-        voterlogin(&r);
+        voter_login_page(&r);
+        break;
         break;
       default:
         http_open(&r, KHTTP_404);
