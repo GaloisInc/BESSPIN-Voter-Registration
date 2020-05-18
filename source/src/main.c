@@ -199,7 +199,7 @@ voterlogin(struct kreq *r)
 }
 
 static void
-checkstatus(struct kreq *r)
+voter_check_status_page(struct kreq *r)
 {
   time_t birthddate;
   const char *lastname, *givennames;
@@ -280,7 +280,8 @@ main(int argc, char **argv)
     //Get session? Bail Otherwise?
     switch (r.page) {
       case PAGE_VOTER_CHECK_STATUS:
-        checkstatus(&r);
+        voter_check_status_page(&r);
+        break;
         break;
       case PAGE_VOTER_UPDATE_LOGIN:
         voterlogin(&r);
