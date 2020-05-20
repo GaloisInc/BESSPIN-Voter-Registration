@@ -12,13 +12,16 @@ endif
 
 ORT_PREFIX = ../../build/host/bin/ort
 OBJS		  = db.o backend.o
-# CFLAGS += -DDEBUG
+CFLAGS += -DDEBUG
 CFLAGS += -I $(PREFIX)/include -g -Werror
 LFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libkcgijson.a -l:libz.a
 LFLAGS += -ldl -lpthread -lcrypt -lresolv -lm
 LFLAGS_TEST = -lcurl -l:libkcgiregress.a
 
-TESTS = test0 test1 test2 test3 test4
+TESTS = tests/test0 tests/test1 tests/test2 tests/test3 tests/test4 \
+        tests/test5 tests/test6 tests/test7 tests/test8 \
+        tests/cgi_test0 tests/cgi_test1 tests/cgi_test2 tests/cgi_test3 \
+        tests/cgi_test4 tests/cgi_test5 tests/cgi_test6
 
 all: bvrs
 
