@@ -6,8 +6,8 @@ SQLITE_VERSION=3.22.0
 ZLIB_URL="https://www.zlib.net/zlib-1.2.11.tar.gz"
 SQLITE_URL="https://www.sqlite.org/src/tarball/sqlite.tar.gz"
 KCGI_URL="https://github.com/kristapsdz/kcgi/archive/VERSION_0_12_0.tar.gz"
-SQLBOX_URL="https://kristaps.bsd.lv/sqlbox/snapshots/sqlbox.tar.gz"
-ORT_URL="https://kristaps.bsd.lv/openradtool/snapshots/openradtool.tar.gz"
+SQLBOX_URL="https://github.com/kristapsdz/sqlbox/archive/VERSION_0_1_12.tar.gz"
+ORT_URL="https://github.com/kristapsdz/openradtool/archive/VERSION_0_8_14.tar.gz"
 
 ### Create "ext" directory if it doesn't exist
 

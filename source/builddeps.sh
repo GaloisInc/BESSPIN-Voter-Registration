@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
+ZLIB_PATH="ext/zlib-1.2.11"
+SQLITE_PATH="ext/sqlite"  # sqlite downloads with no version number in filename
+KCGI_PATH="ext/kcgi-VERSION_0_12_0"
+SQLBOX_PATH="ext/sqlbox-VERSION_0_1_12"
+ORT_PATH="ext/openradtool-VERSION_0_8_14"
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 TARGET_BUILD=${DIR}/../build/host
 BVRS_RISCV=${BVRS_RISCV:-0}
@@ -23,7 +29,7 @@ export PKG_CONFIG_PATH="${TARGET_BUILD}/lib/pkgconfig"
 
 # 1. Build zlib
 if [ -z ${HAVE_ZLIB+x} ]; then
-    pushd ext/zlib-1.2.11
+    pushd ${ZLIB_PATH}
     if [ -f "configure.log" ]; then
        make distclean
     fi
@@ -34,7 +40,7 @@ fi
 
 # 2. Build sqlite
 if [ -z ${HAVE_SQLITE+x} ]; then
-    pushd ext/sqlite
+    pushd ${SQLITE_PATH}
     rm -rf build
     mkdir build
     cd build
@@ -45,7 +51,7 @@ fi
 
 # 3. Build sqlbox
 if [ -z ${HAVE_SQLBOX+x} ]; then
-    pushd ext/sqlbox-0.1.12
+    pushd ${SQLBOX_PATH}
     ./configure PREFIX=${TARGET_BUILD}
     bmake && bmake install
     popd
@@ -53,7 +59,7 @@ fi
 
 # 3. Build kcgi
 if [ -z ${HAVE_KCGI+x} ]; then
-    pushd ext/kcgi-VERSION_0_12_0
+    pushd ${KCGI_PATH}
     if [ -f "Makefile.configure" ]; then
         bmake distclean
     fi
@@ -68,7 +74,7 @@ fi
 # 4. Build ORT. This is a buildtool, and hence will not
 # be compiled with any of the riscv toolchain
 if [ -z ${HAVE_ORT+x} ]; then
-    pushd ext/openradtool-0.8.14
+    pushd ${ORT_PATH}
     if [ -f "Makefile.configure" ]; then
         bmake distclean
     fi
