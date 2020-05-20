@@ -8,6 +8,14 @@ SQLITE_URL="https://www.sqlite.org/src/tarball/sqlite.tar.gz"
 KCGI_URL="https://github.com/kristapsdz/kcgi/archive/VERSION_0_12_0.tar.gz"
 SQLBOX_URL="https://kristaps.bsd.lv/sqlbox/snapshots/sqlbox.tar.gz"
 ORT_URL="https://kristaps.bsd.lv/openradtool/snapshots/openradtool.tar.gz"
+
+### Create "ext" directory if it doesn't exist
+
+echo "****"
+echo "Ensuring 'ext' directory exists"
+echo "****"
+mkdir -p ext
+
 ### Fetch sources ###
 
 echo "****"
