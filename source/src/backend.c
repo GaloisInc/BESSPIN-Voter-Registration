@@ -10,6 +10,7 @@
 #include <kcgijson.h>
 #include "backend.h"
 #include <stdlib.h>
+#include <err.h>
 
 typedef struct ort bvrs_ctxt;
 
@@ -18,7 +19,7 @@ open_db(const char *dbname, bvrs_ctxt_t **ctxt)
 {
     bvrs_ctxt_t *lctxt;
 
-    lctxt = db_open(dbname);
+    lctxt = db_open_logging(dbname, NULL, warnx, NULL);
     if (NULL == lctxt) {
         return ERROR;
     }

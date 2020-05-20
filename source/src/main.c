@@ -369,6 +369,9 @@ main(int argc, char **argv)
     }
 
     status_t openok = open_db(argv[1], &ctxt);
+    if (openok != OK) {
+      return EXIT_FAILURE;
+    }
 
     flush_old_sessions(ctxt, 5*60, 5*60);
 
