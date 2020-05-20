@@ -14,6 +14,7 @@
 enum regstatus {
   item ACTIVE comment "Active" jslabel "Active";
   item INACTIVE comment "Inactive" jslabel "Active";
+  item PENDINGREVIEW comment "Pending Review" jslabel "Pending Review";
 };
 
 # the voting method used

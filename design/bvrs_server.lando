@@ -22,6 +22,8 @@ component Voter Operations
     address(es), date of birth, and identifying information are required.
   Voters can not update election participation or mailed ballot information.
   Confidential voters can not update their own information or unregister themselves.
+  New or updated registrations have "pending review" status until reviewed by an
+    election official.
   
 component Election Official Operations
   May I have a new authenticated session with this username and password?
