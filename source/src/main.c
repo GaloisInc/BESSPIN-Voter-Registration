@@ -52,7 +52,7 @@ enum page {
   PAGE_OFFICIAL_LOGIN,
   /*  run a query on the entire voter db */
   PAGE_OFFICIAL_QUERY_VOTERS,
-  /*  run an on the entire voter db */
+  /*  run an update on the entire voter db */
   PAGE_OFFICIAL_UPDATE_VOTERS,
   PAGE__MAX
 };

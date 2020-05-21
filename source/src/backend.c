@@ -238,7 +238,7 @@ register_voter(bvrs_ctxt_t *ctxt,
                                  birthdate,
                                  idinfo_sz,
                                  idinfo,
-                                 REGSTATUS_ACTIVE,
+                                 REGSTATUS_PENDINGREVIEW,
                                  now,
                                  now,
                                  confidential);
