@@ -287,7 +287,7 @@ update_voter_information(bvrs_ctxt_t *ctxt,
                                         birthdate,
                                         idinfo_sz,
                                         idinfo,
-                                        status,
+                                        REGSTATUS_PENDINGREVIEW,
                                         time(NULL),
                                         confidential,
                                         voter_id);
