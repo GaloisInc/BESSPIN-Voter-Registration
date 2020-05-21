@@ -227,8 +227,7 @@ register_voter(bvrs_ctxt_t *ctxt,
                int64_t confidential,
                int64_t *out_id)
 {
-    time_t now;
-    time(&now);
+    time_t now = time(NULL);
     int64_t id = db_voter_insert(ctxt,
                                  lastname,
                                  givennames,
@@ -287,7 +286,7 @@ update_voter_information(bvrs_ctxt_t *ctxt,
                                         birthdate,
                                         idinfo_sz,
                                         idinfo,
-                                        REGSTATUS_PENDINGREVIEW,
+                                        status,
                                         time(NULL),
                                         confidential,
                                         voter_id);
