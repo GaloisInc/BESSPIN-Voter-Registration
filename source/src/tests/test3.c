@@ -53,5 +53,5 @@ main(int argc, char **argv)
     status_t closeok = close_db(ctxt);
     assert(closeok == OK);
 
-    printf("Test Passed.");
+    printf("[3] Test Passed.\n");
 }

@@ -37,7 +37,7 @@ parent(void *fp)
   curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http);
   assert(http == 200);
 
-  printf("Test Passed.\n");
+  printf("\n[cgi4] Test Passed.\n");
   return 1;
 }
 

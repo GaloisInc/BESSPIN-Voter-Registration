@@ -50,12 +50,12 @@ bvrs.sql: bvrs.ort
 	$(ORT_PREFIX)-sql bvrs.ort > bvrs.sql
 
 tests/%: bvrs bvrs.sql
-	mkdir -p out
-	rm -f out/$(@F).db
-	sqlite3 out/$(@F).db < bvrs.sql
-	if [ -f tests/$(@F).sql ]; then sqlite3 out/$(@F).db < tests/$(@F).sql; fi
-	$(CC)  $(OBJS) tests/$(@F).c -I $(PWD) $(CFLAGS) $(LFLAGS) $(LFLAGS_TEST) -o out/$(@F)
-	./out/$(@F) out/$(@F).db
+	@mkdir -p out
+	@rm -f out/$(@F).db
+	@sqlite3 out/$(@F).db < bvrs.sql
+	@if [ -f tests/$(@F).sql ]; then sqlite3 out/$(@F).db < tests/$(@F).sql; fi
+	@$(CC)  $(OBJS) tests/$(@F).c -I $(PWD) $(CFLAGS) $(LFLAGS) $(LFLAGS_TEST) -o out/$(@F)
+	@./out/$(@F) out/$(@F).db
 
 # cgi_test%: bvrs bvrs.sql
 # 	mkdir -p out

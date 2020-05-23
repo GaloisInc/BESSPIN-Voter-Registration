@@ -75,8 +75,8 @@ main(int argc, char **argv)
 {
   assert(EXIT_SUCCESS == kcgi_regress_fcgi(parent, NULL, child, argv[1]) ?
          EXIT_SUCCESS : EXIT_FAILURE);
-  printf("Part 1 done.\n");
+  printf("\n[cgi5] Part 1 done.\n");
   assert(EXIT_SUCCESS == kcgi_regress_fcgi(check_voter, NULL, child, argv[1]) ?
          EXIT_SUCCESS : EXIT_FAILURE);
-  printf("Part 2 done.\n");
+  printf("\n[cgi5] Part 2 done.\n");
 }

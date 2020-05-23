@@ -53,7 +53,7 @@ parent(void *fp)
   // We should have gotten a session-id and a session-token
   assert(ok == 2);
 
-  printf("Test Passed.\n");
+  printf("\n[cgi3] Test Passed.\n");
   return 1;
 }
 

@@ -40,7 +40,7 @@ parent(void *fp)
                  "voter-birthdate=1986-02-04",
                  200);
 
-  printf("Test Passed.\n");
+  printf("[cgi0] Test Passed.\n");
   return 1;
 }
 
