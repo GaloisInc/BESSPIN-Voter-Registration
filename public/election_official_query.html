@@ -16,45 +16,57 @@
     <h2>
         Election Official Database Query
     </h2>
+    <div class=dataFormOuter>
+    <div class=dataFormInner>
+        <form action="TODO">
+        	
+            <label class=firstColLabel for="field">Field:</label>
+        	<input class=firstColInput list="fields" id="field" name="field_name">
+    		<datalist id="fields">
+    			<option value="a">
+    			<option value="b">
+    			<option value="c">
+    			<option value="d">
+    		</datalist>
+            <label class=secondColLabelVariable for="contains">Field Contains:</label>
+            <input class=secondColInput type="text" id="contains" name="field_contains">
+            <label class=secondColLabelVariable for="invert">Invert Selection:</label>
+            <input class=secondColInput type="checkbox" id="invert" name="field_invert">
 
-    <form action="TODO">
-    	<label for="field">Field:</label>
-    	<input list="fields" id="field" name="field_name">
-		<datalist id="fields">
-			<option value="a">
-			<option value="b">
-			<option value="c">
-			<option value="d">
-		</datalist>
-        <label for="contains">Field Contains:</label>
-        <input type="text" id="contains" name="field_contains">
-        <label for="invert">Invert Selection:</label>
-        <input type="checkbox" id="invert" name="field_invert"><br><br>
+            <br><br>
 
-        <label for="active">Select Only Active Registrations:</label>
-        <input type="checkbox" id="active" name="only_active"><br><br>
-     
-      	<label for="updated">Select Only Updated Registrations:</label>
-        <input type="checkbox" id="updated" name="only_updated"><br><br>
-     
-        <label for="date_field">Date Field:</label>
-    	<input list="date_fields" id="date_field" name="date_field_name">
-		<datalist id="date_fields">
-			<option value="a">
-			<option value="b">
-			<option value="c">
-			<option value="d">
-		</datalist>
-        <label for="start_date">between:</label>
-        <input type="date" id="start_date" name="start_date">
-        <label for="end_date">and:</label>
-        <input type="date" id="end_date" name="end_date">
-        <label for="date_invert">Invert Selection:</label>
-        <input type="checkbox" id="date_invert" name="date_field_invert"><br><br>
+            <label class=firstColLabel for="active">Select Only Active Registrations:</label>
+            <input class=firstColInput type="checkbox" id="active" name="only_active">
 
-        <input type="submit" value="Submit">
-</form>
+            <br><br>
+         
+          	<label class=firstColLabel for="updated">Select Only Updated Registrations:</label>
+            <input class=firstColInput type="checkbox" id="updated" name="only_updated">
 
+            <br><br>
+         
+            <label class=firstColLabel for="date_field">Date Field:</label>
+        	<input class=firstColInput list="date_fields" id="date_field" name="date_field_name">
+    		<datalist id="date_fields">
+    			<option value="a">
+    			<option value="b">
+    			<option value="c">
+    			<option value="d">
+    		</datalist>
+            <label class=secondColLabelVariable for="start_date">between:</label>
+            <input class=secondColInput type="date" id="start_date" name="start_date">
+            <label class=secondColLabelVariable for="end_date">and:</label>
+            <input class=secondColInput type="date" id="end_date" name="end_date">
+            <label class=secondColLabelVariable for="date_invert">Invert Selection:</label>
+            <input class=secondColInput type="checkbox" id="date_invert" name="date_field_invert">
+
+            <br><br>
+
+            <label class=firstColLabel for="submit"> </label>
+            <input class=formButton type="submit" value="Submit">
+        </form>
+    </div>
+    </div>
 </body>
 
 </html>

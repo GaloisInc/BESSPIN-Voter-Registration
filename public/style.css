@@ -17,6 +17,8 @@ label{
 	text-align: right;
 }
 
+/* Divs */
+
 .dataFormOuter{
 	text-align: center;
 	padding-top: 50px
@@ -29,12 +31,13 @@ label{
 	
 }
 
+/* Input */
+
 .firstColInput {
 	position: relative;
 	float: left;
 	margin-left: 10px;
 	width: 200px;
-
 	border: 2px solid grey
 }
 
@@ -42,15 +45,14 @@ label{
 	float: left;
 	margin-left: 10px;
 	width: 100px;
-
 	border: 2px solid grey
-
 }
+
+/* Label */
 
 .firstColLabel{
 	float:left;
 	width:30%;
-
 }
 
 .secondColLabel{
@@ -58,6 +60,14 @@ label{
 	width: 70px;
 	text-align: right;
 }
+
+.secondColLabelVariable{
+	float: left;
+	text-align: right;
+	margin-left: 10px;
+}
+
+/* Button */
 
 .formButton {
 	position: relative;
