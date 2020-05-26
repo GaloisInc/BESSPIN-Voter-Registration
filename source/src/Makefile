@@ -2,40 +2,39 @@
 
 BVRS_RISCV ?= 0
 BVRS_LLVM ?= 0
-BVRS_OS ?= linux
+BVRS_OS ?= linux-gnu
 
 ifeq ($(BVRS_RISCV),1)
 	PREFIX ?= ../../build/target
-	BVRS_OS ?= linux
 	ARCH_STR ?= riscv64-unknown-${BVRS_OS}
 	ifeq ($(BVRS_LLVM),0)
-		# for GCC, ome defaults to get going
-		ARCH_STR = riscv64-unknown-${BVRS_OS}-gnu
-		CC ?= ${ARCH_STR}-gcc
-		LD ?= ${ARCH_STR}-ld
-		AR ?= ${ARCH_STR}-ar
+		# for GCC, some defaults to get going
+		CC = ${ARCH_STR}-gcc
+		LD = ${ARCH_STR}-ld
+		AR = ${ARCH_STR}-ar
 	endif
 else
 	PREFIX ?= ../../build/host
 endif
 
 ORT_PREFIX ?= ../../build/host/bin/ort
-OBJS		  = db.o backend.o
+OBJS = db.o backend.o
 CFLAGS += -DDEBUG
 CFLAGS += -I $(PREFIX)/include -g -Werror
-CFLAGS_TEST = 
+CFLAGS_TEST ?= 
 LDFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libkcgijson.a -l:libz.a
-LDFLAGS += -ldl -lpthread -lcrypt -lm
+LDFLAGS += -ldl -lpthread -lcrypt
 LDFLAGS_TEST += -lcurl -l:libkcgiregress.a
 
-ifeq ($(BVRS_OS),freebsd)
+ifeq ($(findstring linux,$(BVRS_OS)),linux)
+	LDFLAGS += -lresolv -lm
+endif
+ifeq ($(findstring freebsd,$(BVRS_OS)),freebsd)
 	LDFLAGS += -lmd
 	ifeq ($(BVRS_RISCV),0) # native FreeBSD needs extra include/lib path
 		LDFLAGS_TEST += -L/usr/local/lib
 		CFLAGS_TEST += -I/usr/local/include
 	endif
-else # a platform with -lresolv, we assume
-	LDFLAGS += -lresolv
 endif
 
 TESTS = tests/test0 tests/test1 tests/test2 tests/test3 tests/test4 \
@@ -50,7 +49,8 @@ clean:
 	rm -f db.h
 	rm -f db.c
 	rm -f $(OBJS)
-	rm -f bvrs 
+	rm -f bvrs
+	rm -f bvrs.db
 
 distclean: clean
 	rm -f config.log config.h Makefile.configure
@@ -75,6 +75,9 @@ bvrs: main.o $(OBJS) db.h
 bvrs.sql: bvrs.ort
 	$(ORT_PREFIX)-sql bvrs.ort > bvrs.sql
 
+bvrs.db: bvrs.sql
+	sqlite3 bvrs.db < bvrs.sql
+
 tests/%: bvrs bvrs.sql
 	@mkdir -p out
 	@rm -f out/$(@F).db
@@ -83,12 +86,11 @@ tests/%: bvrs bvrs.sql
 	@$(CC)	$(OBJS) tests/$(@F).c -I $(PWD) $(CFLAGS) $(CFLAGS_TEST) $(LDFLAGS) $(LDFLAGS_TEST) -o out/$(@F)
 	@./out/$(@F) out/$(@F).db
 
-# cgi_test%: bvrs bvrs.sql
-#	mkdir -p out
-#	rm -f out/$@.db
-#	sqlite3 out/testdb.db < bvrs.sql
-#	if [ -f tests/$@.sql ]; then sqlite3 out/testdb.db < tests/$@.sql; fi
-#	$(CC)  $(OBJS) tests/$@.c -I $(PWD) $(CFLAGS) $(LDFLAGS) $(LDFLAGS_TEST) -o out/$@
-#	./out/$@ out/$@.db
+dist: bvrs bvrs.db
+	mkdir -p $(PREFIX)/share
+	cp bvrs $(PREFIX)/bin
+	cp bvrs.db $(PREFIX)/share
+	cp ../conf/fastcgi.conf $(PREFIX)/share
+	cp ../conf/voting.conf $(PREFIX)/share
 
 alltests: $(TESTS)
