@@ -1,8 +1,8 @@
 ifeq ($(BVRS_RISCV),1)
 	# Some defaults to get going
 	PREFIX = ../../build/target
-	BVRS_OS ?= linux
-	ARCH_STR = riscv64-unknown-${BVRS_OS}-gnu
+	BVRS_OS ?= linux-gnu
+	ARCH_STR = riscv64-unknown-${BVRS_OS}
 	CC=${ARCH_STR}-gcc
 	LD=${ARCH_STR}-ld
 	AR=${ARCH_STR}-ar
@@ -15,7 +15,14 @@ OBJS		  = db.o backend.o
 CFLAGS += -DDEBUG
 CFLAGS += -I $(PREFIX)/include -g -Werror
 LFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libkcgijson.a -l:libz.a
-LFLAGS += -ldl -lpthread -lcrypt -lresolv -lm
+LFLAGS += -ldl -lpthread -lcrypt
+ifeq ($(BVRS_OS),linux-gnu)
+	LFLAGS += -lresolv -lm
+endif
+ifeq ($(findstring freebsd,$(BVRS_OS)),freebsd)
+	LFLAGS += -lmd
+endif
+
 LFLAGS_TEST = -lcurl -l:libkcgiregress.a
 
 TESTS = tests/test0 tests/test1 tests/test2 tests/test3 tests/test4 \
@@ -29,7 +36,8 @@ clean:
 	rm -f db.h
 	rm -f db.c
 	rm -f $(OBJS)
-	rm -f bvrs 
+	rm -f bvrs
+	rm -f bvrs.db
 
 distclean: clean
 	rm -f config.log config.h Makefile.configure
@@ -49,6 +57,9 @@ bvrs: main.o $(OBJS) db.h
 bvrs.sql: bvrs.ort
 	$(ORT_PREFIX)-sql bvrs.ort > bvrs.sql
 
+bvrs.db: bvrs.sql
+	sqlite3 bvrs.db < bvrs.sql
+
 tests/%: bvrs bvrs.sql
 	mkdir -p out
 	rm -f out/$(@F).db
@@ -57,12 +68,11 @@ tests/%: bvrs bvrs.sql
 	$(CC)  $(OBJS) tests/$(@F).c -I $(PWD) $(CFLAGS) $(LFLAGS) $(LFLAGS_TEST) -o out/$(@F)
 	./out/$(@F) out/$(@F).db
 
-# cgi_test%: bvrs bvrs.sql
-# 	mkdir -p out
-# 	rm -f out/$@.db
-# 	sqlite3 out/testdb.db < bvrs.sql
-# 	if [ -f tests/$@.sql ]; then sqlite3 out/testdb.db < tests/$@.sql; fi
-# 	$(CC)  $(OBJS) tests/$@.c -I $(PWD) $(CFLAGS) $(LFLAGS) $(LFLAGS_TEST) -o out/$@
-# 	./out/$@ out/$@.db
+dist: bvrs bvrs.db
+	mkdir -p $(PREFIX)/share
+	cp bvrs $(PREFIX)/bin
+	cp bvrs.db $(PREFIX)/share
+	cp ../conf/fastcgi.conf $(PREFIX)/share
+	cp ../conf/voting.conf $(PREFIX)/share
 
 alltests: $(TESTS)

@@ -10,18 +10,28 @@ ORT_PATH="ext/openradtool-VERSION_0_8_14"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 TARGET_BUILD=${DIR}/../build/host
 BVRS_RISCV=${BVRS_RISCV:-0}
-BVRS_OS=${BVRS_OS:-linux}
+BVRS_OS=${BVRS_OS:-linux-gnu}
 SQLITE_HOST=""
+PRINT_DEFS=${PRINT_DEFS:-0}
 
 if [ "${BVRS_RISCV}" -eq 1 ]; then
     TARGET_BUILD=${DIR}/../build/target
-    PREFIX=riscv64-unknown-${BVRS_OS}-gnu
+    PREFIX=riscv64-unknown-${BVRS_OS}
     export CC=${PREFIX}-gcc
     export CFLAGS="-I ${TARGET_BUILD}/include"
     export LFLAGS="-L ${TARGET_BUILD}/lib"
     export LD=${PREFIX}-ld
     export AR=${PREFIX}-ar
-    SQLITE_HOST="--host=riscv64-unknown-${BVRS_OS}"
+    # YMMV with the build argument-below
+    SQLITE_HOST="--build=x86_64-unknown-linux --host=riscv64-unknown-${BVRS_OS}"
+    if [ "${PRINT_DEFS}" -eq 1 ]; then
+	    echo "export CC=${CC}"
+	    echo "export CFLAGS=${CFLAGS}"
+	    echo "export LFLAGS=${LFLAGS}"
+	    echo "export LD=${LD}"
+	    echo "export AR=${AR}"
+	    exit 0
+    fi
 fi
 
 echo "Building deps in ${TARGET_BUILD}"
@@ -44,7 +54,7 @@ if [ -z ${HAVE_SQLITE+x} ]; then
     rm -rf build
     mkdir build
     cd build
-    ../configure --disable-tcl --prefix=${TARGET_BUILD} --enable-fts3 ${SQLITE_HOST}
+    ../configure --disable-readline --disable-editline --disable-tcl --prefix=${TARGET_BUILD} --enable-fts3 ${SQLITE_HOST}
     make && make install
     popd
 fi
