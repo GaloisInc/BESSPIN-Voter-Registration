@@ -11,6 +11,13 @@ h2{
 	text-align: center;
 }
 
+h3{
+	text-align: center;
+	width: 60%;
+	padding-left: 20%;
+	padding-top: 30px;
+}
+
 label{
 	margin-top: 2px;
 	font-size: 10px;
@@ -19,19 +26,31 @@ label{
 
 /* Divs */
 
+.centeredDiv {
+	text-align: center;
+}
+
 .dataFormOuter{
 	text-align: center;
-	padding-top: 50px
+	padding-top: 50px;
+	padding-left: 7%;
 }
 
 .dataFormInner{
 	display: inline-block;
 	text-align: left;
 	width:90%;
-	
 }
 
 /* Input */
+
+input[type=button], input[type=submit]{
+	background-color: #A9A9A9;
+	padding: 2px 8px;
+	border: 2px solid grey;
+	color: white;
+	cursor: pointer;
+}
 
 .firstColInput {
 	position: relative;
