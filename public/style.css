@@ -1,3 +1,5 @@
+/* General */
+
 body{
 	background-color: #DCDCDC;
 	font-family: Helvetica, sans-serif;
@@ -24,6 +26,8 @@ label{
 	text-align: right;
 }
 
+
+
 /* Divs */
 
 .centeredDiv {
@@ -42,7 +46,6 @@ label{
 
 .dataFormOuter{
 	text-align: center;
-	padding-top: 50px;
 	padding-left: 7%;
 }
 
@@ -52,12 +55,14 @@ label{
 	width:90%;
 }
 
+
+
 /* Input */
 
 input[type=button], input[type=submit]{
 	background-color: #A9A9A9;
 	padding: 2px 8px;
-	margin: 2px 2px;
+	margin: 2px 10px;
 	border: 2px solid grey;
 	color: white;
 	cursor: pointer;
@@ -84,6 +89,13 @@ input[type=button], input[type=submit]{
 	border: 2px solid grey
 }
 
+.formButton {
+	position: relative;
+	float: left;
+}
+
+
+
 /* Label */
 
 .firstColLabel{
@@ -100,14 +112,6 @@ input[type=button], input[type=submit]{
 .secondColLabelVariable{
 	float: left;
 	text-align: right;
-	margin-left: 10px;
-}
-
-/* Button */
-
-.formButton {
-	position: relative;
-	float: left;
 	margin-left: 10px;
 }
 
