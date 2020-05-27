@@ -68,7 +68,7 @@ fi
 # 4. Build ORT. This is a buildtool, and hence will not
 # be compiled with any of the riscv toolchain
 if [ -z ${HAVE_ORT+x} ]; then
-    pushd ext/openradtool-0.8.13
+    pushd ext/openradtool-VERSION_0_8_13
     if [ -f "Makefile.configure" ]; then
         bmake distclean
     fi

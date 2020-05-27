@@ -7,7 +7,7 @@ ZLIB_URL="https://www.zlib.net/zlib-1.2.11.tar.gz"
 SQLITE_URL="https://www.sqlite.org/src/tarball/sqlite.tar.gz"
 KCGI_URL="https://github.com/kristapsdz/kcgi/archive/VERSION_0_12_0.tar.gz"
 SQLBOX_URL="https://kristaps.bsd.lv/sqlbox/snapshots/sqlbox.tar.gz"
-ORT_URL="https://kristaps.bsd.lv/openradtool/snapshots/openradtool.tar.gz"
+ORT_URL="https://github.com/kristapsdz/openradtool/archive/VERSION_0_8_13.tar.gz"
 ### Fetch sources ###
 
 echo "****"
