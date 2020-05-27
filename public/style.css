@@ -31,7 +31,7 @@ label{
 }
 
 .buttonDiv{
-	display: flex;
+	display: inline-flex;
 	flex-direction: row;
 	justify-content: space-between;
 	flex-wrap: wrap;
@@ -64,6 +64,8 @@ input[type=button], input[type=submit]{
 }
 
 .flexMember{
+	padding-left: 10px;
+	padding-right: 10px;
 	flex-grow: 1;
 }
 
