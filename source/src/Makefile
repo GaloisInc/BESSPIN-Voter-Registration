@@ -21,7 +21,7 @@ LFLAGS_TEST = -lcurl -l:libkcgiregress.a
 TESTS = tests/test0 tests/test1 tests/test2 tests/test3 tests/test4 \
         tests/test5 tests/test6 tests/test7 tests/test8 \
         tests/cgi_test0 tests/cgi_test1 tests/cgi_test2 tests/cgi_test3 \
-        tests/cgi_test4 tests/cgi_test5 tests/cgi_test6
+        tests/cgi_test4 tests/cgi_test5 tests/cgi_test6 tests/cgi_test7
 
 all: bvrs
 

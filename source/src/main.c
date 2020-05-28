@@ -318,6 +318,7 @@ voter_check_status_page(struct kreq *r)
       kjson_obj_close(&req);
       kjson_close(&req);
     } else {
+      // Unknown DB Error
       http_open(r, KHTTP_500);
     }
   } else {

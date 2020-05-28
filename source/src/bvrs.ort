@@ -43,11 +43,11 @@ struct voter {
   field resaddress text limit gt 0 comment "Residence address";
   field mailaddress text limit gt 0 comment "Mailing address";
   field registeredparty text limit gt 0 comment "Registered party";
-  field birthdate date limit gt 0 comment "Birth date";
+  field birthdate date comment "Birth date";
   field idinfo blob limit gt 0 unique comment "Identification information.";
   field status enum regstatus comment "Registration status.";
-  field initialregtime date limit gt 0 comment "Initial registration time.";
-  field lastupdatetime date limit gt 0 comment "Last record update time.";
+  field initialregtime date comment "Initial registration time.";
+  field lastupdatetime date comment "Last record update time.";
   field confidential bit comment "Flag for voter confidentiality.";
   comment "A registered voter.";
 
