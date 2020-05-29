@@ -9,64 +9,122 @@
 </head>
 
 <body>
-    
-    <h1>
-        BESSPIN Voter Registration System
-    </h1>
-    <h2>
-        Election Official Database Query
-    </h2>
-    <div class=dataFormOuter>
-    <div class=dataFormInner>
-        <form enctype="multipart/form-data" method=post action="bvrs/official_query_voters">
-        	
-            <label class=firstColLabel for="field">Field:</label>
-        	<input class=firstColInput list="fields" id="field" name="field_name">
-    		<datalist id="fields">
-    			<option value="a">
-    			<option value="b">
-    			<option value="c">
-    			<option value="d">
-    		</datalist>
-            <label class=secondColLabelVariable for="contains">Field Contains:</label>
-            <input class=secondColInput type="text" id="contains" name="field_contains">
-            <label class=secondColLabelVariable for="invert">Invert Selection:</label>
-            <input class=secondColInput type="checkbox" id="invert" name="field_invert">
+    <div id=headerDiv>
+        <h1>
+            BESSPIN Voter Registration System
+        </h1>
 
-            <br><br>
+        <div class=dataFormOuter>
+        <div class=dataFormInner>
+            <form enctype="multipart/form-data" method=post action="bvrs/official_query_voters">
+            	
+                <label class=firstColLabel for="field">Field:</label>
+            	<input class=firstColInput list="fields" id="field" name="field_name">
+        		<datalist id="fields">
+        			<option value="a">
+        			<option value="b">
+        			<option value="c">
+        			<option value="d">
+        		</datalist>
+                <label class=secondColLabelVariable for="contains">Field Contains:</label>
+                <input class=secondColInput type="text" id="contains" name="field_contains">
+                <label class=secondColLabelVariable for="invert">Invert Selection:</label>
+                <input class=secondColInput type="checkbox" id="invert" name="field_invert">
 
-            <label class=firstColLabel for="active">Select Only Active Registrations:</label>
-            <input class=firstColInput type="checkbox" id="active" name="only_active">
+                <br><br>
 
-            <br><br>
-         
-          	<label class=firstColLabel for="updated">Select Only Updated Registrations:</label>
-            <input class=firstColInput type="checkbox" id="updated" name="only_updated">
+                <label class=firstColLabel for="active">Select Only Active Registrations:</label>
+                <input class=firstColInput type="checkbox" id="active" name="only_active">
 
-            <br><br>
-         
-            <label class=firstColLabel for="date_field">Date Field:</label>
-        	<input class=firstColInput list="date_fields" id="date_field" name="date_field_name">
-    		<datalist id="date_fields">
-    			<option value="a">
-    			<option value="b">
-    			<option value="c">
-    			<option value="d">
-    		</datalist>
-            <label class=secondColLabelVariable for="start_date">between:</label>
-            <input class=secondColInput type="date" id="start_date" name="start_date">
-            <label class=secondColLabelVariable for="end_date">and:</label>
-            <input class=secondColInput type="date" id="end_date" name="end_date">
-            <label class=secondColLabelVariable for="date_invert">Invert Selection:</label>
-            <input class=secondColInput type="checkbox" id="date_invert" name="date_field_invert">
+                <br><br>
+             
+              	<label class=firstColLabel for="updated">Select Only Updated Registrations:</label>
+                <input class=firstColInput type="checkbox" id="updated" name="only_updated">
 
-            <br><br>
+                <br><br>
+             
+                <label class=firstColLabel for="date_field">Date Field:</label>
+            	<input class=firstColInput list="date_fields" id="date_field" name="date_field_name">
+        		<datalist id="date_fields">
+        			<option value="a">
+        			<option value="b">
+        			<option value="c">
+        			<option value="d">
+        		</datalist>
+                <label class=secondColLabelVariable for="start_date">between:</label>
+                <input class=secondColInput type="date" id="start_date" name="start_date">
+                <label class=secondColLabelVariable for="end_date">and:</label>
+                <input class=secondColInput type="date" id="end_date" name="end_date">
+                <label class=secondColLabelVariable for="date_invert">Invert Selection:</label>
+                <input class=secondColInput type="checkbox" id="date_invert" name="date_field_invert">
 
-            <label class=firstColLabel for="submit"> </label>
-            <input class=formButton type="submit" value="Submit">
-        </form>
+                <br><br>
+
+                <label class=firstColLabel for="submit"> </label>
+                <input class=formButton type="submit" value="Submit">
+            </form>
+        </div>
+        </div>
     </div>
-    </div>
+
+
+    <br><br>
+
+    <form enctype="multipart/form-data" method=post action="bvrs/official_query_voters">
+        
+        <div class=centeredDiv id=queryData>
+        <div id=queryDataInner>
+
+        <!-- filled with JS -->
+        
+        <table cellspacing="0" cellpadding="5">
+            <tr>
+                <th> First Name </th>
+                <th> Last Name </th>
+            </tr>
+            <tr>
+                <td> Lyell </td>
+                <td> Read </td>
+            </tr>
+            
+            
+        </table>
+
+        </div>
+        </div>
+
+        <br><br>
+
+        <div id=footerDiv class=centeredDiv>
+        <div class=flexDiv>
+
+            <div class=flexMemberDiv>
+                <label for="mark_as_active">Mark as Active:</label>
+                <input type="checkbox" id="mark_as_active" name="mark_as_active">
+                <br><br>
+            </div>
+            <div class=flexMemberDiv>
+                <label for="mark_as_inactive">Mark as Inactive:</label>
+                <input type="checkbox" id="mark_as_inactive" name="mark_as_inactive">
+                <br><br>
+            </div>
+            <div class=flexMemberDiv>
+                <label for="delete_registrations">Delete Registrations:</label>
+                <input type="checkbox" id="delete_registrations" name="delete_registrations">
+                <br><br>
+            </div>
+            <div class=flexMemberDiv>
+                <label for="mark_as_confidential">Mark as Confidential:</label>
+                <input type="checkbox" id="mark_as_confidential" name="mark_as_confidential">
+                <br><br>
+            </div>
+            <div class=flexMemberDiv>
+                <label for="mark_as_not_confidential">Mark as Not Confidential:</label>
+                <input type="checkbox" id="mark_as_not_confidential" name="mark_as_not_confidential">
+            </div>
+
+    </form>
+
 </body>
 
 </html>

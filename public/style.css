@@ -26,7 +26,19 @@ label{
 	text-align: right;
 }
 
+table {
+	width: 100%;
+	text-align: left;
+	background-color: #FFFFFF;
+}
 
+tr:hover {
+	background-color: #D079F2;
+}
+
+th, td {
+	border-bottom: 2px solid grey;
+}
 
 /* Divs */
 
@@ -42,6 +54,16 @@ label{
 .voterDataItem{
 	padding: 10px;
 	font-size: 12px;
+}
+
+.flexDiv{
+	display: inline-flex;
+	flex-direction: row;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	max-width: 100%;
+	padding-left: 5%;
+	padding-right: 5%;
 }
 
 .buttonDiv{
@@ -65,7 +87,39 @@ label{
 	width:90%;
 }
 
+#footerDiv{
+	margin: 0;
+    padding: 0;
+	position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #FDFDFD;
+}
 
+#headerDiv{
+	margin: 0;
+    padding: 0;
+	position: fixed;
+    top: 0;
+    left:0;
+    width: 100%;
+    height: 250px;
+    background-color: #D2D2D2;
+}
+
+#queryData{
+	overflow: scroll;
+}
+#queryDataInner{
+	display: block;
+	position:fixed;
+	top: 250px;
+	width: 100%;
+	left: 0;
+	height: calc(100% - 270px);
+	overflow: auto;
+}
 
 /* Input */
 
@@ -76,6 +130,14 @@ input[type=button], input[type=submit]{
 	border: 2px solid grey;
 	color: white;
 	cursor: pointer;
+}
+
+.flexMemberDiv{
+	text-align: left;
+	height: 20px;
+	flex-grow: 1;
+	padding-left: 2px;
+	padding-right: 2px;
 }
 
 .flexMember{
@@ -124,7 +186,6 @@ input[type=button], input[type=submit]{
 	text-align: right;
 	margin-left: 10px;
 }
-
 
 
 
