@@ -34,6 +34,16 @@ label{
 	text-align: center;
 }
 
+#voterDataInner{
+	text-align:left;
+	display: inline-block
+}
+
+.voterDataItem{
+	padding: 10px;
+	font-size: 12px;
+}
+
 .buttonDiv{
 	display: inline-flex;
 	flex-direction: row;
