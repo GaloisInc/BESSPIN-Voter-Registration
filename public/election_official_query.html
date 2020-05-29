@@ -4,11 +4,14 @@
 <title>BESSPIN Voter Registration System</title>
 
 <head>
-    <script src="/index.js" charset="utf-8" defer></script>
+    <script src="query.js" charset="utf-8" defer></script>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
+
+    <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+
     <div id=headerDiv>
         <h1>
             BESSPIN Voter Registration System
@@ -70,25 +73,12 @@
 
     <br><br>
 
-    <form enctype="multipart/form-data" method=post action="bvrs/official_query_voters">
+    <form target=dummyframe enctype="multipart/form-data" method=post action="bvrs/official_query_voters">
         
         <div class=centeredDiv id=queryData>
         <div id=queryDataInner>
 
         <!-- filled with JS -->
-        
-        <table cellspacing="0" cellpadding="5">
-            <tr>
-                <th> First Name </th>
-                <th> Last Name </th>
-            </tr>
-            <tr>
-                <td> Lyell </td>
-                <td> Read </td>
-            </tr>
-            
-            
-        </table>
 
         </div>
         </div>
@@ -121,6 +111,10 @@
             <div class=flexMemberDiv>
                 <label for="mark_as_not_confidential">Mark as Not Confidential:</label>
                 <input type="checkbox" id="mark_as_not_confidential" name="mark_as_not_confidential">
+            </div>
+            <div class=flexMemberDiv>
+                <label for="submit"> </label>
+                <input type="submit" id="submit" name="submit">
             </div>
 
     </form>

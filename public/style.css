@@ -27,13 +27,14 @@ label{
 }
 
 table {
+	border-top: 2px solid grey;
 	width: 100%;
 	text-align: left;
 	background-color: #FFFFFF;
 }
 
 tr:hover {
-	background-color: #D079F2;
+	background-color: lightgrey;
 }
 
 th, td {
@@ -93,6 +94,7 @@ th, td {
 	position: fixed;
     bottom: 0;
     left: 0;
+    height: 25px;
     width: 100%;
     background-color: #FDFDFD;
 }
@@ -117,7 +119,7 @@ th, td {
 	top: 250px;
 	width: 100%;
 	left: 0;
-	height: calc(100% - 270px);
+	height: calc(100% - 275px);
 	overflow: auto;
 }
 
@@ -165,8 +167,6 @@ input[type=button], input[type=submit]{
 	position: relative;
 	float: left;
 }
-
-
 
 /* Label */
 
