@@ -4,12 +4,14 @@
 <title>BESSPIN Voter Registration System</title>
 
 <head>
-    <script src="/index.js" charset="utf-8" defer></script>
+    <script src="registration_verification.js" charset="utf-8" defer></script>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
     
+    <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+
     <h1>
         BESSPIN Voter Registration System
     </h1>
@@ -20,9 +22,16 @@
     <br>
     <br>
 
-    <div class=dataFormOuter>
+    <div id=voterData>
+
+        <!-- filled with JS -->
+
+    </div>
+
+
+    <div id=outerDiv class=dataFormOuter>
     <div class=dataFormInner>
-        <form enctype="multipart/form-data" method=post action="bvrs/voter_verify_login">
+        <form id=loginForm method=post action="bvrs/voter_verify_login">
             <label class=firstColLabel for="fname">First name:</label>
             <input class=firstColInput type="text" id="fname" name="given_name">
             <label class=secondColLabel for="lname">Last name:</label>
@@ -35,7 +44,7 @@
 
             <br><br> 
             <label class=firstColLabel for="submit"> </label>
-            <input class=formButton type="submit" value="Submit">
+            <input id=formSubmit class=formButton type="submit" value="Submit">
         </form>
     </div>
     </div>
