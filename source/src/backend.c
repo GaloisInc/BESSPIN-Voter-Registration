@@ -110,7 +110,13 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   const char *lastname,
                   const char *givenname,
                   const char *resaddr,
+                  const char *resaddr2,
+                  const char *reszip,
+                  const char *resstate,
                   const char *mailaddr,
+                  const char *mailaddr2,
+                  const char *mailzip,
+                  const char *mailstate,
                   time_t birthdate,
                   const void *idinfo,
                   size_t idinfo_sz,
@@ -218,8 +224,14 @@ status_t
 register_voter(bvrs_ctxt_t *ctxt,
                const char *lastname,
                const char *givennames,
-               const char *resaddress,
-               const char *mailaddress,
+               const char *resaddr,
+               const char *resaddr2,
+               const char *reszip,
+               const char *resstate,
+               const char *mailaddr,
+               const char *mailaddr2,
+               const char *mailzip,
+               const char *mailstate,
                const char *registeredparty,
                time_t birthdate,
                const void *idinfo,
@@ -228,11 +240,36 @@ register_voter(bvrs_ctxt_t *ctxt,
                int64_t *out_id)
 {
     time_t now = time(NULL);
+/*
+* 	v1: lastname
+ * 	v2: givennames
+ * 	v3: resaddress
+ * 	v4: resaddress2
+ * 	v5: reszip
+ * 	v6: resstate
+ * 	v7: mailaddress
+ * 	v8: mailaddress2
+ * 	v9: mailzip
+ * 	v10: mailstate
+ * 	v11: registeredparty
+ * 	v12: birthdate
+ * 	v13: idinfo
+ * 	v14: status
+ * 	v15: initialregtime
+ * 	v16: lastupdatetime
+ * 	v17: confidential
+ */
     int64_t id = db_voter_insert(ctxt,
                                  lastname,
                                  givennames,
-                                 resaddress,
-                                 mailaddress,
+                                 resaddr,
+                                 resaddr2,
+                                 reszip,
+                                 resstate,
+                                 mailaddr,
+                                 mailaddr2,
+                                 mailzip,
+                                 mailstate,
                                  registeredparty,
                                  birthdate,
                                  idinfo_sz,
@@ -268,8 +305,14 @@ update_voter_information(bvrs_ctxt_t *ctxt,
                          int64_t voter_id,
                          const char *lastname,
                          const char *givennames,
-                         const char *resaddress,
-                         const char *mailaddress,
+                         const char *resaddr,
+                         const char *resaddr2,
+                         const char *reszip,
+                         const char *resstate,
+                         const char *mailaddr,
+                         const char *mailaddr2,
+                         const char *mailzip,
+                         const char *mailstate,
                          const char *registeredparty,
                          time_t birthdate,
                          const void *idinfo,
@@ -280,8 +323,14 @@ update_voter_information(bvrs_ctxt_t *ctxt,
     int updateok = db_voter_update_info(ctxt,
                                         lastname,
                                         givennames,
-                                        resaddress,
-                                        mailaddress,
+                                        resaddr,
+                                        resaddr2,
+                                        reszip,
+                                        resstate,
+                                        mailaddr,
+                                        mailaddr2,
+                                        mailzip,
+                                        mailstate,
                                         registeredparty,
                                         birthdate,
                                         idinfo_sz,

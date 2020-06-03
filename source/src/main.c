@@ -27,6 +27,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include <kcgi.h>
 #include <kcgijson.h>
@@ -57,6 +58,11 @@ enum page {
   PAGE__MAX
 };
 
+struct field_error {
+  char field[32];
+  char desc[128];
+};
+
 static const char *const pages[PAGE__MAX] = {
   "voter_check_status",
   "voter_register",
@@ -74,7 +80,6 @@ static const char *const pages[PAGE__MAX] = {
 static void
 http_open(struct kreq *r, enum khttp code)
 {
-
   khttp_head(r, kresps[KRESP_STATUS],
     "%s", khttps[code]);
   khttp_head(r, kresps[KRESP_CONTENT_TYPE],
@@ -113,6 +118,7 @@ status_t
 get_str_param(struct kreq *r, enum valid_keys key, const char **str_val)
 {
   if (NULL != r->fieldmap[key]) {
+    DBG("%s\n",r->fieldmap[key]->parsed.s);
     if (r->fieldmap[key]->parsed.s) {
      *str_val = r->fieldmap[key]->parsed.s;
      return OK;
@@ -142,24 +148,81 @@ static void
 voter_register_page(struct kreq *r)
 {
   const char *lastname, *givennames,
-             *resaddress, *mailaddress,
+             *resaddress, *resaddress2, *reszip, *resstate,
+             *mailaddress, *mailaddress2, *mailzip, *mailstate,
              *party, *idinfo;
   time_t birthdate;
   size_t idinfo_sz;
+  struct kjsonreq req;
+  size_t num_fields = 11;
+  struct field_error errors[num_fields];
 
-  if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
-       (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
-       (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
-       (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
-       (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate))  &&
-       (OK == get_str_param(r, VALID_VOTER_REGISTEREDPARTY, &party))   &&
-       (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz))  ) {
+  memset(errors, 0, sizeof(errors));
+  DBG("\nWTH\n");
+  int error_count = 0;
+  if (OK != get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) {
+    errors[error_count] = (struct field_error) { "voter-lastname", "Last name field required."};
+    error_count++;
+  }
+  if(OK != get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) {
+    errors[error_count] = (struct field_error) { "voter-givennames", "Given name field required."};
+    error_count++;
+  }
+  if(OK != get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) {
+    errors[error_count] = (struct field_error) { "voter-resaddress", "Residential address required."};
+    error_count++;
+  }
+  if(OK != get_str_param(r, VALID_VOTER_RESZIP, &reszip)) {
+    errors[error_count] = (struct field_error) { "voter-reszip", "Residential zipcode required."};
+    error_count++;
+  }
+  if(OK != get_str_param(r, VALID_VOTER_RESSTATE, &resstate)) {
+    errors[error_count] = (struct field_error) { "voter-resstate", "Residential state required."};
+    error_count++;
+  }
+  if (OK != get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) {
+    errors[error_count] = (struct field_error) { "voter-mailaddress", "Mailing address required."};
+    error_count++;
+  }
+  if (OK != get_str_param(r, VALID_VOTER_MAILZIP, &mailzip)) {
+    errors[error_count] = (struct field_error) { "voter-mailzip", "Mailing zipcode required."};
+    error_count++;
+  }
+  if (OK != get_str_param(r, VALID_VOTER_MAILSTATE, &mailstate)) {
+    errors[error_count] = (struct field_error) { "voter-mailstate", "Mailing state required."};
+    error_count++;
+  }
+  DBG("mailstate: %s\n", mailstate);
+  if (OK != get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate)) {
+    errors[error_count] = (struct field_error) { "voter-birthdate", "Date of birth field required."};
+    error_count++;
+  }
+  if (OK != get_str_param(r, VALID_VOTER_REGISTEREDPARTY, &party)) {
+    errors[error_count] = (struct field_error) { "voter-registeredparty", "Registered party field required."};
+    error_count++;
+  } else if(strcmp(party, "---") == 0) {
+    DBG("Registered party not valid\n");
+    errors[error_count] = (struct field_error) { "voter-registeredparty", "Registered party field required(2)."};
+    error_count++;
+  }
+  if (OK != get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz)) {
+    errors[error_count] = (struct field_error) { "voter-idinfo", "ID field required."};
+    error_count++;
+  }
+
+  if(0 == error_count) {
     int64_t voter_id;
     status_t reg_status = register_voter(r->arg,
                                          lastname,
                                          givennames,
                                          resaddress,
+                                         resaddress2,
+                                         reszip,
+                                         resstate,
                                          mailaddress,
+                                         mailaddress2,
+                                         mailzip,
+                                         mailstate,
                                          party,
                                          birthdate,
                                          idinfo,
@@ -170,10 +233,24 @@ voter_register_page(struct kreq *r)
       http_open(r, KHTTP_200);
       empty_json(r);
     } else {
+      // encountered a db error.  Could be unique key constraint or
+      // something similar
       http_open(r, KHTTP_400);
     }
   } else {
+
+    // Form generated errors
     http_open(r, KHTTP_400);
+    kjson_open(&req, r);
+    kjson_obj_open(&req); // {
+    kjson_objp_open(&req, "errors"); // "errors:" {
+    kjson_putintp(&req, "count", error_count);
+    for(int i=0; i<error_count; i++) {
+      kjson_putstringp(&req, errors[i].field, errors[i].desc);
+    }
+    kjson_obj_close(&req); //    }
+    kjson_obj_close(&req); // }
+    kjson_close(&req);
   }
 
 }
@@ -182,7 +259,8 @@ status_t
 do_voter_updateinfo(struct kreq *r, int64_t voter_id)
 {
   const char *lastname, *givennames,
-             *resaddress, *mailaddress,
+             *resaddress, *resaddress2, *reszip, *resstate,
+             *mailaddress, *mailaddress2, *mailzip, *mailstate,
              *party, *idinfo;
   time_t birthdate;
   size_t idinfo_sz;
@@ -204,7 +282,13 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
                                    lastname,
                                    givennames,
                                    resaddress,
+                                   resaddress2,
+                                   reszip,
+                                   resstate,
                                    mailaddress,
+                                   mailaddress2,
+                                   mailzip,
+                                   mailstate,
                                    party,
                                    birthdate,
                                    idinfo,
@@ -253,7 +337,10 @@ voter_login_page(struct kreq *r)
   char buf[64];
   time_t birthdate;
   size_t idinfo_sz;
-  const char *lastname, *givennames, *resaddress, *mailaddress, *idinfo;
+  const char *lastname, *givennames,
+    *resaddress, *resaddress2, *reszip, *resstate,
+    *mailaddress, *mailaddress2, *mailzip, *mailstate,
+    *idinfo;
 
   if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
        (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
@@ -267,7 +354,13 @@ voter_login_page(struct kreq *r)
                                                 lastname,
                                                 givennames,
                                                 resaddress,
+                                                resaddress2,
+                                                reszip,
+                                                resstate,
                                                 mailaddress,
+                                                mailaddress2,
+                                                mailzip,
+                                                mailstate,
                                                 birthdate,
                                                 idinfo,
                                                 idinfo_sz,

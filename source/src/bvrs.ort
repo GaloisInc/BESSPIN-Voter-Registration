@@ -41,7 +41,13 @@ struct voter {
   field lastname text limit gt 0 comment "Last name";
   field givennames text limit gt 0 comment "Given names";
   field resaddress text limit gt 0 comment "Residence address";
+  field resaddress2 text limit gt 0 comment "Residence address line 2";
+  field reszip text limit gt 0 comment "Residence address zipcode";
+  field resstate text limit gt 0 comment "Residence address state";
   field mailaddress text limit gt 0 comment "Mailing address";
+  field mailaddress2 text limit gt 0 comment "Mailing address line 2";
+  field mailzip text limit gt 0 comment "Mailing zipcode";
+  field mailstate text limit gt 0 comment "Mailing state";
   field registeredparty text limit gt 0 comment "Registered party";
   field birthdate date comment "Birth date";
   field idinfo blob limit gt 0 unique comment "Identification information.";
@@ -68,8 +74,10 @@ struct voter {
 
   insert;
 
-  update lastname, givennames, resaddress, mailaddress, registeredparty, birthdate, idinfo, status,
-         lastupdatetime, confidential:
+  update lastname, givennames, resaddress, resaddress2, reszip,
+         resstate, mailaddress, mailaddress2, mailzip, mailstate,
+         registeredparty, birthdate, idinfo, status, lastupdatetime,
+         confidential:
          id:
     name info
     comment "Update a voter registration record by id";
