@@ -24,11 +24,15 @@
                 <label class=firstColLabel for="field">Field:</label>
             	<input class=firstColInput list="fields" id="field" name="field_name">
         		<datalist id="fields">
-        			<option value="a">
-        			<option value="b">
-        			<option value="c">
-        			<option value="d">
+        			<option value="id">
+        			<option value="lastname">
+        		    <option value="givennames">
+                    <option value="resaddress">
+                    <option value="mailaddress">
+                    <option value="registeredparty">
+                    <option value="status">
         		</datalist>
+
                 <label class=secondColLabelVariable for="contains">Field Contains:</label>
                 <input class=secondColInput type="text" id="contains" name="field_contains">
                 <label class=secondColLabelVariable for="invert">Invert Selection:</label>
@@ -49,10 +53,10 @@
                 <label class=firstColLabel for="date_field">Date Field:</label>
             	<input class=firstColInput list="date_fields" id="date_field" name="date_field_name">
         		<datalist id="date_fields">
-        			<option value="a">
-        			<option value="b">
-        			<option value="c">
-        			<option value="d">
+        			<option value="birthdate">
+                    <option value="initialregtime">
+                    <option value="lastupdatedtime">
+        			
         		</datalist>
                 <label class=secondColLabelVariable for="start_date">between:</label>
                 <input class=secondColInput type="date" id="start_date" name="start_date">
