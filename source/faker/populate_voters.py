@@ -8,7 +8,7 @@ import calendar
 
 conn = sqlite3.connect(sys.argv[1])
 conn.set_trace_callback(print)
-for id in range(100):
+for id in range(4,110):
     frank = Faker()
     address = frank.address()
     zipcode = frank.zipcode()
@@ -40,15 +40,17 @@ for id in range(100):
         lastupdatetime,
         confidential)
         VALUES
-        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
         id,
         frank.last_name(),
         frank.first_name(),
         address,
+        "",
         zipcode,
         state,
         mail_address,
+        "",
         zipcode,
         state,
         party,
