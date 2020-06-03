@@ -4,6 +4,66 @@ function reset_form_errors() {
 
 $(document).ready(function(){
 
+
+    // Voter registration verification
+    $("#submit_voter_reg_verification").on('click', function() {
+        console.log("Verify voter registration");
+
+        // Reset form status for resubmissions
+        reset_form_errors();
+        $("#no-results").hide();
+        $("[id$=display]").text("");
+        $("#results").hide();
+
+        //Verify inputs before submitting
+        var verify_fields = ["#voter-givennames", "#voter-lastname", "#voter-birthdate"];
+        var has_errors = false;
+        $.each(verify_fields, function(index, field) {
+            var val = $(field).val();
+            if(val == undefined || val.length <= 0) {
+                has_errors = true;
+                $(field).addClass("error");
+            }
+        });
+        if(has_errors) {
+            return;
+        }
+
+        $.ajax({
+            url : 'voter_check_status', 
+            type : "GET",
+            data : $("#voter_registration_verification_form").serialize(),
+            success : function(result) {
+                console.log(result);
+                // No results
+                if(result["voter_q"][0] == undefined) {
+                    $("#no-results").show();
+                    return;
+                }
+
+                // We have a result: Populate page data
+                $.each(result["voter_q"][0], function(index, value) {
+                    console.log("voter-" + index + "-display", value);
+                    // convert date values
+                    if(index.includes("time") || index.includes("date")) {
+                        var d = new Date(0);
+                        d.setUTCSeconds(value);
+                        value = d.toDateString();
+                    }
+                    if(index.includes("confidential")) {
+                        value = value ? "TRUE" : "FALSE";
+                    }
+                    $("#voter-" + index + "-display").text(value);
+                });
+                $("#results").show();
+            },
+            error: function(xhr, result, text) {
+                // Handle Form Errors
+                console.log("backend returned an error");
+            }
+        });
+    });
+
     // Voter registration
     $("#submit_voter_registration").on('click', function(){
         reset_form_errors()

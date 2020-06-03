@@ -32,25 +32,102 @@
     </div>
 
 
-    <div id=outerDiv class=dataFormOuter>
+    <div id=outerDiv class=dataFormOuter id="query-form">
     <div class=dataFormInner>
-        <form id=loginForm method=get id="voter_registration_verification_form" action="voter_verify.json">
-            <label class=firstColLabel for="fname">First name:</label>
-            <input class=firstColInput type="text" id="fname" name="given_name">
-            <label class=secondColLabel for="lname">Last name:</label>
-            <input class=secondColInput type="text" id="lname" name="last_name">
+        <form id="voter_registration_verification_form">
+            <label class=firstColLabel for="voter-givennames">First name:</label>
+            <input class=firstColInput type="text" id="voter-givennames" name="voter-givennames">
+            <label class=secondColLabel for="voter-lastname">Last name:</label>
+            <input class=secondColInput type="text" id="voter-lastname" name="voter-lastname">
 
             <br><br>
          
-            <label class=firstColLabel for="dob">Date of Birth:</label>
-            <input class=firstColInput type="date" id="dob" name="date_of_birth">
+            <label class=firstColLabel for="voter-birthdate">Date of Birth:</label>
+            <input class=firstColInput type="date" id="voter-birthdate" name="voter-birthdate">
 
             <br><br> 
             <label class=firstColLabel for="submit"> </label>
-            <input id=formSubmit class=formButton type="submit" value="Submit">
+            <input id="submit_voter_reg_verification" class=formButton type="button" value="Submit">
         </form>
     </div>
     </div>
+
+    <div id="results" class="dataFormOuter" style="display: none;">
+    <div class="dataFormInner">
+        <h3>
+         Non Confidential Registration Verification
+        </h3>
+        <ul>
+            <li>
+                <label for="voter-givennames-display">First Name:</label>
+                <span id="voter-givennames-display"></span>
+            </li>
+            <li>
+                <label for="voter-lastname-display">Last Name:</label>
+                <span id="voter-lastname-display"></span>
+            </li>
+
+            <li>
+                <label>Residential Address:</label>
+                <div id="voter-resaddress-display"></div>
+                <div id="voter-resaddress2-display"></div>
+                <span id="voter-resstate-display"></span>
+                <span id="voter-reszip-display"></span>
+            </li>
+
+            <li>
+                <label>Mailing Address:</label>
+                <div id="voter-mailing-display"></div>
+                <div id="voter-mailing2-display"></div>
+                <span id="voter-mailstate-display"></span>
+                <span id="voter-mailzip-display"></span>
+            </li>
+
+
+            <li>
+                <label for="voter-registeredparty-display">Registered Party:</label>
+                <span id="voter-registeredparty-display"></span>
+            </li>
+
+            <li>
+                <label for="voter-birthdate-display">Brithdate:</label>
+                <span id="voter-birthdate-display"></span>
+            </li>
+
+            <li>
+                <label for="voter-initalregtime-display">First Registered:</label>
+                <span id="voter-initialregtime-display"></span>
+            </li>
+
+            <li>
+                <label for="voter-lastupdatetime-display">Last Updated:</label>
+                <span id="voter-lastupdatetime-display"></span>
+            </li>
+
+            <li>
+                <label for="voter-confidential-display">Confidential:</label>
+                <span id="voter-confidential-display"></span>
+            </li>
+
+        </ul>
+    </div>
+    </div>
+
+    <div id="no-results" style="display: none;">
+        <h3>
+            It appears that you are not registered yet.
+        </h3>
+        
+        <div class=centeredDiv>
+        <div class=buttonDiv>
+            <form class=flexMember action="voter_registration.html">
+                <input type="submit" value="I want to register now" />
+            </form>
+        </div> 
+        </div> 
+    </div>
+
+
 
 </body>
 
