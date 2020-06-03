@@ -7,11 +7,9 @@ document.addEventListener('submit', e => {
   const form = e.target;
 
   // Post data using the Fetch API
-  fetch(form.action, {
-    method: form.method,
+  fetch('bvrs/voter_check_status', {
+    method: 'POST',
     body: new FormData(form)
-    // method: form.method,
-    // body: new FormData(form)
   })  
   .then(
 	function(response) {
