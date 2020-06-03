@@ -48,7 +48,7 @@ $(document).ready(function(){
                     if(index.includes("time") || index.includes("date")) {
                         var d = new Date(0);
                         d.setUTCSeconds(value);
-                        value = d.toDateString();
+                        value = d.toUTCString();
                     }
                     if(index.includes("confidential")) {
                         value = value ? "TRUE" : "FALSE";
