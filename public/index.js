@@ -1,3 +1,4 @@
+
 function reset_form_errors() {
     $('input, select').removeClass("error");
 }
@@ -65,13 +66,18 @@ $(document).ready(function(){
     });
 
     // Voter registration
-    $("#submit_voter_registration").on('click', function(){
+    $("form#voter_register_form").submit(function(e){
+        e.preventDefault();
         reset_form_errors()
         console.log("Submit voter registration");
+        var formData = new FormData(this);
         $.ajax({
             url: 'voter_register', 
-            type : "GET",
-            data : $("#voter_register_form").serialize(),
+            type : "POST",
+            data : formData,
+            contentType: false,
+            cache: false,
+            processData: false,
             success : function(result) {
                 // Server returned a result
                 // redirect to voter_registration_confirmation.html
@@ -85,7 +91,8 @@ $(document).ready(function(){
                     $.each(resp.errors, function(index, value) {
                         console.log(index, value);
                         $('input[name ="' + index + '"]').addClass("error");
-                        $('select[name ="' + index + '"]').addClass("error");  
+                        $('select[name ="' + index + '"]').addClass("error");
+                        $('label[for ="' + index + '"]').addClass("error");
                     });
                 }
             }

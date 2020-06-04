@@ -190,6 +190,9 @@ input[type=button], input[type=submit]{
 .error {
 	border-color: red;
 }
+label.error {
+	color: red;
+}
 
 
 

@@ -19,10 +19,11 @@
 
         <div class=dataFormOuter>
         <div class=dataFormInner>
-            <form enctype="multipart/form-data" method=post action="bvrs/official_query_voters">
+            <form enctype="multipart/form-data" method=post action="official_query_voters">
             	
                 <label class=firstColLabel for="fields">Field:</label>
         		<select class=firstColInput id="fields">
+                    <option></option>
         			<option>id</option>
         			<option>lastname</option>
         		    <option>givennames</option>
@@ -51,6 +52,7 @@
              
                 <label class=firstColLabel for="date_fields">Date Field:</label>
         		<select class=firstColInput id="date_fields">
+                    <option></option>
                     <option>birthdate</option>
                     <option>initialregtime</option>
                     <option>lastupdatetime</option>
@@ -74,7 +76,7 @@
 
     <br><br>
 
-    <form target=dummyframe enctype="multipart/form-data" method=post action="bvrs/official_query_voters">
+    <form target=dummyframe enctype="multipart/form-data" method=post action="official_query_voters">
         
         <div class=centeredDiv id=queryData>
         <div id=queryDataInner>

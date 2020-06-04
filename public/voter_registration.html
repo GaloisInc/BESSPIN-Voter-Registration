@@ -23,7 +23,7 @@
 
     <div class=dataFormOuter>
     <div class=dataFormInner>
-        <form enctype="multipart/form-data" id="voter_register_form" method="GET" action="voter_check_status">
+        <form enctype="multipart/form-data" id="voter_register_form" method="POST" action="voter_register">
             <label class=firstColLabel for="voter-givennames">First name:</label>
             <input class=firstColInput type="text" id="voter-givennames" name="voter-givennames">
             <label class=secondColLabel for="voter-lastname">Last name:</label>
@@ -76,13 +76,13 @@
 
             <!-- <label class=firstColLabel for="supporting_type">Supporting Document Type:</label>
             <input class=firstColInput type="text" id="supporting_type" name="supporting_type">
-
-            <br><br> -->
-<!-- 
-            <label class=firstColLabel for="supporting_doc">Upload Document:</label>
-            <input class=formButton type="file" id="supporting_doc" name="supporting_doc"> -->
-            <label class=firstColLabel for="supporting_doc">ID Info:</label>
-            <input type="text" id="voter-idinfo" name="voter-idinfo">
+            -->
+            <br><br>
+            
+            <label class=firstColLabel for="voter-idinfo">Upload Document:</label>
+            <input class=formButton type="file" id="voter-idinfo" name="voter-idinfo">
+            <!-- <label class=firstColLabel for="supporting_doc">ID Info:</label>
+            <input type="text" id="voter-idinfo" name="voter-idinfo"> -->
 
 
             <br><br>
@@ -93,7 +93,7 @@
             <br><br>
          
             <label class=firstColLabel for="submit"> </label>
-            <input class=formButton id="submit_voter_registration" type="button" value="Submit">
+            <input class=formButton id="submit_voter_registration" type="submit" value="Submit">
     </form>
 </div>
 </div>

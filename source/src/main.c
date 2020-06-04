@@ -145,6 +145,19 @@ get_blob_param(struct kreq *r, enum valid_keys key, const char **buf, size_t *bu
 }
 
 static void
+official_query_voters(struct kreq *r)
+{
+  const char *field_name, *field_contains, *date_field;
+  time_t date_from, date_thru;
+
+  get_str_param('field-name', , &field_name);
+  get_str_param(r, ,&field_contains);
+  get_int_param(r, , &date_from);
+  get_int_param(r, ,date_thru);
+
+}
+
+static void
 voter_register_page(struct kreq *r)
 {
   const char *lastname, *givennames,
@@ -484,6 +497,9 @@ main(int argc, char **argv)
         break;
       case PAGE_VOTER_UPDATE_INFO:
         voter_update_info_page(&r);
+        break;
+      case PAGE_OFFICIAL_QUERY_VOTERS:
+        official_query_voters(&r);
         break;
       default:
         http_open(&r, KHTTP_404);
