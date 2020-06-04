@@ -21,17 +21,16 @@
         <div class=dataFormInner>
             <form enctype="multipart/form-data" method=post action="bvrs/official_query_voters">
             	
-                <label class=firstColLabel for="field">Field:</label>
-            	<input class=firstColInput list="fields" id="field" name="field_name">
-        		<datalist id="fields">
-        			<option value="id">
-        			<option value="lastname">
-        		    <option value="givennames">
-                    <option value="resaddress">
-                    <option value="mailaddress">
-                    <option value="registeredparty">
-                    <option value="status">
-        		</datalist>
+                <label class=firstColLabel for="fields">Field:</label>
+        		<select class=firstColInput id="fields">
+        			<option>id</option>
+        			<option>lastname</option>
+        		    <option>givennames</option>
+                    <option>resaddress</option>
+                    <option>mailaddress</option>
+                    <option>registeredparty</option>
+                    <option>status</option>
+        		</select>
 
                 <label class=secondColLabelVariable for="contains">Field Contains:</label>
                 <input class=secondColInput type="text" id="contains" name="field_contains">
@@ -50,14 +49,12 @@
 
                 <br><br>
              
-                <label class=firstColLabel for="date_field">Date Field:</label>
-            	<input class=firstColInput list="date_fields" id="date_field" name="date_field_name">
-        		<datalist id="date_fields">
-        			<option value="birthdate">
-                    <option value="initialregtime">
-                    <option value="lastupdatedtime">
-        			
-        		</datalist>
+                <label class=firstColLabel for="date_fields">Date Field:</label>
+        		<select class=firstColInput id="date_fields">
+                    <option>birthdate</option>
+                    <option>initialregtime</option>
+                    <option>lastupdatetime</option>
+                </select>
                 <label class=secondColLabelVariable for="start_date">between:</label>
                 <input class=secondColInput type="date" id="start_date" name="start_date">
                 <label class=secondColLabelVariable for="end_date">and:</label>
