@@ -7,5 +7,6 @@ source/src/db.c
 source/src/bvrs.db
 source/src/bvrs.sql
 source/src/bvrs
+source/src/create_official
 .vscode/
 .idea/

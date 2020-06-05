@@ -115,6 +115,8 @@ struct electionofficial {
   field hash password limit gt 6 comment "Password (hashed)";
   comment "An election official account.";
 
+  insert;
+
   search username, hash:
     name credentials
     comment "Search for an election official by username/password.";

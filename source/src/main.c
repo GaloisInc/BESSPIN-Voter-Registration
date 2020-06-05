@@ -150,10 +150,10 @@ official_query_voters(struct kreq *r)
   const char *field_name, *field_contains, *date_field;
   time_t date_from, date_thru;
 
-  get_str_param('field-name', , &field_name);
-  get_str_param(r, ,&field_contains);
-  get_int_param(r, , &date_from);
-  get_int_param(r, ,date_thru);
+  // get_str_param('field-name', , &field_name);
+  // get_str_param(r, ,&field_contains);
+  // get_int_param(r, , &date_from);
+  // get_int_param(r, ,date_thru);
 
 }
 
@@ -171,7 +171,7 @@ voter_register_page(struct kreq *r)
   struct field_error errors[num_fields];
 
   memset(errors, 0, sizeof(errors));
-  DBG("\nWTH\n");
+ 
   int error_count = 0;
   if (OK != get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) {
     errors[error_count] = (struct field_error) { "voter-lastname", "Last name field required."};
@@ -340,6 +340,46 @@ voter_update_info_page(struct kreq *r)
   http_open(r, KHTTP_403);
   empty_json(r);
 }
+
+/*
+ * 
+ * 
+ */
+static void 
+official_login_page(struct kreq *r)
+{
+  const char *username, *password;
+  int64_t sid, token;
+  char buf[64];
+
+  status_t session_create = new_official_session(r->arg,
+                                                 username,
+                                                 password,
+                                                 &sid,
+                                                 &token);
+
+  if( (OK == get_str_param(r, VALID_ELECTIONOFFICIAL_USERNAME, &username)) &&
+      (OK == get_str_param(r, VALID_ELECTIONOFFICIAL_HASH, &password)) ) {
+    if(OK == session_create) {
+      /*  TODO: correct time */
+      kutil_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
+      khttp_head(r, kresps[KRESP_SET_COOKIE],
+                "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
+                valid_keys[VALID_VOTERUPDATESESSION_TOKEN].name, token, "", buf);
+      khttp_head(r, kresps[KRESP_SET_COOKIE],
+                "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
+                valid_keys[VALID_VOTERUPDATESESSION_ID].name, sid, "", buf);
+      http_open(r, KHTTP_200);
+      empty_json(r);
+    } else {
+      http_open(r, KHTTP_401);
+    }
+  } else {
+    http_open(r, KHTTP_400);
+  }
+}
+
+
 /*
  * Should this just re-use an existing session if one is found?
  * Or always create a new one?

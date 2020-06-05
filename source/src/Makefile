@@ -23,7 +23,7 @@ TESTS = tests/test0 tests/test1 tests/test2 tests/test3 tests/test4 \
         tests/cgi_test0 tests/cgi_test1 tests/cgi_test2 tests/cgi_test3 \
         tests/cgi_test4 tests/cgi_test5 tests/cgi_test6 tests/cgi_test7
 
-all: bvrs
+all: bvrs create_official
 
 clean:
 	rm -f db.h
@@ -42,6 +42,9 @@ db.h: bvrs.ort
 
 db.c: bvrs.ort
 	$(ORT_PREFIX)-c-source -Idjv -jv bvrs.ort > db.c
+
+create_official: create_official.o $(OBJS) db.h
+	$(CC) -o $@ create_official.o $(OBJS) $(LFLAGS)
 
 bvrs: main.o $(OBJS) db.h
 	$(CC) -o $@ main.o $(OBJS) $(LFLAGS)
