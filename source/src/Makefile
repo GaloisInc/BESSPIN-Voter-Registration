@@ -1,16 +1,16 @@
 ifeq ($(BVRS_RISCV),1)
 	# Some defaults to get going
-	PREFIX = ../../build/target
+	PREFIX ?= ../../build/target
 	BVRS_OS ?= linux
 	ARCH_STR = riscv64-unknown-${BVRS_OS}-gnu
-	CC=${ARCH_STR}-gcc
-	LD=${ARCH_STR}-ld
-	AR=${ARCH_STR}-ar
+	CC ?= ${ARCH_STR}-gcc
+	LD ?= ${ARCH_STR}-ld
+	AR ?= ${ARCH_STR}-ar
 else
-	PREFIX = ../../build/host
+	PREFIX ?= ../../build/host
 endif
 
-ORT_PREFIX = ../../build/host/bin/ort
+ORT_PREFIX ?= ../../build/host/bin/ort
 OBJS		  = db.o backend.o
 CFLAGS += -I $(PREFIX)/include -g -Werror
 LFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libz.a -ldl -lpthread -lcrypt
