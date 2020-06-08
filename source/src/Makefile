@@ -31,6 +31,8 @@ distclean: clean
 %.o: %.c db.h
 	$(CC) -c -o $@ $(CFLAGS) $<
 
+.DELETE_ON_ERROR:
+
 db.h: bvrs.ort
 	$(ORT_PREFIX)-c-header bvrs.ort > db.h
 
