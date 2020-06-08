@@ -114,6 +114,53 @@ get_int_param(struct kreq *r, enum valid_keys key, int64_t *int_val)
   return NOT_FOUND;
 }
 
+/**
+ * Fetches "non-valid" integer parameter which are not part of 
+ * openrad tool models.
+ */
+ status_t
+ get_int_param2(struct kreq *r, char* key, int64_t *int_val) {
+  for(size_t i=0; i < r->fieldsz; i++) {
+    if(strcmp(r->fields[i].key, key) == 0) {
+      *int_val = strtol(r->fields[i].val, NULL, 10);
+      DBG("%s: %ld\n", key, *int_val);
+      return OK;
+    }
+  }
+  DBG("get_int_param2: %s --> NULL (NOT_FOUND)\n", key);
+  return NOT_FOUND;  
+ }
+
+ /**
+ * Fetches "non-valid" bool parameter which are not part of 
+ * openrad tool models.
+ */
+ status_t
+ get_bool_param2(struct kreq *r, char* key, bool *int_val) {
+   int64_t val;
+   if(OK == get_int_param2(r, key, &val)) {
+    *int_val = (bool) val;
+   }
+   return NOT_FOUND;
+}
+
+/**
+ * Fetches "non-valid" parameters which are not part of an
+ * openradtool model. 
+ */
+status_t
+get_str_param2(struct kreq *r, char* key, const char **str_val) {
+  for(size_t i=0; i < r->fieldsz; i++) {
+    if(strcmp(r->fields[i].key, key) == 0) {
+      *str_val = r->fields[i].val;
+      DBG("%s: %s\n", key, *str_val);
+      return OK;
+    }
+  }
+  DBG("get_str_param2: %s --> NULL (NOT_FOUND)\n", key);
+  return NOT_FOUND;
+}
+
 status_t
 get_str_param(struct kreq *r, enum valid_keys key, const char **str_val)
 {
@@ -149,12 +196,56 @@ official_query_voters(struct kreq *r)
 {
   const char *field_name, *field_contains, *date_field;
   time_t date_from, date_thru;
+  bool select_active, select_updated, invert_contains,
+    invert_date_selection = false;
 
-  // get_str_param('field-name', , &field_name);
-  // get_str_param(r, ,&field_contains);
-  // get_int_param(r, , &date_from);
-  // get_int_param(r, ,date_thru);
+  // Ensure request is coming from a logged-in election official
+  // if(OK != lookup_official_session()) {
+  //   } else {
 
+  //     http_open(r, KHTTP_401);
+  //   }
+  // } else {
+  //   http_open(r, KHTTP_400);
+  // }
+
+  DBG("official_query_voters\n");
+
+  // Fetch boolean modifiers. All default to false
+  get_bool_param2(r, "select-active", &select_active);
+  get_bool_param2(r, "select-updated", &select_updated);
+  get_bool_param2(r, "field-invert", &invert_contains);
+  get_bool_param2(r, "date-invert", &invert_date_selection);
+
+  if(OK == get_str_param2(r, "field-contains", &field_contains) 
+    && OK == get_str_param2(r, "field-name", &field_name)) {
+  }
+
+  if(OK == get_str_param2(r, "date-field", &date_field)) {
+  }
+
+  get_int_param2(r, "date-from", &date_from);
+  get_int_param2(r, "date-thru", &date_thru);
+
+  struct voter_q *voters;
+
+  status_t lookup = official_query(r->arg, field_name,
+  field_contains, invert_contains, date_field, date_from, date_thru,
+  invert_date_selection, select_active, select_updated);
+
+  if (OK == lookup) {
+      struct kjsonreq req;
+
+      http_open(r, KHTTP_200);
+      kjson_open(&req, r);
+      kjson_obj_open(&req);
+      json_voter_array(&req, voters);
+      kjson_obj_close(&req);
+      kjson_close(&req);
+  } else {
+    // Unknown DB Error
+    http_open(r, KHTTP_500);
+  }
 }
 
 static void
@@ -342,8 +433,7 @@ voter_update_info_page(struct kreq *r)
 }
 
 /*
- * 
- * 
+ * Start a new session for election official.
  */
 static void 
 official_login_page(struct kreq *r)
@@ -352,30 +442,33 @@ official_login_page(struct kreq *r)
   int64_t sid, token;
   char buf[64];
 
-  status_t session_create = new_official_session(r->arg,
+
+  if( (OK == get_str_param(r, VALID_ELECTIONOFFICIAL_USERNAME, &username)) &&
+      (OK == get_str_param(r, VALID_ELECTIONOFFICIAL_HASH, &password)) ) {
+
+    status_t session_create = new_official_session(r->arg,
                                                  username,
                                                  password,
                                                  &sid,
                                                  &token);
 
-  if( (OK == get_str_param(r, VALID_ELECTIONOFFICIAL_USERNAME, &username)) &&
-      (OK == get_str_param(r, VALID_ELECTIONOFFICIAL_HASH, &password)) ) {
     if(OK == session_create) {
       /*  TODO: correct time */
       kutil_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
       khttp_head(r, kresps[KRESP_SET_COOKIE],
                 "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
-                valid_keys[VALID_VOTERUPDATESESSION_TOKEN].name, token, "", buf);
+                valid_keys[VALID_ELECTIONOFFICIALSESSION_TOKEN].name, token, "", buf);
       khttp_head(r, kresps[KRESP_SET_COOKIE],
                 "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
-                valid_keys[VALID_VOTERUPDATESESSION_ID].name, sid, "", buf);
-      http_open(r, KHTTP_200);
-      empty_json(r);
+                valid_keys[VALID_ELECTIONOFFICIALSESSION_ID].name, sid, "", buf);
+      khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/election_official_home.html");
+      http_open(r, KHTTP_301);
     } else {
-      http_open(r, KHTTP_401);
+      khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/election_official_login.html");
+      http_open(r, KHTTP_301);
     }
   } else {
-    http_open(r, KHTTP_400);
+    http_open(r, KHTTP_401);
   }
 }
 
@@ -508,7 +601,7 @@ main(int argc, char **argv)
       http_open(&r, KHTTP_405);
       khttp_free(&r);
       continue;
-    } else if (r.page == PAGE__MAX /* @todo Add a MIME check? */) {
+    } else if (r.page >= PAGE__MAX /* @todo Add a MIME check? */) {
       http_open(&r, KHTTP_404);
       khttp_puts(&r, "Page not found.");
       khttp_free(&r);
@@ -537,6 +630,9 @@ main(int argc, char **argv)
         break;
       case PAGE_VOTER_UPDATE_INFO:
         voter_update_info_page(&r);
+        break;
+      case PAGE_OFFICIAL_LOGIN:
+        official_login_page(&r);
         break;
       case PAGE_OFFICIAL_QUERY_VOTERS:
         official_query_voters(&r);

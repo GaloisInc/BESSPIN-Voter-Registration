@@ -21,8 +21,8 @@
         <div class=dataFormInner>
             <form enctype="multipart/form-data" method=post action="official_query_voters">
             	
-                <label class=firstColLabel for="fields">Field:</label>
-        		<select class=firstColInput id="fields">
+                <label class=firstColLabel for="fields-name">Field:</label>
+        		<select class=firstColInput id="fields-name" name="field-name">
                     <option></option>
         			<option>id</option>
         			<option>lastname</option>
@@ -33,25 +33,25 @@
                     <option>status</option>
         		</select>
 
-                <label class=secondColLabelVariable for="contains">Field Contains:</label>
-                <input class=secondColInput type="text" id="contains" name="field_contains">
-                <label class=secondColLabelVariable for="invert">Invert Selection:</label>
-                <input class=secondColInput type="checkbox" id="invert" name="field_invert">
+                <label class=secondColLabelVariable for="field-contains">Field Contains:</label>
+                <input class=secondColInput type="text" id="filed-contains" name="filed_contains">
+                <label class=secondColLabelVariable for="field-invert">Invert Selection:</label>
+                <input class=secondColInput type="checkbox" id="field-invert" name="field-invert">
 
                 <br><br>
 
-                <label class=firstColLabel for="active">Select Only Active Registrations:</label>
-                <input class=firstColInput type="checkbox" id="active" name="only_active">
-
-                <br><br>
-             
-              	<label class=firstColLabel for="updated">Select Only Updated Registrations:</label>
-                <input class=firstColInput type="checkbox" id="updated" name="only_updated">
+                <label class=firstColLabel for="select-active">Select Only Active Registrations:</label>
+                <input class=firstColInput type="checkbox" id="select-active" name="select-active">
 
                 <br><br>
              
-                <label class=firstColLabel for="date_fields">Date Field:</label>
-        		<select class=firstColInput id="date_fields">
+              	<label class=firstColLabel for="select-updated">Select Only Updated Registrations:</label>
+                <input class=firstColInput type="checkbox" id="select-updated" name="select-updated">
+
+                <br><br>
+             
+                <label class=firstColLabel for="date-field">Date Field:</label>
+        		<select class=firstColInput id="date-field" name="date-field">
                     <option></option>
                     <option>birthdate</option>
                     <option>initialregtime</option>
@@ -62,12 +62,12 @@
                 <label class=secondColLabelVariable for="end_date">and:</label>
                 <input class=secondColInput type="date" id="end_date" name="end_date">
                 <label class=secondColLabelVariable for="date_invert">Invert Selection:</label>
-                <input class=secondColInput type="checkbox" id="date_invert" name="date_field_invert">
+                <input class=secondColInput type="checkbox" id="date_invert" name="date_invert">
 
                 <br><br>
 
                 <label class=firstColLabel for="submit"> </label>
-                <input class=formButton type="submit" value="Submit">
+                <input class=formButton type="submit" value="Search">
             </form>
         </div>
         </div>
@@ -117,7 +117,7 @@
             </div>
             <div class=flexMemberDiv>
                 <label for="submit"> </label>
-                <input type="submit" id="submit" name="submit">
+                <input type="submit" value="Apply" id="submit" name="submit">
             </div>
 
     </form>

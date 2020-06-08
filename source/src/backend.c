@@ -12,6 +12,14 @@
 #include <stdlib.h>
 #include <err.h>
 
+#include <sqlbox.h>
+#include "db.h"
+
+struct	ort {
+	/* Hidden database connection */
+	struct sqlbox *db;
+};
+
 typedef struct ort bvrs_ctxt;
 
 status_t
@@ -414,6 +422,25 @@ new_official_session(bvrs_ctxt_t *ctxt,
 }
 
 status_t
+lookup_official_session(bvrs_ctxt_t *ctx,
+                        int64_t *session_id,
+                        int64_t *token)
+{
+    status_t ret = ERROR;
+    struct electionofficialsession *session;
+    session = db_electionofficialsession_get_officialcreds(ctx, *session_id, *token);
+    if (NULL != session) {
+        db_electionofficialsession_free(session);
+        ret = OK;
+    } else {
+        ret = NOT_FOUND;
+    }
+
+    return ret;
+}
+
+
+status_t
 end_official_session(bvrs_ctxt_t *ctxt,
                      int64_t the_session_id,
                      int64_t the_token)
@@ -426,4 +453,106 @@ end_official_session(bvrs_ctxt_t *ctxt,
     }
 
     return OK;
+}
+
+status_t official_query(bvrs_ctxt_t *ctxt,
+                        const char *field_name,
+                        const char *field_contains,
+                        bool invert_contains,
+                        const char *date_field,
+                        time_t date_from,
+                        time_t date_thru,
+                        bool invert_date_selection,
+                        tristate_t active_status,
+                        tristate_t updated_status)
+{
+    int max_parms = 9;
+    int parmcnt = 0;
+	struct voter *p;
+	struct voter_q *q;
+    struct sqlbox* db = ctxt->db;
+	const struct sqlbox_parmset *res;
+    char *where_clause = "WHERE ";
+    char *tmp, *fragment;
+	struct sqlbox_parm parms[max_parms];
+    memset(parms, 0, sizeof(parms));
+
+    // int sqlite3_open(
+    //     const char *filename,   /* Database filename (UTF-8) */
+    //     sqlite3 **ppDb          /* OUT: SQLite db handle */
+    // );
+
+    if(field_name != NULL && strlen(field_name) > 0 
+      && field_contains != NULL && strlen(field_contains) > 0) {
+
+        if(invert_contains) {
+            tmp = "%s LIKE%%?%% ";
+        } else {
+            tmp = "NOT %s LIKE%%?%% ";
+        }
+        sprintf(fragment, tmp, field_name);
+        fragment = (char *)calloc(strlen(tmp), sizeof(char));
+        sprintf(fragment, tmp, field_name);
+        tmp = where_clause;
+        where_clause = (char *)calloc(strlen(tmp) + strlen(fragment) + 1, sizeof(char));
+        strcat(where_clause, tmp);
+        strcat(where_clause, fragment);
+        parmcnt++;
+        parms[parmcnt].sparm = field_contains;
+        parms[parmcnt].type = SQLBOX_PARM_STRING;
+    }
+
+    if(date_field != NULL && strlen(date_field) > 0) {
+        if(invert_date_selection) {
+            fragment = "%s BETWEEN ? AND ? ";
+        } else {
+            fragment = "%s NOT BETWEEN ? AND ? ";
+        }
+        tmp = where_clause;
+        where_clause = (char *)calloc(strlen(tmp) + strlen(fragment) + 1, sizeof(char));
+        strcat(where_clause, tmp);
+        strcat(where_clause, fragment);
+        parmcnt++;
+        parms[parmcnt].iparm = date_from;
+        parms[parmcnt].type = SQLBOX_PARM_INT;
+        parmcnt++;
+        parms[parmcnt].iparm = date_thru;
+        parms[parmcnt].type = SQLBOX_PARM_INT;
+    }
+
+    if(NOT_DEF != active_status) {
+        if(ACTIVE == active_status) {
+            fragment = "active = 0 ";
+        } else {
+            fragment = "active = 1 ";
+        }
+    }
+
+    // TODO: How do we determine an updated record?
+
+    
+    char *stmt;
+    sprintf(stmt, "SELECT * FROM voter WHERE %s", where_clause);
+    DBG("%s", stmt);
+
+    
+	// if (!sqlbox_prepare_bind_async
+	//     (db, 0, stmt,
+	//      4, parms, SQLBOX_STMT_MULTI))
+	// 	exit(EXIT_FAILURE);
+	// while ((res = sqlbox_step(db, 0)) != NULL && res->psz) {
+	// 	p = malloc(sizeof(struct voter));
+	// 	if (p == NULL) {
+	// 		perror(NULL);
+	// 		exit(EXIT_FAILURE);
+	// 	}
+	// 	db_voter_fill_r(ctxt, p, res, NULL);
+	// 	TAILQ_INSERT_TAIL(q, p, _entries);
+	// }
+	// if (res == NULL)
+	// 	exit(EXIT_FAILURE);
+	// if (!sqlbox_finalise(db, 0))
+	// 	exit(EXIT_FAILURE);
+	//return q;
+    return ERROR;
 }

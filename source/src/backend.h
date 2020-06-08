@@ -8,10 +8,17 @@
 #include <stdint.h>
 #include <time.h>
 #include <sys/queue.h>
+#include <stdbool.h>
 
 #include <kcgi.h>
 #include <kcgijson.h>
 #include "db.h"
+
+typedef enum tristate {
+  NOT_DEF,
+  ACTIVE,
+  INACTIVE
+} tristate_t;
 
 typedef enum status {
   ERROR,
@@ -207,6 +214,28 @@ query_voter_database(bvrs_ctxt_t *ctxt,
                      time_t birthdate_upper,
                      struct voter_q **the_voters);
 
+/**
+ * Performs a detailed query for an election official
+ * 
+ * 
+ * Returns
+ *  OK on successful query
+ *  NOT_FOUND if there are no matching records
+ *  ERROR if internal error occurs
+ */
+
+status_t official_query(bvrs_ctxt_t *ctxt,
+                        const char *field_name,
+                        const char *field_contains,
+                        bool invert_contains,
+                        const char *date_field,
+                        time_t date_from,
+                        time_t date_thru,
+                        bool invert_date_selection,
+                        tristate_t active_status,
+                        tristate_t updated_status
+);
+
 /* Create a new election official session.
  *
  * username/password are the login credentials of an official in the database.
@@ -222,6 +251,18 @@ new_official_session(bvrs_ctxt_t *ctxt,
                      const char *password,
                      int64_t *session_id,
                      int64_t *token);
+
+/* Validate election official session
+*
+* Returns
+* OK if there is a active matching session
+* NOT_FOUND if there not a current / valid session matching cookie
+* ERROR if some internal error occurs
+*/
+status_t
+lookup_official_session(bvrs_ctxt_t *ctx,
+                        int64_t *session_id,
+                        int64_t *token);
 
 /* Explicitly end a session and remove it from the database.
  *

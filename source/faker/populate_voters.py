@@ -14,7 +14,7 @@ for id in range(4,110):
     zipcode = frank.zipcode()
     state = frank.state_abbr()
     mail_address = address
-    party = ["SSITH", "REBEL"][random.randint(0,1)]
+    party = ["SSITH", "REBEL", "Unaffiliated"][random.randint(0,2)]
     dob = calendar.timegm(frank.date_of_birth(minimum_age=18).timetuple())
     initialregtime = calendar.timegm(frank.date_this_decade().timetuple())
     lastupdatetime = calendar.timegm(frank.date_this_year().timetuple())
@@ -42,24 +42,24 @@ for id in range(4,110):
         VALUES
         (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-        id,
-        frank.last_name(),
-        frank.first_name(),
-        address,
-        "",
-        zipcode,
-        state,
-        mail_address,
-        "",
-        zipcode,
-        state,
-        party,
-        int(dob),
-        "/path/to/%s" % id,
-        random.randint(0,1),
-        0,
-        0,
-        random.randint(0,1),
+        id,                     # id
+        frank.last_name(),      # lastname
+        frank.first_name(),     # givennames
+        address,                # res address 
+        "",                     # res address 2
+        zipcode,                # res zipcode
+        state,                  # res state
+        mail_address,           # mail address
+        "",                     # mail address 2
+        zipcode,                # mail zipcode
+        state,                  # mail state
+        party,                  # party offiliation
+        int(dob),               # birthdate
+        "MY ID: %s" % id,       # id file (just using row id here)
+        random.randint(0,1),    # voter status?
+        initialregtime,         # initial voter registration date
+        lastupdatetime,         # last updated info on date
+        random.randint(0,1),    # confidential?
     ))
 conn.commit()
 conn.close()

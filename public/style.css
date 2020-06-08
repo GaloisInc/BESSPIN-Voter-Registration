@@ -125,14 +125,14 @@ th, td {
 
 /* Input */
 
-input[type=button], input[type=submit]{
+ input[type=button], input[type=submit]{
 	background-color: #A9A9A9;
 	padding: 2px 8px;
 	margin: 2px 10px;
 	border: 2px solid grey;
 	color: white;
 	cursor: pointer;
-}
+} 
 
 .flexMemberDiv{
 	text-align: left;
@@ -193,12 +193,3 @@ input[type=button], input[type=submit]{
 label.error {
 	color: red;
 }
-
-
-
-
-
-
-
-
-
