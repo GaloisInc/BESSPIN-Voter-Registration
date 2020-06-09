@@ -1,3 +1,5 @@
+#define _GNU_SOURCE 
+
 #include <inttypes.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -14,6 +16,7 @@
 
 #include <sqlbox.h>
 #include "db.h"
+#include "sqlite3.h"
 
 struct	ort {
 	/* Hidden database connection */
@@ -455,7 +458,22 @@ end_official_session(bvrs_ctxt_t *ctxt,
     return OK;
 }
 
-status_t official_query(bvrs_ctxt_t *ctxt,
+int official_query_callback(void *q, int argc, char **argv, 
+                    char **azColName) {
+    
+    struct voter *p;
+    DBG("---------------------------------------------------------\n  ");
+    for (int i = 0; i < argc; i++) {
+        char* val = argv[i] ? argv[i] : "NULL";
+        DBG("%s = %s\n", azColName[i], val);
+    }
+    p->id = 33;
+    TAILQ_INSERT_TAIL((struct voter_q*)q, p, _entries);
+
+    return 0;
+}
+
+status_t official_query(char *database_name,
                         const char *field_name,
                         const char *field_contains,
                         bool invert_contains,
@@ -464,95 +482,75 @@ status_t official_query(bvrs_ctxt_t *ctxt,
                         time_t date_thru,
                         bool invert_date_selection,
                         tristate_t active_status,
-                        tristate_t updated_status)
+                        tristate_t updated_status,
+                        struct voter_q *q)
 {
     int max_parms = 9;
     int parmcnt = 0;
 	struct voter *p;
-	struct voter_q *q;
-    struct sqlbox* db = ctxt->db;
-	const struct sqlbox_parmset *res;
-    char *where_clause = "WHERE ";
-    char *tmp, *fragment;
-	struct sqlbox_parm parms[max_parms];
-    memset(parms, 0, sizeof(parms));
+    char *fragment;
+    sqlite3_stmt *res;
+    char *err_msg = 0;
+    char *stmt = "SELECT * FROM voter WHERE";
 
-    // int sqlite3_open(
-    //     const char *filename,   /* Database filename (UTF-8) */
-    //     sqlite3 **ppDb          /* OUT: SQLite db handle */
-    // );
-
+    struct sqlite3 *ppDb;
+    DBG("opening db: %s\n", database_name);
+    int status = sqlite3_open(database_name, &ppDb);
+    if(SQLITE_OK != status) {
+        DBG("Error opening sqlite3 db: %s\n", database_name);
+        sqlite3_close(ppDb);
+    } else {
+        DBG("Opened sqlite db: %s\n", database_name);
+    }
+    
     if(field_name != NULL && strlen(field_name) > 0 
       && field_contains != NULL && strlen(field_contains) > 0) {
 
         if(invert_contains) {
-            tmp = "%s LIKE%%?%% ";
+            fragment = "%s NOT LIKE '%%%s%%'";
         } else {
-            tmp = "NOT %s LIKE%%?%% ";
+            fragment = "%s LIKE '%%%s%%'";
         }
-        sprintf(fragment, tmp, field_name);
-        fragment = (char *)calloc(strlen(tmp), sizeof(char));
-        sprintf(fragment, tmp, field_name);
-        tmp = where_clause;
-        where_clause = (char *)calloc(strlen(tmp) + strlen(fragment) + 1, sizeof(char));
-        strcat(where_clause, tmp);
-        strcat(where_clause, fragment);
-        parmcnt++;
-        parms[parmcnt].sparm = field_contains;
-        parms[parmcnt].type = SQLBOX_PARM_STRING;
+        asprintf(&fragment, fragment, field_name, field_contains);
+        asprintf(&stmt, "%s %s", stmt, fragment);
+        free(fragment);
     }
 
     if(date_field != NULL && strlen(date_field) > 0) {
         if(invert_date_selection) {
-            fragment = "%s BETWEEN ? AND ? ";
+            fragment = "%s NOT BETWEEN %d AND %d";
         } else {
-            fragment = "%s NOT BETWEEN ? AND ? ";
+            fragment = "%s BETWEEN %d AND %d";
         }
-        tmp = where_clause;
-        where_clause = (char *)calloc(strlen(tmp) + strlen(fragment) + 1, sizeof(char));
-        strcat(where_clause, tmp);
-        strcat(where_clause, fragment);
-        parmcnt++;
-        parms[parmcnt].iparm = date_from;
-        parms[parmcnt].type = SQLBOX_PARM_INT;
-        parmcnt++;
-        parms[parmcnt].iparm = date_thru;
-        parms[parmcnt].type = SQLBOX_PARM_INT;
+        asprintf(&fragment, fragment, date_field, date_from, date_thru);
+        asprintf(&stmt, "%s %s", stmt, fragment);
+        free(fragment);
     }
 
     if(NOT_DEF != active_status) {
         if(ACTIVE == active_status) {
-            fragment = "active = 0 ";
+            fragment = "active = 0";
         } else {
-            fragment = "active = 1 ";
+            fragment = "active = 1";
         }
+        asprintf(&stmt, "%s %s", stmt, fragment);
     }
 
-    // TODO: How do we determine an updated record?
-
+    // TODO: How do we determine an updated record?    
+    DBG("%s\n", stmt);
     
-    char *stmt;
-    sprintf(stmt, "SELECT * FROM voter WHERE %s", where_clause);
-    DBG("%s", stmt);
 
+    TAILQ_INIT(q);
     
-	// if (!sqlbox_prepare_bind_async
-	//     (db, 0, stmt,
-	//      4, parms, SQLBOX_STMT_MULTI))
-	// 	exit(EXIT_FAILURE);
-	// while ((res = sqlbox_step(db, 0)) != NULL && res->psz) {
-	// 	p = malloc(sizeof(struct voter));
-	// 	if (p == NULL) {
-	// 		perror(NULL);
-	// 		exit(EXIT_FAILURE);
-	// 	}
-	// 	db_voter_fill_r(ctxt, p, res, NULL);
-	// 	TAILQ_INSERT_TAIL(q, p, _entries);
-	// }
-	// if (res == NULL)
-	// 	exit(EXIT_FAILURE);
-	// if (!sqlbox_finalise(db, 0))
-	// 	exit(EXIT_FAILURE);
-	//return q;
-    return ERROR;
+    status = sqlite3_exec(ppDb, stmt, official_query_callback, &q, &err_msg);
+    if (status != SQLITE_OK ) {
+        DBG("SQL error: %s\n", err_msg);
+        sqlite3_free(err_msg);        
+        sqlite3_close(ppDb);
+        return ERROR;
+    } 
+    DBG("Done\n");
+
+    sqlite3_close(ppDb);
+    return OK;
 }

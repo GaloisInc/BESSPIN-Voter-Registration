@@ -224,7 +224,7 @@ query_voter_database(bvrs_ctxt_t *ctxt,
  *  ERROR if internal error occurs
  */
 
-status_t official_query(bvrs_ctxt_t *ctxt,
+status_t official_query(char *database_name,
                         const char *field_name,
                         const char *field_contains,
                         bool invert_contains,
@@ -233,7 +233,8 @@ status_t official_query(bvrs_ctxt_t *ctxt,
                         time_t date_thru,
                         bool invert_date_selection,
                         tristate_t active_status,
-                        tristate_t updated_status
+                        tristate_t updated_status,
+                        struct voter_q *voters
 );
 
 /* Create a new election official session.

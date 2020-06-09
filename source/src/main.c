@@ -28,7 +28,6 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdbool.h>
-
 #include <kcgi.h>
 #include <kcgijson.h>
 
@@ -231,7 +230,7 @@ official_query_voters(struct kreq *r)
 
   status_t lookup = official_query(r->arg, field_name,
   field_contains, invert_contains, date_field, date_from, date_thru,
-  invert_date_selection, select_active, select_updated);
+  invert_date_selection, select_active, select_updated, voters);
 
   if (OK == lookup) {
       struct kjsonreq req;
@@ -251,10 +250,18 @@ official_query_voters(struct kreq *r)
 static void
 voter_register_page(struct kreq *r)
 {
-  const char *lastname, *givennames,
-             *resaddress, *resaddress2, *reszip, *resstate,
-             *mailaddress, *mailaddress2, *mailzip, *mailstate,
-             *party, *idinfo;
+  const char *lastname = "";
+  const char *givennames = "";
+  const char *resaddress = "";
+  const char *resaddress2 = "";
+  const char *reszip = "";
+  const char *resstate = "";
+  const char *mailaddress = "";
+  const char *mailaddress2 = "";
+  const char *mailzip = "";
+  const char *mailstate = "";
+  const char *party = "";
+  const char *idinfo = "";
   time_t birthdate;
   size_t idinfo_sz;
   struct kjsonreq req;
@@ -483,10 +490,17 @@ voter_login_page(struct kreq *r)
   char buf[64];
   time_t birthdate;
   size_t idinfo_sz;
-  const char *lastname, *givennames,
-    *resaddress, *resaddress2, *reszip, *resstate,
-    *mailaddress, *mailaddress2, *mailzip, *mailstate,
-    *idinfo;
+  const char *lastname = "";
+  const char *givennames = "";
+  const char *resaddress = "";
+  const char *resaddress2 = "";
+  const char *reszip = "";
+  const char *resstate = "";
+  const char *mailaddress = "";
+  const char *mailaddress2 = "";
+  const char *mailzip = "";
+  const char *mailstate = "";
+  const char *idinfo = "";
 
   if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
        (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
