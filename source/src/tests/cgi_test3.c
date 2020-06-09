@@ -27,8 +27,14 @@ parent(void *fp)
                    "voter-lastname=lastname&"
                    "voter-givennames=firstname&"
                    "voter-birthdate=1986-02-04&"
-                   "voter-resaddress=1234 address&"
-                   "voter-mailaddress=1234 address&"
+                   "voter-resaddress=1234 resaddress&"
+                   "voter-resaddress2=1234 resaddress2&"
+                   "voter-reszip=00000&"
+                   "voter-resstate=ZZ&"
+                   "voter-mailaddress=1234 mailaddress&"
+                   "voter-mailaddress2=1234 resaddress2&"
+                   "voter-mailzip=00000&"
+                   "voter-mailstate=ZZ&"
                    "voter-idinfo=blob1";
 
   curl = curl_easy_init();

@@ -22,8 +22,14 @@ check_voter(void *fp)
       "voter-birthdate=1986-02-04&"
       "voter-lastname=lastname&"
       "voter-givennames=firstname&" // The old firstname
-      "voter-resaddress=1234 address&"
-      "voter-mailaddress=1234 address&"
+      "voter-resaddress=1234 resaddress&"
+      "voter-resaddress2=1234 resaddress2&"
+      "voter-reszip=00000&"
+      "voter-resstate=ZZ&"
+      "voter-mailaddress=1234 mailaddress&"
+      "voter-mailaddress2=1234 resaddress2&"
+      "voter-mailzip=00000&"
+      "voter-mailstate=ZZ&"
       "voter-registeredparty=NPP&"
       "voter-idinfo=blob1";
 
@@ -50,8 +56,14 @@ parent(void *fp)
       "voter-birthdate=1986-02-04&"
       "voter-lastname=lastname&"
       "voter-givennames=NEW FIRST NAME&"
-      "voter-resaddress=1234 address&"
-      "voter-mailaddress=1234 address&"
+      "voter-resaddress=1234 resaddress&"
+      "voter-resaddress2=1234 resaddress2&"
+      "voter-reszip=00000&"
+      "voter-resstate=ZZ&"
+      "voter-mailaddress=1234 mailaddress&"
+      "voter-mailaddress2=1234 resaddress2&"
+      "voter-mailzip=00000&"
+      "voter-mailstate=ZZ&"
       "voter-registeredparty=NPP&"
       "voter-status=0&"
       "voter-idinfo=blob1";

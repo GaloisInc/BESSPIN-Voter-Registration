@@ -22,13 +22,19 @@ parent(void *fp)
       "voter-birthdate=1986-02-04&"
       "voter-lastname=Schmidt&"
       "voter-givennames=Leslie&"
-      "voter-resaddress=1234 Main St.&"
-      "voter-mailaddress=1234 Secondary St.&"
+      "voter-resaddress=123 Primary St&"
+      "voter-resaddress2=&"
+      "voter-reszip=00000&"
+      "voter-resstate=ZZ&"
+      "voter-mailaddress=123 Secondary St&"
+      "voter-mailaddress2=&"
+      "voter-mailzip=00000&"
+      "voter-mailstate=ZZ&"
       "voter-registeredparty=NPP&"
       "voter-idinfo=SECRETENCODING";
 
   curl = curl_easy_init();
-  curl_easy_setopt(curl, CURLOPT_URL,"http://localhost:17123/voter_register.json");
+  curl_easy_setopt(curl, CURLOPT_URL, "http://localhost:17123/voter_register.json");
   curl_easy_setopt(curl, CURLOPT_POSTFIELDSIZE, strlen(postdata));
   curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postdata);
 
