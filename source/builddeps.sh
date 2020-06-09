@@ -10,18 +10,38 @@ ORT_PATH="ext/openradtool-VERSION_0_8_14"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 TARGET_BUILD=${DIR}/../build/host
 BVRS_RISCV=${BVRS_RISCV:-0}
+BVRS_LLVM=${BVRS_LLVM:-0}
 BVRS_OS=${BVRS_OS:-linux}
 SQLITE_HOST=""
 
+if [ "${BVRS_LLVM}" -eq 1 ]; then
+    export CFLAGS="-fPIC" # explicit position-independent code flag for LLVM
+fi
+
 if [ "${BVRS_RISCV}" -eq 1 ]; then
     TARGET_BUILD=${DIR}/../build/target
-    PREFIX=riscv64-unknown-${BVRS_OS}-gnu
-    export CC=${PREFIX}-gcc
-    export CFLAGS="-I ${TARGET_BUILD}/include"
-    export LFLAGS="-L ${TARGET_BUILD}/lib"
-    export LD=${PREFIX}-ld
-    export AR=${PREFIX}-ar
     SQLITE_HOST="--host=riscv64-unknown-${BVRS_OS}"
+    export CFLAGS="-I ${TARGET_BUILD}/include"
+    export LDFLAGS="-L ${TARGET_BUILD}/lib"
+    if [ "${BVRS_LLVM}" -eq 1 ]; then
+      # assume RISC-V toolchain (CC, LD, AR) is set in environment already
+      # anything specific to RISC-V cross-compilation with LLVM goes here
+      echo CC=${CC} LD=${LD} AR=${AR}
+    else
+      # RISC-V gcc toolchain
+      PREFIX=riscv64-unknown-${BVRS_OS}-gnu
+      export CC=${PREFIX}-gcc
+      export LD=${PREFIX}-ld
+      export AR=${PREFIX}-ar
+    fi
+elif [ "${BVRS_OS}" == "freebsd" ]; then
+    # for FreeBSD's native (not RISC-V) LLVM toolchain, we need to include /usr/local
+    # in search paths, and we'll also set the compiler/linker/archiver.
+    export CFLAGS="${CFLAGS} -I/usr/local/include"
+    export LDFLAGS="${LDFLAGS} -L/usr/local/lib"
+    export CC=cc
+    export LD=ld.lld
+    export AR=llvm-ar
 fi
 
 echo "Building deps in ${TARGET_BUILD}"
