@@ -33,6 +33,10 @@
 
 #include "backend.h"
 
+#define DATE_MIN -3000000000
+
+static char* database_name;
+
 /*
  * Start with five pages.
  * As you add more pages, you'll start by giving them an identifier key
@@ -152,7 +156,7 @@ get_str_param2(struct kreq *r, char* key, const char **str_val) {
   for(size_t i=0; i < r->fieldsz; i++) {
     if(strcmp(r->fields[i].key, key) == 0) {
       *str_val = r->fields[i].val;
-      DBG("%s: %s\n", key, *str_val);
+      DBG("FOUND: %s: %s\n", key, *str_val);
       return OK;
     }
   }
@@ -164,7 +168,7 @@ status_t
 get_str_param(struct kreq *r, enum valid_keys key, const char **str_val)
 {
   if (NULL != r->fieldmap[key]) {
-    DBG("%s\n",r->fieldmap[key]->parsed.s);
+    DBG("get_str_param: %s\n",r->fieldmap[key]->parsed.s);
     if (r->fieldmap[key]->parsed.s) {
      *str_val = r->fieldmap[key]->parsed.s;
      return OK;
@@ -190,24 +194,22 @@ get_blob_param(struct kreq *r, enum valid_keys key, const char **buf, size_t *bu
   return NOT_FOUND;
 }
 
+
 static void
 official_query_voters(struct kreq *r)
 {
-  const char *field_name, *field_contains, *date_field;
-  time_t date_from, date_thru;
-  bool select_active, select_updated, invert_contains,
-    invert_date_selection = false;
+  const char *field_name = "";
+  const char *field_contains = "";
+  const char *date_field = "";
+  time_t date_from = DATE_MIN;
+  time_t date_thru;
+  time(&date_thru);
+  bool invert_contains = false;
+  bool select_active = false;
+  bool select_updated = false;
+  bool invert_date_selection = false;
 
-  // Ensure request is coming from a logged-in election official
-  // if(OK != lookup_official_session()) {
-  //   } else {
-
-  //     http_open(r, KHTTP_401);
-  //   }
-  // } else {
-  //   http_open(r, KHTTP_400);
-  // }
-
+  
   DBG("official_query_voters\n");
 
   // Fetch boolean modifiers. All default to false
@@ -216,25 +218,22 @@ official_query_voters(struct kreq *r)
   get_bool_param2(r, "field-invert", &invert_contains);
   get_bool_param2(r, "date-invert", &invert_date_selection);
 
-  if(OK == get_str_param2(r, "field-contains", &field_contains) 
-    && OK == get_str_param2(r, "field-name", &field_name)) {
-  }
+  get_str_param2(r, "field-contains", &field_contains);
+  get_str_param2(r, "field-name", &field_name);
 
-  if(OK == get_str_param2(r, "date-field", &date_field)) {
-  }
+  get_str_param2(r, "date-field", &date_field);
 
   get_int_param2(r, "date-from", &date_from);
   get_int_param2(r, "date-thru", &date_thru);
 
   struct voter_q *voters;
 
-  status_t lookup = official_query(r->arg, field_name,
+  status_t lookup = official_query(database_name, field_name,
   field_contains, invert_contains, date_field, date_from, date_thru,
   invert_date_selection, select_active, select_updated, voters);
 
   if (OK == lookup) {
       struct kjsonreq req;
-
       http_open(r, KHTTP_200);
       kjson_open(&req, r);
       kjson_obj_open(&req);
@@ -271,7 +270,7 @@ voter_register_page(struct kreq *r)
   memset(errors, 0, sizeof(errors));
  
   int error_count = 0;
-  if (OK != get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) {
+  if (OK != get_str_param(r, VALID_VOTER_LASTNAME, &lastname)) {
     errors[error_count] = (struct field_error) { "voter-lastname", "Last name field required."};
     error_count++;
   }
@@ -303,7 +302,6 @@ voter_register_page(struct kreq *r)
     errors[error_count] = (struct field_error) { "voter-mailstate", "Mailing state required."};
     error_count++;
   }
-  DBG("mailstate: %s\n", mailstate);
   if (OK != get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate)) {
     errors[error_count] = (struct field_error) { "voter-birthdate", "Date of birth field required."};
     error_count++;
@@ -320,7 +318,6 @@ voter_register_page(struct kreq *r)
     errors[error_count] = (struct field_error) { "voter-idinfo", "ID field required."};
     error_count++;
   }
-
   if(0 == error_count) {
     int64_t voter_id;
     status_t reg_status = register_voter(r->arg,
@@ -369,10 +366,19 @@ voter_register_page(struct kreq *r)
 status_t
 do_voter_updateinfo(struct kreq *r, int64_t voter_id)
 {
-  const char *lastname, *givennames,
-             *resaddress, *resaddress2, *reszip, *resstate,
-             *mailaddress, *mailaddress2, *mailzip, *mailstate,
-             *party, *idinfo;
+  const char *lastname = "";
+  const char *givennames = "";
+  const char *resaddress = "";
+  const char *resaddress2 = "";
+  const char *reszip = "";
+  const char *resstate = "";
+  const char *mailaddress = "";
+  const char *mailaddress2 = "";
+  const char *mailzip = "";
+  const char *mailstate = "";
+  const char *party = "";
+  const char *idinfo = "";
+
   time_t birthdate;
   size_t idinfo_sz;
   enum regstatus status;
@@ -561,6 +567,7 @@ voter_check_status_page(struct kreq *r)
     status_t lookup = lookup_voter_information(r->arg, lastname, givennames, birthddate,
                                                0, /*  IMPORTANT: this block confidential voters! */
                                                &voters);
+                                               
     if (OK == lookup) {
       struct kjsonreq req;
 
@@ -626,6 +633,7 @@ main(int argc, char **argv)
     if (openok != OK) {
       return EXIT_FAILURE;
     }
+    database_name = argv[1];
 
     flush_old_sessions(ctxt, 5*60, 5*60);
 
