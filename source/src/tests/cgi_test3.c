@@ -14,11 +14,6 @@ child(void *arg)
 }
 
 static int
-do_test(const char *req, long code)
-{
-}
-
-static int
 parent(void *fp)
 {
   CURL *curl;
