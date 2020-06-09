@@ -1,6 +1,7 @@
 # defaults, if no environment variables set
 
 BVRS_RISCV ?= 0
+BVRS_LLVM ?= 0
 BVRS_OS ?= linux
 
 ifeq ($(BVRS_RISCV),1)
