@@ -10,7 +10,7 @@ ifeq ($(BVRS_RISCV),1)
     ARCH_STR ?= riscv64-unknown-${BVRS_OS}
     ifeq ($(BVRS_LLVM),0)
     	# for GCC, ome defaults to get going
-	    ARCH_STR ?= riscv64-unknown-${BVRS_OS}-gnu
+	    ARCH_STR = riscv64-unknown-${BVRS_OS}-gnu
 	    CC ?= ${ARCH_STR}-gcc
 	    LD ?= ${ARCH_STR}-ld
 	    AR ?= ${ARCH_STR}-ar
