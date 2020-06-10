@@ -10,11 +10,12 @@
 #include <unistd.h>
 #include <kcgi.h>
 #include <kcgijson.h>
-#include "backend.h"
 #include <stdlib.h>
 #include <err.h>
-
+#include <sys/queue.h>
 #include <sqlbox.h>
+
+#include "backend.h"
 #include "db.h"
 #include "sqlite3.h"
 
@@ -458,21 +459,6 @@ end_official_session(bvrs_ctxt_t *ctxt,
     return OK;
 }
 
-int official_query_callback(void *q, int argc, char **argv, 
-                    char **azColName) {
-    
-    struct voter *p;
-    DBG("---------------------------------------------------------\n  ");
-    for (int i = 0; i < argc; i++) {
-        char* val = argv[i] ? argv[i] : "NULL";
-        DBG("%s = %s\n", azColName[i], val);
-    }
-    p->id = 33;
-    TAILQ_INSERT_TAIL((struct voter_q*)q, p, _entries);
-
-    return 0;
-}
-
 status_t official_query(char *database_name,
                         const char *field_name,
                         const char *field_contains,
@@ -483,7 +469,7 @@ status_t official_query(char *database_name,
                         bool invert_date_selection,
                         tristate_t active_status,
                         tristate_t updated_status,
-                        struct voter_q *q)
+                        struct voter_q **q)
 {
     int max_parms = 9;
     int parmcnt = 0;
@@ -491,7 +477,26 @@ status_t official_query(char *database_name,
     char *fragment;
     sqlite3_stmt *res;
     char *err_msg = 0;
-    char *stmt = "SELECT * FROM voter WHERE";
+    char *stmt =
+    "SELECT id, "
+    "lastname, "
+    "givennames, "
+    "resaddress, "
+    "resaddress2, "
+    "reszip, "
+    "resstate, "
+    "mailaddress, "
+    "mailaddress2, "
+    "mailzip, "
+    "mailstate, "
+    "registeredparty, "
+    "birthdate, "
+    "idinfo, "
+    "status, "
+    "initialregtime, "
+    "lastupdatetime, "
+    "confidential "
+    "FROM voter WHERE";
 
     struct sqlite3 *ppDb;
     DBG("opening db: %s\n", database_name);
@@ -536,21 +541,49 @@ status_t official_query(char *database_name,
         asprintf(&stmt, "%s %s", stmt, fragment);
     }
 
-    // TODO: How do we determine an updated record?    
-    DBG("%s\n", stmt);
-    
+    // TODO: How do we determine an updated record?
+    DBG("SQL: %s\n", stmt);
 
-    TAILQ_INIT(q);
-    
-    status = sqlite3_exec(ppDb, stmt, official_query_callback, &q, &err_msg);
+    status = sqlite3_prepare_v2(ppDb, stmt, -1, &res, NULL);
+
     if (status != SQLITE_OK ) {
-        DBG("SQL error: %s\n", err_msg);
-        sqlite3_free(err_msg);        
+        DBG("SQL error: %s\n", sqlite3_errmsg(ppDb));
         sqlite3_close(ppDb);
         return ERROR;
     } 
-    DBG("Done\n");
 
+    while ((status = sqlite3_step(res)) == SQLITE_ROW) {
+        struct voter *p = malloc(sizeof(struct voter));
+
+        p->id               = sqlite3_column_int(res, 0);
+        p->lastname         = strdup(sqlite3_column_text(res, 1));
+        p->givennames       = strdup(sqlite3_column_text(res, 2));
+        p->resaddress       = strdup(sqlite3_column_text(res, 3));
+        p->resaddress2      = strdup(sqlite3_column_text(res, 4));
+        p->reszip           = strdup(sqlite3_column_text(res, 5));
+        p->resstate         = strdup(sqlite3_column_text(res, 6));
+        p->mailaddress      = strdup(sqlite3_column_text(res, 7));
+        p->mailaddress2     = strdup(sqlite3_column_text(res, 8));
+        p->mailzip          = strdup(sqlite3_column_text(res, 9));
+        p->mailstate        = strdup(sqlite3_column_text(res, 10));
+        p->registeredparty  = strdup(sqlite3_column_text(res, 11));
+        p->birthdate        = sqlite3_column_int(res, 12);
+        p->idinfo           = strdup(sqlite3_column_text(res, 13));
+        p->status           = sqlite3_column_int(res, 14);
+        p->initialregtime   = sqlite3_column_int(res, 15);
+        p->lastupdatetime   = sqlite3_column_int(res, 16);
+        p->confidential     = sqlite3_column_int(res, 17);
+
+        TAILQ_INSERT_TAIL(*q, p, _entries);
+    }
+    if (status != SQLITE_DONE) {
+        DBG("error: %s\n", sqlite3_errmsg(ppDb));
+        sqlite3_close(ppDb);
+        return ERROR;
+    }
+    
+    sqlite3_finalize(res);
+    DBG("Done\n");
     sqlite3_close(ppDb);
     return OK;
 }

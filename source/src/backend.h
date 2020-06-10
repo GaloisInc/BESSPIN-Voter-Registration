@@ -234,7 +234,7 @@ status_t official_query(char *database_name,
                         bool invert_date_selection,
                         tristate_t active_status,
                         tristate_t updated_status,
-                        struct voter_q *voters
+                        struct voter_q **voters
 );
 
 /* Create a new election official session.

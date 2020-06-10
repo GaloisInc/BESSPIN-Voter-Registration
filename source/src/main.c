@@ -215,7 +215,7 @@ official_query_voters(struct kreq *r)
   // Fetch boolean modifiers. All default to false
   get_bool_param2(r, "select-active", &select_active);
   get_bool_param2(r, "select-updated", &select_updated);
-  get_bool_param2(r, "field-invert", &invert_contains);
+  get_bool_param2(r, "invert-contains", &invert_contains);
   get_bool_param2(r, "date-invert", &invert_date_selection);
 
   get_str_param2(r, "field-contains", &field_contains);
@@ -226,18 +226,24 @@ official_query_voters(struct kreq *r)
   get_int_param2(r, "date-from", &date_from);
   get_int_param2(r, "date-thru", &date_thru);
 
-  struct voter_q *voters;
+  struct voter_q *q = malloc(sizeof(struct voter_q));
+	if (q == NULL) {
+		perror(NULL);
+		exit(EXIT_FAILURE);
+	}
+	TAILQ_INIT(q);
+
 
   status_t lookup = official_query(database_name, field_name,
   field_contains, invert_contains, date_field, date_from, date_thru,
-  invert_date_selection, select_active, select_updated, voters);
-
+  invert_date_selection, select_active, select_updated, &q);
+  
   if (OK == lookup) {
       struct kjsonreq req;
       http_open(r, KHTTP_200);
       kjson_open(&req, r);
       kjson_obj_open(&req);
-      json_voter_array(&req, voters);
+      json_voter_array(&req, q);
       kjson_obj_close(&req);
       kjson_close(&req);
   } else {
