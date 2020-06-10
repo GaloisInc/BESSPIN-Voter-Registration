@@ -6,7 +6,7 @@ $(document).ready(function(){
     // Voter registration verification
     $("form#official_query_form").submit(function(e){
     	e.preventDefault();
-    	
+
         console.log("Query Clicked");
 
         $.ajax({
@@ -17,29 +17,30 @@ $(document).ready(function(){
                 console.log(result);
                 // No results
                 if(result["voter_q"][0] == undefined) {
-                    console.log("no results");
+                    console.log("GET from server returned no results");
+                    empty_table();
                 }
 
-                // $.each(result["voter_q"][0], function(index, value) {
-                //     console.log("voter-" + index + "-display", value);
-                //     // convert date values
-                //     if(index.includes("time") || index.includes("date")) {
-                //         var d = new Date(0);
-                //         d.setUTCSeconds(value);
-                //         value = d.toUTCString();
-                //     }
-                //     if(index.includes("confidential")) {
-                //         value = value ? "TRUE" : "FALSE";
-                //     }
-                //     $("#voter-" + index + "-display").text(value);
-                // });
-                console.log("success");
+                
+                console.log("GET Query from server succeeded");
                 console.log(result);
+
+                emptyTable();
+				
+				result_a = JSON.parse(result);
+                $.each(result_a["voter_q"], function(index, value) {
+                	console.log("Adding Voter To Table");
+                	console.log(value);
+                	addVoterToTable(value);
+                });
 
             },
             error: function(xhr, result, text) {
                 // Handle Form Errors
-                console.log("backend returned an error");
+                console.log("Server returned an error");
+
+                showError();
+
             }
         });
     });
@@ -67,19 +68,15 @@ function emptyTable(){
         </table>`;
 }
 
-function addVoterToTable(/*voter*/){
-	
-	var voter = '{"voter_q":[{"id":101,"lastname":"lastname","givennames":"firstname","resaddress":"1234 address","mailaddress":"1234 address","registeredparty":"whig","birthdate":507859200,"idinfo":"YmxvYjE=","status":0,"initialregtime":0,"lastupdatetime":0,"confidential":0}]}';
-
-	jsonData = JSON.parse(voter);
+function addVoterToTable(voter){
 
 	var div = document.getElementById("queryTable");
 
-	var ID = String(jsonData['voter_q'][0]["id"]);
+	var ID = String(voter["id"]);
 
 	var status;
 
-	if (jsonData['voter_q'][0]["status"] === '0'){
+	if (voter["status"] === '0'){
 		status = "<td> Inactive </td>";
 	}
 	else{
@@ -89,14 +86,14 @@ function addVoterToTable(/*voter*/){
 	div.innerHTML += "<tr>" + 
 					'<td><input type="checkbox" id="' + ID + '" name="' + ID + '"></td>' +
 					"<td>" + ID + "</td>" +
-					"<td>"+ jsonData['voter_q'][0]["givennames"] + "</td>" +
-					"<td>" + jsonData['voter_q'][0]["lastname"] + "</td>" +
-					"<td>" + jsonData['voter_q'][0]["resaddress"] + "</td>" +
-					"<td>" + jsonData['voter_q'][0]["mailaddress"] + "</td>" +
-					"<td>" + jsonData['voter_q'][0]["registeredparty"] + "</td>" +
-					"<td>" + formatDate(jsonData['voter_q'][0]["birthdate"]) + "</td>" +
-					"<td>" + formatDate(jsonData['voter_q'][0]["initialregtime"]) + "</td>" + 
-					"<td>" + formatDate(jsonData['voter_q'][0]["lastupdatetime"]) + "</td>" + 
+					"<td>"+ voter["givennames"] + "</td>" +
+					"<td>" + voter["lastname"] + "</td>" +
+					"<td>" + voter["resaddress"] + "</td>" +
+					"<td>" + voter["mailaddress"] + "</td>" +
+					"<td>" + voter["registeredparty"] + "</td>" +
+					"<td>" + formatDate(voter["birthdate"]) + "</td>" +
+					"<td>" + formatDate(voter["initialregtime"]) + "</td>" + 
+					"<td>" + formatDate(voter["lastupdatetime"]) + "</td>" + 
 					status +
 					"</tr>";
 
@@ -115,4 +112,11 @@ function formatDate(epoch_time) {
         day = '0' + day;
 
     return [year, month, day].join('-');
+}
+
+function showError(){
+	var div = document.getElementById("queryDataInner");
+	div.innerHTML = "Server returned an error. See console for details";
+	
+
 }
