@@ -499,6 +499,8 @@ status_t official_query(char *database_name,
     "FROM voter WHERE";
 
     struct sqlite3 *ppDb;
+    char* and = "";
+
     DBG("opening db: %s\n", database_name);
     int status = sqlite3_open(database_name, &ppDb);
     if(SQLITE_OK != status) {
@@ -519,17 +521,20 @@ status_t official_query(char *database_name,
         asprintf(&fragment, fragment, field_name, field_contains);
         asprintf(&stmt, "%s %s", stmt, fragment);
         free(fragment);
+        and = "AND";
     }
 
     if(date_field != NULL && strlen(date_field) > 0) {
+
         if(invert_date_selection) {
             fragment = "%s NOT BETWEEN %d AND %d";
         } else {
             fragment = "%s BETWEEN %d AND %d";
         }
         asprintf(&fragment, fragment, date_field, date_from, date_thru);
-        asprintf(&stmt, "%s %s", stmt, fragment);
+        asprintf(&stmt, "%s %s %s", stmt, and, fragment);
         free(fragment);
+        and = "AND";
     }
 
     if(NOT_DEF != active_status) {
@@ -538,7 +543,7 @@ status_t official_query(char *database_name,
         } else {
             fragment = "active = 1";
         }
-        asprintf(&stmt, "%s %s", stmt, fragment);
+        asprintf(&stmt, "%s %s %s", stmt, and, fragment);
     }
 
     // TODO: How do we determine an updated record?

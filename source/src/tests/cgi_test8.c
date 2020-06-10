@@ -34,7 +34,8 @@ static int
 parent(void *fp)
 {
   do_test("http://localhost:17123/official_query_voters.json?"
-          "field-name=lastname&field-contains=lastname",
+          "field-name=lastname&field-contains=lastname"
+          "&date-field=birthdate&date-thru=2020-01-01",
           200);
 
   printf("\n[cgi8] Test Passed.\n");

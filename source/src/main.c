@@ -105,6 +105,7 @@ empty_json(struct kreq *r)
   kjson_close(&req);
 }
 
+
 status_t
 get_int_param(struct kreq *r, enum valid_keys key, int64_t *int_val)
 {
@@ -116,6 +117,12 @@ get_int_param(struct kreq *r, enum valid_keys key, int64_t *int_val)
   DBG("get_int_param: %s (%d) --> NOT_FOUND\n", valid_keys[key].name, key);
   return NOT_FOUND;
 }
+
+status_t
+get_date_param2(struct kreq *r, char* key, time_t time) {
+  
+}
+
 
 /**
  * Fetches "non-valid" integer parameter which are not part of 
