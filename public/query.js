@@ -1,5 +1,52 @@
 
 
+$(document).ready(function(){
+
+
+    // Voter registration verification
+    $("form#official_query_form").submit(function(e){
+    	e.preventDefault();
+    	
+        console.log("Query Clicked");
+
+        $.ajax({
+            url : 'official_query_voters', 
+            type : "GET",
+            data : $("#official_query_form").serialize(),
+            success : function(result) {
+                console.log(result);
+                // No results
+                if(result["voter_q"][0] == undefined) {
+                    console.log("no results");
+                }
+
+                // $.each(result["voter_q"][0], function(index, value) {
+                //     console.log("voter-" + index + "-display", value);
+                //     // convert date values
+                //     if(index.includes("time") || index.includes("date")) {
+                //         var d = new Date(0);
+                //         d.setUTCSeconds(value);
+                //         value = d.toUTCString();
+                //     }
+                //     if(index.includes("confidential")) {
+                //         value = value ? "TRUE" : "FALSE";
+                //     }
+                //     $("#voter-" + index + "-display").text(value);
+                // });
+                console.log("success");
+                console.log(result);
+
+            },
+            error: function(xhr, result, text) {
+                // Handle Form Errors
+                console.log("backend returned an error");
+            }
+        });
+    });
+
+});
+
+
 function emptyTable(){
 	var div = document.getElementById("queryDataInner");
 

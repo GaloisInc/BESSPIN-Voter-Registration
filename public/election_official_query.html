@@ -4,13 +4,12 @@
 <title>BESSPIN Voter Registration System</title>
 
 <head>
+    <script src="jquery-3.5.1.min.js"></script>
     <script src="query.js" charset="utf-8" defer></script>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
-
-    <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
 
     <div id=headerDiv>
         <h1>
@@ -19,10 +18,10 @@
 
         <div class=dataFormOuter>
         <div class=dataFormInner>
-            <form enctype="multipart/form-data" method=post action="official_query_voters">
+            <form enctype="multipart/form-data" id="official_query_form" method="POST" action="official_query_voters">
             	
-                <label class=firstColLabel for="fields-name">Field:</label>
-        		<select class=firstColInput id="fields-name" name="field-name">
+                <label class=firstColLabel for="field-name">Field:</label>
+        		<select class=firstColInput id="field-name" name="field-name">
                     <option></option>
         			<option>id</option>
         			<option>lastname</option>
@@ -34,7 +33,7 @@
         		</select>
 
                 <label class=secondColLabelVariable for="field-contains">Field Contains:</label>
-                <input class=secondColInput type="text" id="filed-contains" name="filed_contains">
+                <input class=secondColInput type="text" id="field-contains" name="field-contains">
                 <label class=secondColLabelVariable for="invert-contains">Invert Selection:</label>
                 <input class=secondColInput type="checkbox" id="invert-contains" name="invert-contains">
 
@@ -57,17 +56,17 @@
                     <option>initialregtime</option>
                     <option>lastupdatetime</option>
                 </select>
-                <label class=secondColLabelVariable for="start_date">between:</label>
-                <input class=secondColInput type="date" id="start_date" name="start_date">
-                <label class=secondColLabelVariable for="end_date">and:</label>
-                <input class=secondColInput type="date" id="end_date" name="end_date">
-                <label class=secondColLabelVariable for="date_invert">Invert Selection:</label>
-                <input class=secondColInput type="checkbox" id="date_invert" name="date_invert">
+                <label class=secondColLabelVariable for="date-from">between:</label>
+                <input class=secondColInput type="date" id="date-from" name="date-from">
+                <label class=secondColLabelVariable for="date-thru">and:</label>
+                <input class=secondColInput type="date" id="date-thru" name="date-thru">
+                <label class=secondColLabelVariable for="date-invert">Invert Selection:</label>
+                <input class=secondColInput type="checkbox" id="date-invert" name="date-invert">
 
                 <br><br>
 
                 <label class=firstColLabel for="submit"> </label>
-                <input class=formButton type="submit" value="Search">
+                <input class=formButton id="submit_voter_query" type="submit" value="Search">
             </form>
         </div>
         </div>
