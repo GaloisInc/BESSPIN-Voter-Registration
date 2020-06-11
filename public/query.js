@@ -10,11 +10,13 @@ $(document).ready(function(){
             .map(function(){ return this.id}).get();
         console.log(ids);
         console.log(ids.join());
-        $("#voter_ids").val(ids.join());
+        $("#voter-ids").val(ids.join());
+        $("form#offical_update_voters").trigger("change");
+        console.log($("form#offical_update_voters").serialize());
         $.ajax({
             url  : 'official_update_voters',
             type : 'GET',
-            data : $("#official_update_voters").serialize(),
+            data : $("form#offical_update_voters").serialize(),
             success : function(result) {
 
             },

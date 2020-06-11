@@ -15,6 +15,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#define _GNU_SOURCE 
+
 #if HAVE_ERR
 # include <err.h>
 #endif
@@ -214,10 +216,83 @@ get_blob_param(struct kreq *r, enum valid_keys key, const char **buf, size_t *bu
   return NOT_FOUND;
 }
 
+static char *util_cat(char *dest, char *end, const char *str)
+{
+    while (dest < end && *str)
+        *dest++ = *str++;
+    return dest;
+}
+
+size_t join_str(char *out_string, size_t out_bufsz, const char *delim, char **chararr)
+{
+    char *ptr = out_string;
+    char *strend = out_string + out_bufsz;
+    while (ptr < strend && *chararr)
+    {
+        ptr = util_cat(ptr, strend, *chararr);
+        chararr++;
+        if (*chararr)
+            ptr = util_cat(ptr, strend, delim);
+    }
+    return ptr - out_string;
+}
+
 static void
 official_update_voters(struct kreq *r)
 {
   struct kjsonreq req;
+  const char *voter_idstr = "";
+  int64_t mark_as_active = 0;
+  int64_t mark_as_inactive = 0;
+  int64_t mark_as_confidential = 0;
+  int64_t mark_as_not_confidential = 0; 
+  char *rest = NULL;
+  char * clean_ids = NULL;
+  char *token = NULL;
+  int token_count = 0;
+  int voter_ids[100]; // Maximum records after that we stop processing
+  char *update_stmt = "";
+  size_t claned_id_cnt = 0;
+
+  get_int_param2(r, "mark-as-active", &mark_as_active);
+  get_int_param2(r, "mark-as-inactive", &mark_as_inactive);
+  get_int_param2(r, "mark-as-confidential", &mark_as_confidential);
+  get_int_param2(r, "mark-as-not-confidential", &mark_as_not_confidential);
+
+  if(mark_as_active) {
+    asprintf(&update_stmt, "status = 1");
+  } else if (mark_as_inactive) {
+    asprintf(&update_stmt, "status = 0");
+  }
+
+  if(mark_as_confidential) {
+    asprintf(&update_stmt, "%s confidential = 1", strlen(update_stmt) > 0 ? " AND" : "");
+  } else if (mark_as_not_confidential) {
+    asprintf(&update_stmt, "%s confidential = 0", strlen(update_stmt) > 0 ? " AND" : "");
+  }
+
+  get_str_param2(r, "voter-ids", &voter_idstr);
+  if(strlen(voter_idstr) > 0) {
+    char* tokstr = strdup(voter_idstr);
+    for(token = strtok_r(tokstr, ",", &rest); token != NULL; token = strtok_r(NULL, ",", &rest)) {
+      voter_ids[token_count] = atoi(token);
+      token_count++;
+    }
+  }
+  DBG("token count: %d\n", token_count);
+  for(int i=0; i<token_count; i++) {
+    DBG("voter id %d\n", voter_ids[i]);
+  }
+
+  if(strlen(update_stmt) == 0) {
+    DBG("No update actions reqested\n");
+  } else {
+    // todo: passing unclean voter_id list like this is open to
+    // injection attacks;
+    char *stmt = "UPDATE voter SET %s WHERE voter.id IN (%s)";
+    asprintf(&stmt, stmt, update_stmt, voter_idstr);
+    DBG("SQL: %s\n", stmt);
+  }
   
   http_open(r, KHTTP_200);
   empty_json(r);
