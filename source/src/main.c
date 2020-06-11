@@ -119,8 +119,18 @@ get_int_param(struct kreq *r, enum valid_keys key, int64_t *int_val)
 }
 
 status_t
-get_date_param2(struct kreq *r, char* key, time_t time) {
-  
+get_date_param2(struct kreq *r, char* key, time_t *time) {
+  for(size_t i=0; i < r->fieldsz; i++) {
+    if(strcmp(r->fields[i].key, key) == 0) {
+      if(!kvalid_date(&r->fields[i])) {
+        return ERROR;
+      } else {
+        *time = r->fields[i].parsed.i;
+        return OK;
+      }
+    }
+  }
+  return NOT_FOUND;
 }
 
 
@@ -215,7 +225,11 @@ official_query_voters(struct kreq *r)
   bool select_active = false;
   bool select_updated = false;
   bool invert_date_selection = false;
+  int error_count = 0;
+  int num_fields = 8;
+  struct field_error errors[num_fields];
 
+  memset(errors, 0, sizeof(errors));
   
   DBG("official_query_voters\n");
 
@@ -230,8 +244,14 @@ official_query_voters(struct kreq *r)
 
   get_str_param2(r, "date-field", &date_field);
 
-  get_int_param2(r, "date-from", &date_from);
-  get_int_param2(r, "date-thru", &date_thru);
+  if(ERROR == get_date_param2(r, "date-from", &date_from)) {
+    errors[error_count] = (struct field_error) { "date-from", "Invalid Date."};
+    error_count++;
+  }
+  if(ERROR == get_date_param2(r, "date-thru", &date_thru)) {
+    errors[error_count] = (struct field_error) { "date-thru", "Invalid Date."};
+    error_count++;
+  }
 
   struct voter_q *q = malloc(sizeof(struct voter_q));
 	if (q == NULL) {
@@ -240,13 +260,49 @@ official_query_voters(struct kreq *r)
 	}
 	TAILQ_INIT(q);
 
+  DBG(
+    "field-name: %s\n"
+    "field-contains: %s\n"
+    "field-invert: %d\n"
+    "date-field: %s\n"
+    "date-from: %ld\n"
+    "date-thru: %ld\n"
+    "date-invert: %d\n"
+    "select-updated: %d\n"
+    "select-active: %d\n",
+    field_name,
+    field_contains,
+    invert_contains,
+    date_field,
+    date_from,
+    date_thru,
+    invert_date_selection,
+    select_updated,
+    select_active
+  );
+
+  struct voter_q *voters;
 
   status_t lookup = official_query(database_name, field_name,
   field_contains, invert_contains, date_field, date_from, date_thru,
   invert_date_selection, select_active, select_updated, &q);
   
-  if (OK == lookup) {
-      struct kjsonreq req;
+  struct kjsonreq req;
+
+  if(error_count) {
+    // Form generated errors
+    http_open(r, KHTTP_400);
+    kjson_open(&req, r);
+    kjson_obj_open(&req); // {
+    kjson_objp_open(&req, "errors"); // "errors:" {
+    kjson_putintp(&req, "count", error_count);
+    for(int i=0; i<error_count; i++) {
+      kjson_putstringp(&req, errors[i].field, errors[i].desc);
+    }
+    kjson_obj_close(&req); //    }
+    kjson_obj_close(&req); // }
+    kjson_close(&req);
+  } else if (OK == lookup) {
       http_open(r, KHTTP_200);
       kjson_open(&req, r);
       kjson_obj_open(&req);
@@ -373,7 +429,6 @@ voter_register_page(struct kreq *r)
     kjson_obj_close(&req); // }
     kjson_close(&req);
   }
-
 }
 
 status_t
