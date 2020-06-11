@@ -215,6 +215,7 @@ get_blob_param(struct kreq *r, enum valid_keys key, const char **buf, size_t *bu
 static void
 official_query_voters(struct kreq *r)
 {
+  struct kjsonreq req;
   const char *field_name = "";
   const char *field_contains = "";
   const char *date_field = "";
@@ -225,6 +226,7 @@ official_query_voters(struct kreq *r)
   bool select_active = false;
   bool select_updated = false;
   bool invert_date_selection = false;
+  status_t lookup;
   int error_count = 0;
   int num_fields = 8;
   struct field_error errors[num_fields];
@@ -240,9 +242,34 @@ official_query_voters(struct kreq *r)
   get_bool_param2(r, "date-invert", &invert_date_selection);
 
   get_str_param2(r, "field-contains", &field_contains);
+
   get_str_param2(r, "field-name", &field_name);
+  if(field_name != NULL && strlen(field_name)) {
+    if(!(strcmp(field_name,"lastname") == 0 || 
+         strcmp(field_name, "givennames") == 0 ||
+         strcmp(field_name, "resaddress") == 0 ||
+         strcmp(field_name, "resaddress2") == 0 ||
+         strcmp(field_name, "reszip") == 0 ||
+         strcmp(field_name, "resstate") == 0 ||
+         strcmp(field_name, "mailaddress") == 0 ||
+         strcmp(field_name, "mailaddress2") == 0 ||
+         strcmp(field_name, "mailzip") == 0 ||
+         strcmp(field_name, "mailstate") == 0)) {
+
+         errors[error_count] = (struct field_error) { "field_name", "Invalid field-name"};
+         error_count++;
+    }
+  }
 
   get_str_param2(r, "date-field", &date_field);
+  if("date-field" != NULL && strlen("date-field")) {
+    if( !(strcmp(date_field,"birthdate") == 0 || 
+          strcmp(date_field, "initialregtime") == 0 ||
+          strcmp(date_field, "lastupdatetime") == 0) ) {
+          errors[error_count] = (struct field_error) { "date-field", "Invalid date-field"};
+          error_count++;
+    }
+  }
 
   if(ERROR == get_date_param2(r, "date-from", &date_from)) {
     errors[error_count] = (struct field_error) { "date-from", "Invalid Date."};
@@ -253,12 +280,28 @@ official_query_voters(struct kreq *r)
     error_count++;
   }
 
+  if(error_count) {
+    // Form generated errors
+    http_open(r, KHTTP_400);
+    kjson_open(&req, r);
+    kjson_obj_open(&req); // {
+    kjson_objp_open(&req, "errors"); // "errors:" {
+    kjson_putintp(&req, "count", error_count);
+    for(int i=0; i<error_count; i++) {
+      kjson_putstringp(&req, errors[i].field, errors[i].desc);
+    }
+    kjson_obj_close(&req); //    }
+    kjson_obj_close(&req); // }
+    kjson_close(&req);
+    return;
+  }
+
   struct voter_q *q = malloc(sizeof(struct voter_q));
-	if (q == NULL) {
-		perror(NULL);
-		exit(EXIT_FAILURE);
-	}
-	TAILQ_INIT(q);
+  if (q == NULL) {
+    perror(NULL);
+    exit(EXIT_FAILURE);
+  }
+  TAILQ_INIT(q);
 
   DBG(
     "field-name: %s\n"
@@ -283,26 +326,11 @@ official_query_voters(struct kreq *r)
 
   struct voter_q *voters;
 
-  status_t lookup = official_query(database_name, field_name,
+  lookup = official_query(database_name, field_name,
   field_contains, invert_contains, date_field, date_from, date_thru,
   invert_date_selection, select_active, select_updated, &q);
-  
-  struct kjsonreq req;
 
-  if(error_count) {
-    // Form generated errors
-    http_open(r, KHTTP_400);
-    kjson_open(&req, r);
-    kjson_obj_open(&req); // {
-    kjson_objp_open(&req, "errors"); // "errors:" {
-    kjson_putintp(&req, "count", error_count);
-    for(int i=0; i<error_count; i++) {
-      kjson_putstringp(&req, errors[i].field, errors[i].desc);
-    }
-    kjson_obj_close(&req); //    }
-    kjson_obj_close(&req); // }
-    kjson_close(&req);
-  } else if (OK == lookup) {
+  if (OK == lookup) {
       http_open(r, KHTTP_200);
       kjson_open(&req, r);
       kjson_obj_open(&req);
