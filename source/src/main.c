@@ -122,6 +122,9 @@ status_t
 get_date_param2(struct kreq *r, char* key, time_t *time) {
   for(size_t i=0; i < r->fieldsz; i++) {
     if(strcmp(r->fields[i].key, key) == 0) {
+      if(strlen(r->fields[i].val) < 1) {
+        return NOT_FOUND;
+      }
       if(!kvalid_date(&r->fields[i])) {
         return ERROR;
       } else {
@@ -211,6 +214,12 @@ get_blob_param(struct kreq *r, enum valid_keys key, const char **buf, size_t *bu
   return NOT_FOUND;
 }
 
+static void
+official_update_voters(struct kreq *r)
+{
+  struct kjsonreq req;
+  
+}
 
 static void
 official_query_voters(struct kreq *r)
@@ -244,7 +253,7 @@ official_query_voters(struct kreq *r)
   get_str_param2(r, "field-contains", &field_contains);
 
   get_str_param2(r, "field-name", &field_name);
-  if(field_name != NULL && strlen(field_name)) {
+  if(field_name != NULL && strlen(field_name) > 0) {
     if(!(strcmp(field_name,"lastname") == 0 || 
          strcmp(field_name, "givennames") == 0 ||
          strcmp(field_name, "resaddress") == 0 ||
@@ -262,7 +271,7 @@ official_query_voters(struct kreq *r)
   }
 
   get_str_param2(r, "date-field", &date_field);
-  if("date-field" != NULL && strlen("date-field")) {
+  if("date-field" != NULL && strlen(date_field) > 0) {
     if( !(strcmp(date_field,"birthdate") == 0 || 
           strcmp(date_field, "initialregtime") == 0 ||
           strcmp(date_field, "lastupdatetime") == 0) ) {
@@ -754,6 +763,9 @@ main(int argc, char **argv)
         break;
       case PAGE_OFFICIAL_QUERY_VOTERS:
         official_query_voters(&r);
+        break;
+      case PAGE_OFFICIAL_UPDATE_VOTERS:
+        official_update_voters(&r);
         break;
       default:
         http_open(&r, KHTTP_404);
