@@ -219,6 +219,8 @@ official_update_voters(struct kreq *r)
 {
   struct kjsonreq req;
   
+  http_open(r, KHTTP_200);
+  empty_json(r);
 }
 
 static void

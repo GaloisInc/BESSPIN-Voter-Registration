@@ -74,7 +74,7 @@
 
     <br><br>
 
-    <form enctype="multipart/form-data" method=post action="offical_update_voters">
+    <form enctype="multipart/form-data" method=post  id="offical_update_voters" action="offical_update_voters">
         
         <div class=centeredDiv id=queryData>
         <div id=queryDataInner>
@@ -90,29 +90,31 @@
         <div class=flexDiv>
 
             <div class=flexMemberDiv>
-                <label for="mark_as_active">Mark as Active:</label>
-                <input type="checkbox" id="mark_as_active" name="mark_as_active">
+                <label for="mark-as-active">Mark as Active:</label>
+                <input type="checkbox" name="mark-as-active" id="mark-as-active" name="mark-as-active">
                 <br><br>
             </div>
             <div class=flexMemberDiv>
-                <label for="mark_as_inactive">Mark as Inactive:</label>
-                <input type="checkbox" id="mark_as_inactive" name="mark_as_inactive">
+                <label for="mark-as-inactive">Mark as Inactive:</label>
+                <input type="checkbox" name="mark-as-inactive" id="mark-as-inactive" name="mark-as-inactive">
                 <br><br>
             </div>
             <div class=flexMemberDiv>
-                <label for="delete_registrations">Delete Registrations:</label>
-                <input type="checkbox" id="delete_registrations" name="delete_registrations">
+                <label for="delete-registrations">Delete Registrations:</label>
+                <input type="checkbox" id="delete-registrations" name="delete-registrations">
                 <br><br>
             </div>
             <div class=flexMemberDiv>
-                <label for="mark_as_confidential">Mark as Confidential:</label>
-                <input type="checkbox" id="mark_as_confidential" name="mark_as_confidential">
+                <label for="mark-as-confidential">Mark as Confidential:</label>
+                <input type="checkbox" id="mark-as-confidential" name="mark-as-confidential">
                 <br><br>
             </div>
             <div class=flexMemberDiv>
-                <label for="mark_as_not_confidential">Mark as Not Confidential:</label>
-                <input type="checkbox" id="mark_as_not_confidential" name="mark_as_not_confidential">
+                <label for="mark-as-not-confidential">Mark as Not Confidential:</label>
+                <input type="checkbox" id="mark-as-not-confidential" name="mark-as-not-confidential">
             </div>
+
+            <input type="hidden" id="voter-ids" name="voter-ids">
             <div class=flexMemberDiv>
                 <label for="submit"> </label>
                 <input type="submit" value="Apply" id="submit" name="submit">

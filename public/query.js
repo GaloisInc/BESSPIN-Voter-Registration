@@ -2,8 +2,31 @@
 
 $(document).ready(function(){
 
+    // Offiical - Voter update form
+    $("form#offical_update_voters").submit(function(e){
+        e.preventDefault();
+        console.log("Update voter clicked");
+        var ids = $('input:checked[name^="vsel_"]')
+            .map(function(){ return this.id}).get();
+        console.log(ids);
+        console.log(ids.join());
+        $("#voter_ids").val(ids.join());
+        $.ajax({
+            url  : 'official_update_voters',
+            type : 'GET',
+            data : $("#official_update_voters").serialize(),
+            success : function(result) {
 
-    // Voter registration verification
+            },
+            error: function(xhr, result, text) {
+                console.log("Server returned an error");
+                showError();
+            }
+        });
+    });
+
+
+    // Official - query form
     $("form#official_query_form").submit(function(e){
     	e.preventDefault();
 
@@ -27,8 +50,7 @@ $(document).ready(function(){
 
                 emptyTable();
 				
-				result_a = JSON.parse(result);
-                $.each(result_a["voter_q"], function(index, value) {
+                $.each(result["voter_q"], function(index, value) {
                 	console.log("Adding Voter To Table");
                 	console.log(value);
                 	addVoterToTable(value);
@@ -84,7 +106,7 @@ function addVoterToTable(voter){
 	}
 
 	div.innerHTML += "<tr>" + 
-					'<td><input type="checkbox" id="' + ID + '" name="' + ID + '"></td>' +
+					'<td><input type="checkbox" id="' + ID + '" name="vsel_' + ID + '"></td>' +
 					"<td>" + ID + "</td>" +
 					"<td>"+ voter["givennames"] + "</td>" +
 					"<td>" + voter["lastname"] + "</td>" +
