@@ -1,46 +1,5 @@
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
-CREATE TABLE voter (
-	-- Unique identifier in the database.
-	id INTEGER PRIMARY KEY,
-	-- Last name
-	lastname TEXT NOT NULL,
-	-- Given names
-	givennames TEXT NOT NULL,
-	-- Residence address
-	resaddress TEXT NOT NULL,
-	-- Residence address line 2
-	resaddress2 TEXT NOT NULL,
-	-- Residence address zipcode
-	reszip TEXT NOT NULL,
-	-- Residence address state
-	resstate TEXT NOT NULL,
-	-- Mailing address
-	mailaddress TEXT NOT NULL,
-	-- Mailing address line 2
-	mailaddress2 TEXT NOT NULL,
-	-- Mailing zipcode
-	mailzip TEXT NOT NULL,
-	-- Mailing state
-	mailstate TEXT NOT NULL,
-	-- Registered party
-	registeredparty TEXT NOT NULL,
-	-- Birth date
-	-- (Stored as a UNIX epoch value.)
-	birthdate INTEGER NOT NULL,
-	-- Identification information.
-	idinfo BLOB UNIQUE NOT NULL,
-	-- Registration status.
-	status INTEGER NOT NULL,
-	-- Initial registration time.
-	-- (Stored as a UNIX epoch value.)
-	initialregtime INTEGER NOT NULL,
-	-- Last record update time.
-	-- (Stored as a UNIX epoch value.)
-	lastupdatetime INTEGER NOT NULL,
-	-- Flag for voter confidentiality.
-	confidential INTEGER NOT NULL
-);
 INSERT INTO voter VALUES(1,'Osborn','Steven','asdf','','9238','st','m addr1','','98123','sdf','SSITH',1591228800,X'616473666173646633343334',2,1591130704,1591130704,0);
 INSERT INTO voter VALUES(2,'Osborn','Steven','1991 SE Brookwood','','97123','OR','1991 SE Brookwood','','97123','OR','SSITH',1592265600,X'61647366',2,1591130908,1591130908,0);
 INSERT INTO voter VALUES(3,'Osborn','Steven','1991 SE Brookwood','','97123','OR','1991 SE Brookwood','','97123','OR','SSITH',1591660800,X'616466',2,1591133763,1591133763,0);

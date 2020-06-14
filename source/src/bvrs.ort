@@ -50,7 +50,7 @@ struct voter {
   field mailstate text limit gt 0 comment "Mailing state";
   field registeredparty text limit gt 0 comment "Registered party";
   field birthdate date comment "Birth date";
-  field idinfo blob limit gt 0 unique comment "Identification information.";
+  field idinfo blob limit gt 0 comment "Identification information.";
   field status enum regstatus comment "Registration status.";
   field initialregtime date comment "Initial registration time.";
   field lastupdatetime date comment "Last record update time.";
