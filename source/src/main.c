@@ -242,33 +242,35 @@ official_update_voters(struct kreq *r)
 {
   struct kjsonreq req;
   const char *voter_idstr = "";
-  int64_t mark_as_active = 0;
-  int64_t mark_as_inactive = 0;
-  int64_t mark_as_confidential = 0;
-  int64_t mark_as_not_confidential = 0; 
+  const char *form_action = "";
   char *rest = NULL;
   char * clean_ids = NULL;
   char *token = NULL;
   int token_count = 0;
   int voter_ids[100]; // Maximum records after that we stop processing
   char *update_stmt = "";
-  size_t claned_id_cnt = 0;
+  size_t cleaned_id_count = 0;
+  char *error = "";
+  
+  char *stmt = "UPDATE voter SET %s WHERE voter.id IN (%s)";
 
-  get_int_param2(r, "mark-as-active", &mark_as_active);
-  get_int_param2(r, "mark-as-inactive", &mark_as_inactive);
-  get_int_param2(r, "mark-as-confidential", &mark_as_confidential);
-  get_int_param2(r, "mark-as-not-confidential", &mark_as_not_confidential);
-
-  if(mark_as_active) {
-    asprintf(&update_stmt, "status = 1");
-  } else if (mark_as_inactive) {
-    asprintf(&update_stmt, "status = 0");
-  }
-
-  if(mark_as_confidential) {
-    asprintf(&update_stmt, "%s confidential = 1", strlen(update_stmt) > 0 ? " AND" : "");
-  } else if (mark_as_not_confidential) {
-    asprintf(&update_stmt, "%s confidential = 0", strlen(update_stmt) > 0 ? " AND" : "");
+  if(OK == get_str_param2(r, "form-action", &form_action)) {
+    DBG("FORM ACTION: %s\n", form_action);
+    if(strcmp("mark-confidential", form_action) == 0 ) {
+      update_stmt = "confidential = 1";
+    } else if(strcmp("mark-not-confidential", form_action) == 0) {
+      update_stmt = "confidential = 0";
+    } else if(strcmp("mark-active", form_action) == 0) {
+      update_stmt = "status = 1";
+    } else if(strcmp("mark-inactive", form_action) == 0) {
+      update_stmt = "status = 0";
+    } else if(strcmp("delete", form_action) == 0) {
+      stmt = "%s delete from voter where voter.id IN (%s)";
+    } else {
+      error = "Invalid action given";
+    }
+  } else {
+    error = "Form action is invalid or unspecified";
   }
 
   get_str_param2(r, "voter-ids", &voter_idstr);
@@ -279,23 +281,29 @@ official_update_voters(struct kreq *r)
       token_count++;
     }
   }
+  if(0 == token_count) {
+    error = "No voter-ids provided to update";
+  }
   DBG("token count: %d\n", token_count);
   for(int i=0; i<token_count; i++) {
     DBG("voter id %d\n", voter_ids[i]);
   }
 
-  if(strlen(update_stmt) == 0) {
-    DBG("No update actions reqested\n");
+  if(strlen(error) > 0) {
+    http_open(r, KHTTP_400);
+    kjson_open(&req, r);
+    kjson_objp_open(&req, "errors"); // "errors:" {
+    kjson_putstringp(&req, "all", error);
+    kjson_obj_close(&req); // }
+    kjson_close(&req);
   } else {
-    // todo: passing unclean voter_id list like this is open to
-    // injection attacks;
-    char *stmt = "UPDATE voter SET %s WHERE voter.id IN (%s)";
     asprintf(&stmt, stmt, update_stmt, voter_idstr);
     DBG("SQL: %s\n", stmt);
+    free(stmt);  
+    http_open(r, KHTTP_200);
+    empty_json(r);
   }
-  
-  http_open(r, KHTTP_200);
-  empty_json(r);
+
 }
 
 static void

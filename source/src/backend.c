@@ -581,6 +581,7 @@ status_t official_query(char *database_name,
 
         TAILQ_INSERT_TAIL(*q, p, _entries);
     }
+    free(stmt);
     if (status != SQLITE_DONE) {
         DBG("error: %s\n", sqlite3_errmsg(ppDb));
         sqlite3_close(ppDb);
