@@ -434,8 +434,6 @@ official_query_voters(struct kreq *r)
     select_active
   );
 
-  struct voter_q *voters;
-
   lookup = official_query(database_name, field_name,
   field_contains, invert_contains, date_field, date_from, date_thru,
   invert_date_selection, select_active, select_updated, &q);
@@ -451,6 +449,7 @@ official_query_voters(struct kreq *r)
     // Unknown DB Error
     http_open(r, KHTTP_500);
   }
+  db_voter_freeq(q);
 }
 
 static void
