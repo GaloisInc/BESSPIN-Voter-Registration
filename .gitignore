@@ -1,1 +1,12 @@
 .DS_Store
+*.o
+build/
+source/src/out
+source/src/db.h
+source/src/db.c
+source/src/bvrs.db
+source/src/bvrs.sql
+source/src/bvrs
+source/src/create_official
+.vscode/
+.idea/

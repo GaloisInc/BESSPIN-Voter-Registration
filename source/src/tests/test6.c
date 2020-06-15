@@ -19,5 +19,5 @@ main(int argc, char **argv)
     sess = db_voterupdatesession_get_updatecreds(ctxt, 0, 1234);
     assert(NULL == sess);
 
-    printf("Test Passed.");
+    printf("[6] Test Passed.\n");
 }

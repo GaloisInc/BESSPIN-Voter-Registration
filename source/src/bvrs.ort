@@ -14,6 +14,7 @@
 enum regstatus {
   item ACTIVE comment "Active" jslabel "Active";
   item INACTIVE comment "Inactive" jslabel "Active";
+  item PENDINGREVIEW comment "Pending Review" jslabel "Pending Review";
 };
 
 # the voting method used
@@ -40,13 +41,19 @@ struct voter {
   field lastname text limit gt 0 comment "Last name";
   field givennames text limit gt 0 comment "Given names";
   field resaddress text limit gt 0 comment "Residence address";
+  field resaddress2 text limit gt 0 comment "Residence address line 2";
+  field reszip text limit gt 0 comment "Residence address zipcode";
+  field resstate text limit gt 0 comment "Residence address state";
   field mailaddress text limit gt 0 comment "Mailing address";
+  field mailaddress2 text limit gt 0 comment "Mailing address line 2";
+  field mailzip text limit gt 0 comment "Mailing zipcode";
+  field mailstate text limit gt 0 comment "Mailing state";
   field registeredparty text limit gt 0 comment "Registered party";
-  field birthdate date limit gt 0 comment "Birth date";
-  field idinfo blob limit gt 0 unique comment "Identification information.";
+  field birthdate date comment "Birth date";
+  field idinfo blob limit gt 0 comment "Identification information.";
   field status enum regstatus comment "Registration status.";
-  field initialregtime date limit gt 0 comment "Initial registration time.";
-  field lastupdatetime date limit gt 0 comment "Last record update time.";
+  field initialregtime date comment "Initial registration time.";
+  field lastupdatetime date comment "Last record update time.";
   field confidential bit comment "Flag for voter confidentiality.";
   comment "A registered voter.";
 
@@ -67,11 +74,19 @@ struct voter {
 
   insert;
 
-  update lastname, givennames, resaddress, mailaddress, registeredparty, birthdate, idinfo, status,
-         lastupdatetime, confidential:
+  delete id;
+
+  update lastname, givennames, resaddress, resaddress2, reszip,
+         resstate, mailaddress, mailaddress2, mailzip, mailstate,
+         registeredparty, birthdate, idinfo, status, lastupdatetime,
+         confidential:
          id:
     name info
     comment "Update a voter registration record by id";
+
+  update confidential, lastupdatetime: id:
+    name confidential
+    comment "Update a voter registration confidentiality by id";
 
   update status, lastupdatetime: id:
     name status
@@ -105,6 +120,8 @@ struct electionofficial {
   field username text unique limit gt 0 comment "Username";
   field hash password limit gt 6 comment "Password (hashed)";
   comment "An election official account.";
+
+insert;
 
   search username, hash:
     name credentials

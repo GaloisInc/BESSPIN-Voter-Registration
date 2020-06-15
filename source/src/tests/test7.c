@@ -19,5 +19,5 @@ main(int argc, char **argv)
     sess_ok = new_official_session(ctxt, "love2vote", "hate2vote", &sid, &tok);
     assert(sess_ok != OK);
 
-    printf("Test Passed.");
+    printf("[7] Test Passed.\n");
 }

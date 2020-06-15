@@ -1,13 +1,14 @@
 #include <backend.h>
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "db.h"
 
 int
 main(int argc, char **argv)
 {
-    char data[16];
+    char *data = "blob1";
     time_t now;
     bvrs_ctxt_t *ctxt;
 
@@ -20,12 +21,18 @@ main(int argc, char **argv)
     status_t regok = register_voter(ctxt,
                                     "lastname",
                                     "firstname",
-                                    "addr",
-                                    "addr2",
+                                    "1234 addr",
+                                    "1234 addr2",
+                                    "00000",
+                                    "ZZ",
+                                    "1234 addr",
+                                    "1234 addr2",
+                                    "00000",
+                                    "ZZ",
                                     "whig",
                                     now,
-                                    &data[0],
-                                    sizeof(data),
+                                    data,
+                                    strlen(data),
                                     0,
                                     &id);
     assert(regok == OK);
@@ -35,11 +42,17 @@ main(int argc, char **argv)
     status_t sessionok = new_voter_session(ctxt,
                                            "lastname",
                                            "firstname",
-                                           "addr",
-                                           "addr2",
+                                           "1234 addr",
+                                           "1234 addr2",
+                                           "00000",
+                                           "ZZ",
+                                           "1234 addr",
+                                           "1234 addr2",
+                                           "00000",
+                                           "ZZ",
                                            now,
-                                           &data[0],
-                                           sizeof(data),
+                                           data,
+                                           strlen(data),
                                            0,
                                            &voter,
                                            &sid,
@@ -52,5 +65,5 @@ main(int argc, char **argv)
     status_t closeok = close_db(ctxt);
     assert(closeok == OK);
 
-    printf("Test Passed.");
+    printf("[3] Test Passed.\n");
 }

@@ -3,89 +3,40 @@ set -euo pipefail
 
 SQLITE_VERSION=3.22.0
 
-ZLIB_URL="https://www.zlib.net/zlib-1.2.11.tar.gz"
-SQLITE_URL="https://www.sqlite.org/src/tarball/sqlite.tar.gz"
-KCGI_URL="https://github.com/kristapsdz/kcgi/archive/VERSION_0_12_0.tar.gz"
-SQLBOX_URL="https://kristaps.bsd.lv/sqlbox/snapshots/sqlbox.tar.gz"
-ORT_URL="https://kristaps.bsd.lv/openradtool/snapshots/openradtool.tar.gz"
+zlib_URL="https://www.zlib.net/zlib-1.2.11.tar.gz"
+sqlite_URL="https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=version-${SQLITE_VERSION}"
+kcgi_URL="https://github.com/kristapsdz/kcgi/archive/VERSION_0_12_0.tar.gz"
+sqlbox_URL="https://github.com/kristapsdz/sqlbox/archive/VERSION_0_1_12.tar.gz"
+openradtool_URL="https://github.com/kristapsdz/openradtool/archive/VERSION_0_8_14.tar.gz"
+
+banner() {
+  echo "****"
+  echo "$1"
+  echo "****"
+}
+
+cmd_or() {
+  msg=$1
+  shift
+  if ! "$@"; then echo "$msg" > /dev/stderr && exit 1; fi
+}
+
+### Create "ext" directory if it doesn't exist
+
+banner "Ensuring 'ext' directory exists"
+mkdir -p ext
+
 ### Fetch sources ###
 
-echo "****"
-echo "Fetching zlib"
-echo "****"
-curl -L -G ${ZLIB_URL} -o ext/zlib.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error fetching zlib sources"
-    exit 1
-fi
+for tool in zlib sqlite sqlbox kcgi openradtool; do
+  banner "Fetching $tool"
+  url="${tool}_URL"
+  cmd_or "Error fetching ${tool} sources" curl -L -G "${!url}" -o ext/$tool.tar.gz
+done
 
-echo "****"
-echo "Fetching sqlite"
-echo "****"
-curl -L -G -d "r=version-${SQLITE_VERSION}" ${SQLITE_URL} --output ext/sqlite.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error fetching sqlite sources"
-    exit 1
-fi
-
-echo "****"
-echo "Fetching sqlbox"
-echo "****"
-curl -L -G ${SQLBOX_URL} -o ext/sqlbox.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error fetching sqlbox sources"
-    exit 1
-fi
-
-echo "****"
-echo "Fetching kcgi"
-echo "****"
-curl -L -G ${KCGI_URL} -o ext/kcgi.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error fetching kcgi sources"
-    exit 1
-fi
-
-echo "****"
-echo "Fetching openradtool"
-echo "****"
-curl -L -G ${ORT_URL} -o ext/ort.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error fetching kcgi sources"
-    exit 1
-fi
-
-echo "****"
-echo "Done fetching sources, unpacking"
-echo "****"
+banner "Done fetching sources, unpacking"
 
 cd ext/
-tar -xzvf zlib.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error extracting zlib"
-    exit 1
-fi
-
-tar -xzvf sqlite.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error extracting sqlite"
-    exit 1
-fi
-
-tar -xzvf sqlbox.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error extracting sqlbox"
-    exit 1
-fi
-
-tar -xzvf kcgi.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error extracting kcgi"
-    exit 1
-fi
-
-tar -xzvf ort.tar.gz
-if [ $? -ne 0 ]; then
-    echo "Error extracting openradtool"
-    exit 1
-fi
+for tool in zlib sqlite sqlbox kcgi openradtool; do
+  cmd_or "Error extracting ${tool}" tar -xzvf $tool.tar.gz
+done

@@ -1,11 +1,24 @@
 #ifndef __BACKEND__
 #define __BACKEND__
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <stdarg.h>
 #include <unistd.h>
 #include <stdint.h>
 #include <time.h>
 #include <sys/queue.h>
+#include <stdbool.h>
+
+#include <kcgi.h>
+#include <kcgijson.h>
 #include "db.h"
+
+typedef enum tristate {
+  NOT_DEF,
+  ACTIVE,
+  INACTIVE
+} tristate_t;
 
 typedef enum status {
   ERROR,
@@ -66,9 +79,15 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   const char *lastname,
                   const char *givenname,
                   const char *resaddr,
+                  const char *resaddr2,
+                  const char *reszip,
+                  const char *resstate,
                   const char *mailaddr,
+                  const char *mailaddr2,
+                  const char *mailzip,
+                  const char *mailstate,
                   time_t birthdate,
-                  void *idinfo,
+                  const void *idinfo,
                   size_t idinfo_sz,
                   int64_t confidential,
                   struct voter **the_voter,
@@ -85,6 +104,19 @@ status_t
 end_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t the_session_id,
                   int64_t the_token);
+
+/* Lookup a voter session and return the voter_id if found.
+ *
+ * Returns
+ *   OK on success
+ *   NOT_FOUND if this does not match a valid session
+ *   ERROR if some internal error occurs
+ */
+status_t
+lookup_voter_session(bvrs_ctxt_t *ctxt,
+                     int64_t the_session_id,
+                     int64_t the_token,
+                     int64_t *voter_id);
 
 /* Search for voters by lastname, givenname, birthdate, and whether or not
  * the voter is confidential.
@@ -110,13 +142,19 @@ lookup_voter_information(bvrs_ctxt_t *ctxt,
  */
 status_t
 register_voter(bvrs_ctxt_t *ctxt,
-               char *lastname,
-               char *givennames,
-               char *resaddress,
-               char *mailaddress,
-               char *registeredparty,
+               const char *lastname,
+               const char *givennames,
+               const char *resaddr,
+               const char *resaddr2,
+               const char *reszip,
+               const char *resstate,
+               const char *mailaddr,
+               const char *mailaddr2,
+               const char *mailzip,
+               const char *mailstate,
+               const char *registeredparty,
                time_t birthdate,
-               void *idinfo,
+               const void *idinfo,
                size_t idinfo_sz,
                int64_t confidential,
                int64_t *out_id);
@@ -131,13 +169,19 @@ register_voter(bvrs_ctxt_t *ctxt,
 status_t
 update_voter_information(bvrs_ctxt_t *ctxt,
                          int64_t voter_id,
-                         char *lastname,
-                         char *givennames,
-                         char *resaddress,
-                         char *mailaddress,
-                         char *registeredparty,
+                         const char *lastname,
+                         const char *givennames,
+                         const char *resaddr,
+                         const char *resaddr2,
+                         const char *reszip,
+                         const char *resstate,
+                         const char *mailaddr,
+                         const char *mailaddr2,
+                         const char *mailzip,
+                         const char *mailstate,
+                         const char *registeredparty,
                          time_t birthdate,
-                         void *idinfo,
+                         const void *idinfo,
                          size_t idinfo_sz,
                          enum regstatus status,
                          int64_t confidential);
@@ -170,6 +214,29 @@ query_voter_database(bvrs_ctxt_t *ctxt,
                      time_t birthdate_upper,
                      struct voter_q **the_voters);
 
+/**
+ * Performs a detailed query for an election official
+ * 
+ * 
+ * Returns
+ *  OK on successful query
+ *  NOT_FOUND if there are no matching records
+ *  ERROR if internal error occurs
+ */
+
+status_t official_query(char *database_name,
+                        const char *field_name,
+                        const char *field_contains,
+                        bool invert_contains,
+                        const char *date_field,
+                        time_t date_from,
+                        time_t date_thru,
+                        bool invert_date_selection,
+                        tristate_t active_status,
+                        tristate_t updated_status,
+                        struct voter_q **voters
+);
+
 /* Create a new election official session.
  *
  * username/password are the login credentials of an official in the database.
@@ -186,6 +253,18 @@ new_official_session(bvrs_ctxt_t *ctxt,
                      int64_t *session_id,
                      int64_t *token);
 
+/* Validate election official session
+*
+* Returns
+* OK if there is a active matching session
+* NOT_FOUND if there not a current / valid session matching cookie
+* ERROR if some internal error occurs
+*/
+status_t
+lookup_official_session(bvrs_ctxt_t *ctx,
+                        int64_t *session_id,
+                        int64_t *token);
+
 /* Explicitly end a session and remove it from the database.
  *
  * Returns
@@ -196,5 +275,12 @@ status_t
 end_official_session(bvrs_ctxt_t *ctxt,
                      int64_t the_session_id,
                      int64_t the_token);
+#ifdef DEBUG
+#define DBG(...) fprintf(stderr, __VA_ARGS__)
+#else
+#define DBG(...)
+#endif
+
+#define DBG_STR(_s) DBG(#_s "=%s", _s);
 
 #endif //__BACKEND__
