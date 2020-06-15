@@ -672,7 +672,7 @@ official_login_page(struct kreq *r)
 
     if(OK == session_create) {
       /*  TODO: correct time */
-      kutil_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
+      khttp_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
       khttp_head(r, kresps[KRESP_SET_COOKIE],
                 "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
                 valid_keys[VALID_ELECTIONOFFICIALSESSION_TOKEN].name, token, "", buf);
@@ -741,7 +741,7 @@ voter_login_page(struct kreq *r)
                                                 &token);
     if (OK == session_create) {
       /*  TODO: correct time */
-      kutil_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
+      khttp_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
       khttp_head(r, kresps[KRESP_SET_COOKIE],
                  "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
                  valid_keys[VALID_VOTERUPDATESESSION_TOKEN].name, token, "", buf);
