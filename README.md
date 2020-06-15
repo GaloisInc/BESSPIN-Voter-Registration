@@ -20,7 +20,7 @@ Building
        (`$OS` can be `linux-gnu`, `freebsd12.1`, etc.)
 3. Build BVRS CGI Handler: 
     - for host: `cd sources/src && make`
-    - for host: `cd sources/src && BVRS_RISCV=1 make`
+    - for riscv target: `cd sources/src && BVRS_RISCV=1 make`
 
 "Deploying" to Target
 ===
