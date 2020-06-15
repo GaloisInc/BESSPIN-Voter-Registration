@@ -22,6 +22,12 @@ main(int argc, char **argv)
                                     "firstname",
                                     "addr",
                                     "addr2",
+                                    "00000",
+                                    "ZZ",
+                                    "addr",
+                                    "addr2",
+                                    "00000",
+                                    "ZZ",
                                     "whig",
                                     now,
                                     &data[0],
@@ -50,5 +56,5 @@ main(int argc, char **argv)
     status_t closeok = close_db(ctxt);
     assert(closeok == OK);
 
-    printf("Test Passed.");
+    printf("[2] Test Passed.\n");
 }

@@ -1,21 +1,47 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
+ZLIB_PATH="ext/zlib-1.2.11"
+SQLITE_PATH="ext/sqlite"  # sqlite downloads with no version number in filename
+KCGI_PATH="ext/kcgi-VERSION_0_12_0"
+SQLBOX_PATH="ext/sqlbox-VERSION_0_1_12"
+ORT_PATH="ext/openradtool-VERSION_0_8_14"
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 TARGET_BUILD=${DIR}/../build/host
 BVRS_RISCV=${BVRS_RISCV:-0}
+BVRS_LLVM=${BVRS_LLVM:-0}
 BVRS_OS=${BVRS_OS:-linux}
 SQLITE_HOST=""
 
+if [ "${BVRS_LLVM}" -eq 1 ]; then
+    export CFLAGS="-fPIC" # explicit position-independent code flag for LLVM
+fi
+
 if [ "${BVRS_RISCV}" -eq 1 ]; then
     TARGET_BUILD=${DIR}/../build/target
-    PREFIX=riscv64-unknown-${BVRS_OS}-gnu
-    export CC=${PREFIX}-gcc
-    export CFLAGS="-I ${TARGET_BUILD}/include"
-    export LFLAGS="-L ${TARGET_BUILD}/lib"
-    export LD=${PREFIX}-ld
-    export AR=${PREFIX}-ar
     SQLITE_HOST="--host=riscv64-unknown-${BVRS_OS}"
+    export CFLAGS="-I ${TARGET_BUILD}/include"
+    export LDFLAGS="-L ${TARGET_BUILD}/lib"
+    if [ "${BVRS_LLVM}" -eq 1 ]; then
+      # assume RISC-V toolchain (CC, LD, AR) is set in environment already
+      # anything specific to RISC-V cross-compilation with LLVM goes here
+      echo CC=${CC} LD=${LD} AR=${AR}
+    else
+      # RISC-V gcc toolchain
+      PREFIX=riscv64-unknown-${BVRS_OS}-gnu
+      export CC=${PREFIX}-gcc
+      export LD=${PREFIX}-ld
+      export AR=${PREFIX}-ar
+    fi
+elif [ "${BVRS_OS}" == "freebsd" ]; then
+    # for FreeBSD's native (not RISC-V) LLVM toolchain, we need to include /usr/local
+    # in search paths, and we'll also set the compiler/linker/archiver.
+    export CFLAGS="${CFLAGS} -I/usr/local/include"
+    export LDFLAGS="${LDFLAGS} -L/usr/local/lib"
+    export CC=cc
+    export LD=ld.lld
+    export AR=llvm-ar
 fi
 
 echo "Building deps in ${TARGET_BUILD}"
@@ -23,7 +49,7 @@ export PKG_CONFIG_PATH="${TARGET_BUILD}/lib/pkgconfig"
 
 # 1. Build zlib
 if [ -z ${HAVE_ZLIB+x} ]; then
-    pushd ext/zlib-1.2.11
+    pushd ${ZLIB_PATH}
     if [ -f "configure.log" ]; then
        make distclean
     fi
@@ -34,7 +60,7 @@ fi
 
 # 2. Build sqlite
 if [ -z ${HAVE_SQLITE+x} ]; then
-    pushd ext/sqlite
+    pushd ${SQLITE_PATH}
     rm -rf build
     mkdir build
     cd build
@@ -45,7 +71,7 @@ fi
 
 # 3. Build sqlbox
 if [ -z ${HAVE_SQLBOX+x} ]; then
-    pushd ext/sqlbox-0.1.12
+    pushd ${SQLBOX_PATH}
     ./configure PREFIX=${TARGET_BUILD}
     bmake && bmake install
     popd
@@ -53,7 +79,7 @@ fi
 
 # 3. Build kcgi
 if [ -z ${HAVE_KCGI+x} ]; then
-    pushd ext/kcgi-VERSION_0_12_0
+    pushd ${KCGI_PATH}
     if [ -f "Makefile.configure" ]; then
         bmake distclean
     fi
@@ -68,7 +94,7 @@ fi
 # 4. Build ORT. This is a buildtool, and hence will not
 # be compiled with any of the riscv toolchain
 if [ -z ${HAVE_ORT+x} ]; then
-    pushd ext/openradtool-0.8.13
+    pushd ${ORT_PATH}
     if [ -f "Makefile.configure" ]; then
         bmake distclean
     fi

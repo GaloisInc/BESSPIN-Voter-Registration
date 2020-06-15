@@ -20,8 +20,14 @@ main(int argc, char **argv)
     status_t regok = register_voter(ctxt,
                                     "lastname",
                                     "firstname",
-                                    "addr",
-                                    "addr2",
+                                    "1234 addr",
+                                    "1234 addr2",
+                                    "00000",
+                                    "ZZ",
+                                    "1234 addr",
+                                    "1234 addr2",
+                                    "00000",
+                                    "ZZ",
                                     "whig",
                                     now,
                                     &data[0],
@@ -45,5 +51,5 @@ main(int argc, char **argv)
     status_t closeok = close_db(ctxt);
     assert(closeok == OK);
 
-    printf("Test Passed.");
+    printf("[5] Test Passed.\n");
 }

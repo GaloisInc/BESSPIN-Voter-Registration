@@ -23,5 +23,5 @@ main(int argc, char **argv)
     }
     assert(num == 2);
 
-    printf("Test Passed.");
+    printf("[8] Test Passed.\n");
 }
