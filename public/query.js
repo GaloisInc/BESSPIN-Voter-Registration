@@ -26,7 +26,7 @@ $(document).ready(function(){
             type : 'GET',
             data : $("form#offical_update_voters").serialize(),
             success : function(result) {
-
+                $("form#official_query_form").submit();
             },
             error: function(xhr, result, text) {
                 console.log("Server returned an error");
@@ -110,14 +110,14 @@ function addVoterToTable(voter){
     var status;
     var confidential;
 
-	if (voter["status"] === '0'){
+	if (voter["status"] == 0){
 		status = "<td> Inactive </td>";
 	}
 	else{
 		status = "<td> Active </td>";
     }
 
-    if (voter["confidential"] === '0'){
+    if (voter["confidential"] == 0){
 		confidential = "<td> No </td>";
 	}
 	else{
