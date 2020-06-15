@@ -69,6 +69,7 @@
             </form>
         </div>
         </div>
+        <div class="error" id="errors" style="text-align: center;"></div>
     </div>
 
 
@@ -89,29 +90,25 @@
         <div id=footerDiv class=centeredDiv>
         <div class=flexDiv>
 
-            <div class=flexMemberDiv>
-                <label for="mark-as-active">Mark as Active:</label>
-                <input type="checkbox" name="mark-as-active" id="mark-as-active" name="mark-as-active">
-                <br><br>
+            <div class="flexMemberDiv updateOption">
+                <input type="radio" name="form-action" id="mark-as-active" value="mark-active" name="mark-as-active">
+                <label for="mark-active">Mark as Active:</label>
             </div>
-            <div class=flexMemberDiv>
-                <label for="mark-as-inactive">Mark as Inactive:</label>
-                <input type="checkbox" name="mark-as-inactive" value="1" id="mark-as-inactive" name="mark-as-inactive">
-                <br><br>
+            <div class="flexMemberDiv updateOption">
+                <input type="radio" name="form-action" value="mark-inactive" id="mark-inactive" name="mark-inactive">
+                <label for="mark-inactive">Mark as Inactive:</label>
             </div>
-            <div class=flexMemberDiv>
+            <div class="flexMemberDiv updateOption">
+                <input type="radio" id="delete-registrations" value="delete" name="form-action">
                 <label for="delete-registrations">Delete Registrations:</label>
-                <input type="checkbox" id="delete-registrations" value="1" name="delete-registrations">
-                <br><br>
             </div>
-            <div class=flexMemberDiv>
-                <label for="mark-as-confidential">Mark as Confidential:</label>
-                <input type="checkbox" id="mark-as-confidential" value="1" name="mark-as-confidential">
-                <br><br>
+            <div class="flexMemberDiv updateOption">
+                <input type="radio" id="mark-confidential" value="mark-confidential" name="form-action">
+                <label for="mark-confidential">Mark as Confidential:</label>
             </div>
-            <div class=flexMemberDiv>
-                <label for="mark-as-not-confidential">Mark as Not Confidential:</label>
-                <input type="checkbox" id="mark-as-not-confidential"value="1" name="mark-as-not-confidential">
+            <div class="flexMemberDiv updateOption">
+                <input type="radio" id="mark-not-confidential"value="mark-not-confidential" name="form-action">
+                <label for="mark-not-confidential">Mark as Not Confidential:</label>
             </div>
 
             <input type="hidden" id="voter-ids" name="voter-ids">

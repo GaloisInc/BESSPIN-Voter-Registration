@@ -252,27 +252,6 @@ official_update_voters(struct kreq *r)
   size_t cleaned_id_count = 0;
   char *error = "";
   
-  char *stmt = "UPDATE voter SET %s WHERE voter.id IN (%s)";
-
-  if(OK == get_str_param2(r, "form-action", &form_action)) {
-    DBG("FORM ACTION: %s\n", form_action);
-    if(strcmp("mark-confidential", form_action) == 0 ) {
-      update_stmt = "confidential = 1";
-    } else if(strcmp("mark-not-confidential", form_action) == 0) {
-      update_stmt = "confidential = 0";
-    } else if(strcmp("mark-active", form_action) == 0) {
-      update_stmt = "status = 1";
-    } else if(strcmp("mark-inactive", form_action) == 0) {
-      update_stmt = "status = 0";
-    } else if(strcmp("delete", form_action) == 0) {
-      stmt = "%s delete from voter where voter.id IN (%s)";
-    } else {
-      error = "Invalid action given";
-    }
-  } else {
-    error = "Form action is invalid or unspecified";
-  }
-
   get_str_param2(r, "voter-ids", &voter_idstr);
   if(strlen(voter_idstr) > 0) {
     char* tokstr = strdup(voter_idstr);
@@ -289,6 +268,46 @@ official_update_voters(struct kreq *r)
     DBG("voter id %d\n", voter_ids[i]);
   }
 
+
+  if(OK == get_str_param2(r, "form-action", &form_action)) {
+    if(strcmp("mark-confidential", form_action) == 0 ) {
+      for(int i=0; i<token_count; i++) {
+        if(!db_voter_update_confidential(r->arg, 1, time(NULL), voter_ids[i])) {
+          error = "Error updating confidentiality.";
+        }
+      }
+    } else if(strcmp("mark-not-confidential", form_action) == 0) {
+      for(int i=0; i<token_count; i++) {
+        if(!db_voter_update_confidential(r->arg, 0, time(NULL), voter_ids[i])) {
+          error = "Error updating confidentiality.";
+        };
+      }
+    } else if(strcmp("mark-active", form_action) == 0) {
+      for(int i=0; i<token_count; i++) {
+        if(!db_voter_update_status(r->arg, 1, time(NULL), voter_ids[i])) {
+          error = "Error updating status.";
+        }
+      }
+    } else if(strcmp("mark-inactive", form_action) == 0) {
+      for(int i=0; i<token_count; i++) {
+        if(!db_voter_update_status(r->arg, 0, time(NULL), voter_ids[i])) {
+          error = "Error updating status.";
+        }
+      }
+    } else if(strcmp("delete", form_action) == 0) {
+      for(int i=0; i<token_count; i++) {
+        if(db_voter_delete_by_id_eq(r->arg, voter_ids[i])) {
+          error = "Error updating status.";
+        }
+      }
+    } else {
+      error = "Invalid action given";
+    }
+  } else {
+    error = "Form action is invalid or unspecified";
+  }
+
+
   if(strlen(error) > 0) {
     http_open(r, KHTTP_400);
     kjson_open(&req, r);
@@ -297,9 +316,6 @@ official_update_voters(struct kreq *r)
     kjson_obj_close(&req); // }
     kjson_close(&req);
   } else {
-    asprintf(&stmt, stmt, update_stmt, voter_idstr);
-    DBG("SQL: %s\n", stmt);
-    free(stmt);  
     http_open(r, KHTTP_200);
     empty_json(r);
   }

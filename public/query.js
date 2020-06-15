@@ -2,14 +2,22 @@
 
 $(document).ready(function(){
 
-    // Offiical - Voter update form
+
+    // Offical - Voter update form
     $("form#offical_update_voters").submit(function(e){
         e.preventDefault();
+        clearError();
         console.log("Update voter clicked");
         var ids = $('input:checked[name^="vsel_"]')
             .map(function(){ return this.id}).get();
         console.log(ids);
         console.log(ids.join());
+        var form_action = $('input[name="form-action"]:checked').val();
+        if(form_action == undefined || form_action.length == 0) {
+            showError("Must select a form action");
+            return;
+        }
+
         $("#voter-ids").val(ids.join());
         $("form#offical_update_voters").trigger("change");
         console.log($("form#offical_update_voters").serialize());
@@ -88,6 +96,7 @@ function emptyTable(){
                 <th> Initial Reg. Time </th>
                 <th> Last Reg. Update </th>
                 <th> Status </th>
+                <th> Confidential </th>
             </tr>
         </table>`;
 }
@@ -98,14 +107,22 @@ function addVoterToTable(voter){
 
 	var ID = String(voter["id"]);
 
-	var status;
+    var status;
+    var confidential;
 
 	if (voter["status"] === '0'){
 		status = "<td> Inactive </td>";
 	}
 	else{
 		status = "<td> Active </td>";
+    }
+
+    if (voter["confidential"] === '0'){
+		confidential = "<td> No </td>";
 	}
+	else{
+		confidential = "<td> Yes </td>";
+    }
 
 	div.innerHTML += "<tr>" + 
 					'<td><input type="checkbox" id="' + ID + '" name="vsel_' + ID + '"></td>' +
@@ -117,8 +134,9 @@ function addVoterToTable(voter){
 					"<td>" + voter["registeredparty"] + "</td>" +
 					"<td>" + formatDate(voter["birthdate"]) + "</td>" +
 					"<td>" + formatDate(voter["initialregtime"]) + "</td>" + 
-					"<td>" + formatDate(voter["lastupdatetime"]) + "</td>" + 
-					status +
+					"<td>" + formatDate(voter["lastupdatetime"]) + "</td>" +
+                    status +
+                    confidential +
 					"</tr>";
 
 }
@@ -138,9 +156,14 @@ function formatDate(epoch_time) {
     return [year, month, day].join('-');
 }
 
-function showError(){
-	var div = document.getElementById("queryDataInner");
-	div.innerHTML = "Server returned an error. See console for details";
-	
+function clearError() {
+    $("#errors").text("");    
+}
 
+function showError(msg){
+    if(msg != undefined) {
+        $("#errors").text(msg);
+    } else {
+        $("#errors").text("Server returned an error. See console for details"); 
+    }
 }

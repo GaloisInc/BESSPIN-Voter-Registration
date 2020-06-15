@@ -186,10 +186,13 @@ th, td {
 	text-align: right;
 	margin-left: 10px;
 }
+.updateOption {
+	margin-right: 20px;
+}
 
 .error {
 	border-color: red;
 }
-label.error {
+label.error, #errors {
 	color: red;
 }

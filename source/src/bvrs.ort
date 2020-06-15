@@ -74,6 +74,8 @@ struct voter {
 
   insert;
 
+  delete id;
+
   update lastname, givennames, resaddress, resaddress2, reszip,
          resstate, mailaddress, mailaddress2, mailzip, mailstate,
          registeredparty, birthdate, idinfo, status, lastupdatetime,
@@ -81,6 +83,10 @@ struct voter {
          id:
     name info
     comment "Update a voter registration record by id";
+
+  update confidential, lastupdatetime: id:
+    name confidential
+    comment "Update a voter registration confidentiality by id";
 
   update status, lastupdatetime: id:
     name status
