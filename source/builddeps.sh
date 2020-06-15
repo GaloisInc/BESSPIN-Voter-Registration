@@ -3,7 +3,7 @@ set -eo pipefail
 
 ZLIB_PATH="ext/zlib-1.2.11"
 SQLITE_PATH="ext/sqlite"  # sqlite downloads with no version number in filename
-KCGI_PATH="ext/kcgi-VERSION_0_12_0"
+KCGI_PATH="ext/kcgi-VERSION_0_12_1"
 SQLBOX_PATH="ext/sqlbox-VERSION_0_1_12"
 ORT_PATH="ext/openradtool-VERSION_0_8_14"
 
