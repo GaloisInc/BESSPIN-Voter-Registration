@@ -589,7 +589,7 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
     struct electionofficialsession *sess;
     sess = db_electionofficialsession_get_officialcreds(r->arg, sid, token);
     if(sess == NULL) {
-      DBG("require_official: old or invalid session token.");
+      DBG("require_official: old or invalid session token.\n");
       http_open(r, KHTTP_401);
       return NOT_AUTHORIZED;
     }

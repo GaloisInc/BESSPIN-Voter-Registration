@@ -57,3 +57,10 @@ VALUES (2,
 	   0,
 	   0,
 	   0);
+
+INSERT INTO electionofficial VALUES (
+  1, "love2vote", "AXXGEW7kIXJS."
+);
+
+INSERT INTO electionofficialsession
+VALUES (1, 1, 1234, 1905375553);
