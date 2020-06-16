@@ -56,6 +56,8 @@ enum page {
   PAGE_VOTER_UPDATE_INFO,
   /*  get a new official session */
   PAGE_OFFICIAL_LOGIN,
+  /* delete official session */
+  PAGE_OFFICIAL_LOGOUT,
   /*  run a query on the entire voter db */
   PAGE_OFFICIAL_QUERY_VOTERS,
   /*  run an update on the entire voter db */
@@ -74,6 +76,7 @@ static const char *const pages[PAGE__MAX] = {
   "voter_update_login",
   "voter_update_info",
   "official_login",
+  "official_logout",
   "official_query_voters",
   "official_update_voters"
 };
@@ -568,6 +571,33 @@ voter_register_page(struct kreq *r)
   }
 }
 
+/*
+* Takes a pointer to a page *ppage and checks if the client
+* as provided proper authorization for that page or if 
+*/
+status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
+  int64_t sid, token;
+  if ( (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] == NULL) ||
+      (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] == NULL) ) {
+      DBG("require_offical: No Cookie. Not logged in.\n");
+      http_open(r, KHTTP_401);
+      return NOT_AUTHORIZED;
+  } else {
+    sid   = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i;
+    token = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.i;
+    struct electionofficialsession *p;
+    struct electionofficialsession *sess;
+    sess = db_electionofficialsession_get_officialcreds(r->arg, sid, token);
+    if(sess == NULL) {
+      DBG("require_official: old or invalid session token.");
+      http_open(r, KHTTP_401);
+      return NOT_AUTHORIZED;
+    }
+  }
+  ppage(r);
+  return OK;
+}
+
 status_t
 do_voter_updateinfo(struct kreq *r, int64_t voter_id)
 {
@@ -648,6 +678,25 @@ voter_update_info_page(struct kreq *r)
 
   http_open(r, KHTTP_403);
   empty_json(r);
+}
+
+/*
+ * Delete official session
+ */
+static void
+official_logout_page(struct kreq *r)
+{
+  int64_t sid, token;
+  if ( (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] == NULL) ||
+       (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] == NULL) ) {
+    DBG("official_logout_page: Invalid Election Official Session.\n");
+  } else {
+    sid   = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i;
+    token = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.i;
+    db_electionofficialsession_delete_officialsession(r->arg, sid, token);
+  }
+  khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/index.html");
+  http_open(r, KHTTP_301);
 }
 
 /*
@@ -861,11 +910,14 @@ main(int argc, char **argv)
       case PAGE_OFFICIAL_LOGIN:
         official_login_page(&r);
         break;
+      case PAGE_OFFICIAL_LOGOUT:
+        official_logout_page(&r);
+        break;
       case PAGE_OFFICIAL_QUERY_VOTERS:
-        official_query_voters(&r);
+        require_official(official_query_voters, &r);
         break;
       case PAGE_OFFICIAL_UPDATE_VOTERS:
-        official_update_voters(&r);
+        require_official(official_update_voters, &r);
         break;
       default:
         http_open(&r, KHTTP_404);

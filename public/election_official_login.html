@@ -4,6 +4,7 @@
 <title>BESSPIN Voter Registration System</title>
 
 <head>
+    <script src="jquery-3.5.1.min.js"></script>
     <script src="index.js" charset="utf-8" defer></script>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
@@ -18,14 +19,14 @@
     </h2>
     <div class=dataFormOuter>
     <div class=dataFormInner>
-        <form enctype="multipart/form-data" method=post action="bvrs/official_logins">
-            <label class=firstColLabel for="username">Username:</label>
-            <input class=firstColInput type="text" id="username" name="username">
+        <form enctype="multipart/form-data" method=post action="official_login">
+            <label class=firstColLabel for="electionofficial-username">Username:</label>
+            <input class=firstColInput type="text" id="electionofficial-username" name="electionofficial-username">
 
             <br><br>
             
-            <label class=firstColLabel for="password">Password:</label>
-            <input class=firstColInput type="password" id="password" name="password"><br><br>
+            <label class=firstColLabel for="electionofficial-hash">Password:</label>
+            <input class=firstColInput type="password" id="electionofficial-hash" name="electionofficial-hash"><br><br>
          
             <label class=firstColLabel for="submit"> </label>
             <input class=formButton type="submit" value="Log In">

@@ -29,8 +29,11 @@ $(document).ready(function(){
                 $("form#official_query_form").submit();
             },
             error: function(xhr, result, text) {
-                console.log("Server returned an error");
-                showError();
+                if(xhr.status == 401) {
+                    window.location.href = "/bvrs/election_official_login.html"
+                } else {
+                    showError();
+                }
             }
         });
     });
@@ -47,7 +50,7 @@ $(document).ready(function(){
             type : "GET",
             data : $("#official_query_form").serialize(),
             success : function(result) {
-                console.log(result);
+                // console.log(result);
                 // No results
                 if(result["voter_q"][0] == undefined) {
                     console.log("GET from server returned no results");
@@ -69,10 +72,12 @@ $(document).ready(function(){
             },
             error: function(xhr, result, text) {
                 // Handle Form Errors
-                console.log("Server returned an error");
-
-                showError();
-
+                if(xhr.status == 401) {
+                    window.location.href = "/bvrs/election_official_login.html";
+                } else {
+                    console.log("Server returned an error");
+                    showError();
+                }
             }
         });
     });
