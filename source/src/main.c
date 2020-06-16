@@ -62,6 +62,8 @@ enum page {
   PAGE_OFFICIAL_QUERY_VOTERS,
   /*  run an update on the entire voter db */
   PAGE_OFFICIAL_UPDATE_VOTERS,
+  /* register a voter as an official */
+  PAGE_OFFICIAL_REGISTER_VOTER,
   PAGE__MAX
 };
 
@@ -78,7 +80,8 @@ static const char *const pages[PAGE__MAX] = {
   "official_login",
   "official_logout",
   "official_query_voters",
-  "official_update_voters"
+  "official_update_voters",
+  "official_register_voter"
 };
 
 /*
@@ -455,9 +458,8 @@ official_query_voters(struct kreq *r)
   db_voter_freeq(q);
 }
 
-static void
-voter_register_page(struct kreq *r)
-{
+static status_t
+register_voter_common(struct kreq *r, enum regstatus status) {
   const char *lastname = "";
   const char *givennames = "";
   const char *resaddress = "";
@@ -472,13 +474,16 @@ voter_register_page(struct kreq *r)
   const char *idinfo = "";
   time_t birthdate;
   size_t idinfo_sz;
-  struct kjsonreq req;
+  int64_t confidential = 0;
   size_t num_fields = 11;
+  int error_count;
   struct field_error errors[num_fields];
+  struct kjsonreq req;
+
 
   memset(errors, 0, sizeof(errors));
  
-  int error_count = 0;
+  error_count = 0;
   if (OK != get_str_param(r, VALID_VOTER_LASTNAME, &lastname)) {
     errors[error_count] = (struct field_error) { "voter-lastname", "Last name field required."};
     error_count++;
@@ -527,6 +532,8 @@ voter_register_page(struct kreq *r)
     errors[error_count] = (struct field_error) { "voter-idinfo", "ID field required."};
     error_count++;
   }
+  get_int_param(r, VALID_VOTER_CONFIDENTIAL, &confidential);
+
   if(0 == error_count) {
     int64_t voter_id;
     status_t reg_status = register_voter(r->arg,
@@ -544,7 +551,8 @@ voter_register_page(struct kreq *r)
                                          birthdate,
                                          idinfo,
                                          idinfo_sz,
-                                         0,
+                                         confidential,
+                                         status,
                                          &voter_id);
     if (OK == reg_status) {
       http_open(r, KHTTP_200);
@@ -569,6 +577,17 @@ voter_register_page(struct kreq *r)
     kjson_obj_close(&req); // }
     kjson_close(&req);
   }
+}
+
+static void
+official_register_voter(struct kreq *r) {
+  register_voter_common(r, REGSTATUS_ACTIVE);
+}
+
+static void
+voter_register_page(struct kreq *r)
+{
+  register_voter_common(r,REGSTATUS_PENDINGREVIEW);
 }
 
 /*
@@ -918,6 +937,9 @@ main(int argc, char **argv)
         break;
       case PAGE_OFFICIAL_UPDATE_VOTERS:
         require_official(official_update_voters, &r);
+        break;
+      case PAGE_OFFICIAL_REGISTER_VOTER:
+        require_official(official_register_voter, &r);
         break;
       default:
         http_open(&r, KHTTP_404);
