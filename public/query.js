@@ -114,13 +114,9 @@ function addVoterToTable(voter){
 
     var status;
     var confidential;
+    var regstatus = ["Active", "Inactive", "Pending Review"];
 
-	if (voter["status"] == 0){
-		status = "<td> Inactive </td>";
-	}
-	else{
-		status = "<td> Active </td>";
-    }
+    status = "<td> " + regstatus[voter["status"]] + " </td>";
 
     if (voter["confidential"] == 0){
 		confidential = "<td> No </td>";
