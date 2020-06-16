@@ -34,6 +34,7 @@ main(int argc, char **argv)
                                     data,
                                     strlen(data),
                                     0,
+                                    REGSTATUS_ACTIVE,
                                     &id);
     assert(regok == OK);
 

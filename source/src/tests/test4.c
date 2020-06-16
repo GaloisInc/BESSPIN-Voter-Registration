@@ -33,6 +33,7 @@ main(int argc, char **argv)
                                     &data[0],
                                     sizeof(data),
                                     0,
+                                    REGSTATUS_PENDINGREVIEW,
                                     &id);
     assert(regok == OK);
 

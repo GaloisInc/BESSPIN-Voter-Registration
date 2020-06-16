@@ -587,7 +587,7 @@ official_register_voter(struct kreq *r) {
 static void
 voter_register_page(struct kreq *r)
 {
-  register_voter_common(r,REGSTATUS_PENDINGREVIEW);
+  register_voter_common(r, REGSTATUS_PENDINGREVIEW);
 }
 
 /*
