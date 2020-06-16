@@ -19,6 +19,7 @@ do_test(const char *req, long code)
   long http;
 
   curl = curl_easy_init();
+  curl_easy_setopt(curl, CURLOPT_COOKIE, "electionofficialsession-id=1;electionofficialsession-token=1234;");
   curl_easy_setopt(curl, CURLOPT_URL, req);
   if (CURLE_OK != curl_easy_perform(curl))
     return(0);
