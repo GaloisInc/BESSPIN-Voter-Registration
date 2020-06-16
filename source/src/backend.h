@@ -24,7 +24,8 @@ typedef enum status {
   ERROR,
   CONSTRAINT_VIOLATION,
   NOT_FOUND,
-  OK
+  OK,
+  NOT_AUTHORIZED,
 } status_t;
 
 typedef struct ort bvrs_ctxt_t;
