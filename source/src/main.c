@@ -571,13 +571,16 @@ voter_register_page(struct kreq *r)
   }
 }
 
+/*
+* Takes a pointer to a page *ppage and checks if the client
+* as provided proper authorization for that page or if 
+*/
 status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
   int64_t sid, token;
   if ( (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] == NULL) ||
       (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] == NULL) ) {
       DBG("require_offical: No Cookie. Not logged in.\n");
-      khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/election_official_login.html");
-      http_open(r, KHTTP_301);
+      http_open(r, KHTTP_401);
       return NOT_AUTHORIZED;
   } else {
     sid   = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i;
@@ -586,8 +589,8 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
     struct electionofficialsession *sess;
     sess = db_electionofficialsession_get_officialcreds(r->arg, sid, token);
     if(sess == NULL) {
-      khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/election_official_login.html");
-      http_open(r, KHTTP_301);
+      DBG("require_official: old or invalid session token.");
+      http_open(r, KHTTP_401);
       return NOT_AUTHORIZED;
     }
   }

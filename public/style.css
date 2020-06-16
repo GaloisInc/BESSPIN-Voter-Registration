@@ -196,3 +196,8 @@ th, td {
 label.error, #errors {
 	color: red;
 }
+#logout {
+	width: 600px;
+	margin: auto;
+	text-align: right;
+}
