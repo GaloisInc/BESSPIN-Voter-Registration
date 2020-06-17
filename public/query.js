@@ -1,4 +1,24 @@
 
+function empty_table(){
+	var div = document.getElementById("queryDataInner");
+
+	div.innerHTML = `<table cellspacing="0" cellpadding="5" id=queryTable>
+            <tr>
+            	<th> Select </th>
+            	<th> Voter ID </th>
+                <th> First Name </th>
+                <th> Last Name </th>
+                <th> Residential Address </th>
+                <th> Mailing Address </th>
+                <th> Registered Party </th>
+                <th> Birthdate </th>
+                <th> Initial Reg. Time </th>
+                <th> Last Reg. Update </th>
+                <th> Status </th>
+                <th> Confidential </th>
+            </tr>
+        </table>`;
+}
 
 $(document).ready(function(){
 
@@ -52,7 +72,7 @@ $(document).ready(function(){
             success : function(result) {
                 // console.log(result);
                 // No results
-                if(result["voter_q"][0] == undefined) {
+                if(result["voter_q"] == undefined || result["voter_q"][0] == undefined) {
                     console.log("GET from server returned no results");
                     empty_table();
                 }
@@ -61,7 +81,7 @@ $(document).ready(function(){
                 console.log("GET Query from server succeeded");
                 console.log(result);
 
-                emptyTable();
+                empty_table();
 				
                 $.each(result["voter_q"], function(index, value) {
                 	console.log("Adding Voter To Table");
@@ -85,26 +105,7 @@ $(document).ready(function(){
 });
 
 
-function emptyTable(){
-	var div = document.getElementById("queryDataInner");
 
-	div.innerHTML = `<table cellspacing="0" cellpadding="5" id=queryTable>
-            <tr>
-            	<th> Select </th>
-            	<th> Voter ID </th>
-                <th> First Name </th>
-                <th> Last Name </th>
-                <th> Residential Address </th>
-                <th> Mailing Address </th>
-                <th> Registered Party </th>
-                <th> Birthdate </th>
-                <th> Initial Reg. Time </th>
-                <th> Last Reg. Update </th>
-                <th> Status </th>
-                <th> Confidential </th>
-            </tr>
-        </table>`;
-}
 
 function addVoterToTable(voter){
 

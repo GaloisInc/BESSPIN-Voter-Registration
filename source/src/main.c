@@ -715,7 +715,7 @@ official_logout_page(struct kreq *r)
     db_electionofficialsession_delete_officialsession(r->arg, sid, token);
   }
   khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/index.html");
-  http_open(r, KHTTP_301);
+  http_open(r, KHTTP_302);
 }
 
 /*
@@ -748,10 +748,10 @@ official_login_page(struct kreq *r)
                 "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
                 valid_keys[VALID_ELECTIONOFFICIALSESSION_ID].name, sid, "", buf);
       khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/election_official_home.html");
-      http_open(r, KHTTP_301);
+      http_open(r, KHTTP_302);
     } else {
       khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/election_official_login.html");
-      http_open(r, KHTTP_301);
+      http_open(r, KHTTP_302);
     }
   } else {
     http_open(r, KHTTP_401);

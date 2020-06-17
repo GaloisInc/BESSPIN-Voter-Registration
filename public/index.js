@@ -85,11 +85,15 @@ $(document).ready(function(){
             success : function(result) {
                 // Server returned a result
                 // redirect to voter_registration_confirmation.html
-                window.location.replace("voter_registration_confirmation.html");
+                if(window.location.href.includes("official")) {
+                    window.location.replace("election_official_home.html");
+                } else {
+                    window.location.replace("voter_registration_confirmation.html");
+                }
             },
             error: function(xhr, result, text) {
                 if(xhr.status == 401) {
-                    window.location.href = "/bvrs/election_official_login.html"
+                    window.location.href = "election_official_login.html"
                     return;
                 }
                 resp = xhr.responseJSON;
