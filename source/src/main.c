@@ -458,7 +458,7 @@ official_query_voters(struct kreq *r)
   db_voter_freeq(q);
 }
 
-static status_t
+static void
 register_voter_common(struct kreq *r, enum regstatus status) {
   const char *lastname = "";
   const char *givennames = "";
