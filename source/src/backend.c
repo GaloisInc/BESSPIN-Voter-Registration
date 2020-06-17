@@ -249,6 +249,7 @@ register_voter(bvrs_ctxt_t *ctxt,
                const void *idinfo,
                size_t idinfo_sz,
                int64_t confidential,
+               enum regstatus status,
                int64_t *out_id)
 {
     time_t now = time(NULL);
@@ -286,7 +287,7 @@ register_voter(bvrs_ctxt_t *ctxt,
                                  birthdate,
                                  idinfo_sz,
                                  idinfo,
-                                 REGSTATUS_PENDINGREVIEW,
+                                 status,
                                  now,
                                  now,
                                  confidential);

@@ -158,6 +158,7 @@ register_voter(bvrs_ctxt_t *ctxt,
                const void *idinfo,
                size_t idinfo_sz,
                int64_t confidential,
+               enum regstatus status,
                int64_t *out_id);
 
 /* Modify the voter record whose id is voter_id

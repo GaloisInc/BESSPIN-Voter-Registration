@@ -71,8 +71,12 @@ $(document).ready(function(){
         reset_form_errors()
         console.log("Submit voter registration");
         var formData = new FormData(this);
+        var url = 'voter_register';
+        if(window.location.href.includes("official")) {
+            url = 'official_register_voter';
+        }
         $.ajax({
-            url: 'voter_register', 
+            url: url, 
             type : "POST",
             data : formData,
             contentType: false,
@@ -84,6 +88,10 @@ $(document).ready(function(){
                 window.location.replace("voter_registration_confirmation.html");
             },
             error: function(xhr, result, text) {
+                if(xhr.status == 401) {
+                    window.location.href = "/bvrs/election_official_login.html"
+                    return;
+                }
                 resp = xhr.responseJSON;
                 console.log(resp);
                 if(resp.hasOwnProperty("errors")) {
