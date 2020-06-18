@@ -108,7 +108,7 @@ flush_old_sessions(bvrs_ctxt_t *ctxt,
  */
 
 status_t
-new_session_info(int64_t *the_token, time_t *the_time)
+new_session_info(char *the_token, time_t *the_time)
 {
     *the_time = time(NULL);
     *the_token = random();
@@ -135,7 +135,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t confidential,
                   struct voter **the_voter,
                   int64_t *the_session_id,
-                  int64_t *the_token)
+                  const char *the_token)
 {
     struct voter *a_voter;
     status_t retstatus = ERROR;
@@ -151,10 +151,10 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                                                  confidential);
     if (NULL != a_voter) {
         time_t ctime;
-        int64_t a_token;
         int64_t a_session_id;
+        char *a_token;
 
-        if (OK == new_session_info(&a_token, &ctime)) {
+        if (OK == new_session_info(a_token, &ctime)) {
 
             a_session_id = db_voterupdatesession_insert(ctxt,
                                                         a_voter->id,
@@ -162,7 +162,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                                                         ctime);
             if (a_session_id > 0) {
                 *the_session_id = a_session_id;
-                *the_token = a_token;
+                the_token = a_token;
                 *the_voter = a_voter;
                 retstatus = OK;
             }
@@ -172,14 +172,13 @@ new_voter_session(bvrs_ctxt_t *ctxt,
     } else {
         retstatus = NOT_FOUND;
     }
-
     return retstatus;
 }
 
 status_t
 lookup_voter_session(bvrs_ctxt_t *ctxt,
                      int64_t the_session_id,
-                     int64_t the_token,
+                     char *the_token,
                      int64_t *voter_id)
 {
     status_t ret = ERROR;
@@ -199,7 +198,7 @@ lookup_voter_session(bvrs_ctxt_t *ctxt,
 status_t
 end_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t session_id,
-                  int64_t token)
+                  const char *token)
 {
     int status = db_voterupdatesession_delete_votersession(ctxt, session_id, token);
     if (status == 0) {
@@ -394,7 +393,7 @@ new_official_session(bvrs_ctxt_t *ctxt,
                      const char *username,
                      const char *password,
                      int64_t *session_id,
-                     int64_t *token)
+                     char *token)
 {
     struct electionofficial *official;
     status_t retstatus = ERROR;
@@ -403,16 +402,16 @@ new_official_session(bvrs_ctxt_t *ctxt,
 
     if (NULL != official) {
         time_t ctime;
-        int64_t a_token;
+        char *a_token;
         int64_t a_session_id;
 
-        if (OK == new_session_info(&a_token, &ctime)) {
+        if (OK == new_session_info( a_token, &ctime)) {
 
             a_session_id = db_electionofficialsession_insert(ctxt, official->id, a_token, ctime);
 
             if (a_session_id > 0) {
                 *session_id = a_session_id;
-                *token = a_token;
+                token = a_token;
                 retstatus = OK;
             }
         } else {
@@ -429,11 +428,11 @@ new_official_session(bvrs_ctxt_t *ctxt,
 status_t
 lookup_official_session(bvrs_ctxt_t *ctx,
                         int64_t *session_id,
-                        int64_t *token)
+                        char *token)
 {
     status_t ret = ERROR;
     struct electionofficialsession *session;
-    session = db_electionofficialsession_get_officialcreds(ctx, *session_id, *token);
+    session = db_electionofficialsession_get_officialcreds(ctx, *session_id, token);
     if (NULL != session) {
         db_electionofficialsession_free(session);
         ret = OK;
@@ -448,7 +447,7 @@ lookup_official_session(bvrs_ctxt_t *ctx,
 status_t
 end_official_session(bvrs_ctxt_t *ctxt,
                      int64_t the_session_id,
-                     int64_t the_token)
+                     char *the_token)
 {
     int status = db_electionofficialsession_delete_officialsession(ctxt,
                                                                    the_session_id,

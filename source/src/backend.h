@@ -14,6 +14,9 @@
 #include <kcgijson.h>
 #include "db.h"
 
+// 32 + NULL
+#define TOKEN_SIZE 33
+
 typedef enum tristate {
   NOT_DEF,
   ACTIVE,
@@ -93,7 +96,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t confidential,
                   struct voter **the_voter,
                   int64_t *the_session_id,
-                  int64_t *the_token);
+                  const char *the_token);
 
 /* Explicitly end a session and remove it from the database.
  *
@@ -104,7 +107,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
 status_t
 end_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t the_session_id,
-                  int64_t the_token);
+                  const char *the_token);
 
 /* Lookup a voter session and return the voter_id if found.
  *
@@ -116,7 +119,7 @@ end_voter_session(bvrs_ctxt_t *ctxt,
 status_t
 lookup_voter_session(bvrs_ctxt_t *ctxt,
                      int64_t the_session_id,
-                     int64_t the_token,
+                     char *the_token,
                      int64_t *voter_id);
 
 /* Search for voters by lastname, givenname, birthdate, and whether or not
@@ -253,7 +256,7 @@ new_official_session(bvrs_ctxt_t *ctxt,
                      const char *username,
                      const char *password,
                      int64_t *session_id,
-                     int64_t *token);
+                     char *token);
 
 /* Validate election official session
 *
@@ -265,7 +268,7 @@ new_official_session(bvrs_ctxt_t *ctxt,
 status_t
 lookup_official_session(bvrs_ctxt_t *ctx,
                         int64_t *session_id,
-                        int64_t *token);
+                        char *token);
 
 /* Explicitly end a session and remove it from the database.
  *
@@ -276,7 +279,7 @@ lookup_official_session(bvrs_ctxt_t *ctx,
 status_t
 end_official_session(bvrs_ctxt_t *ctxt,
                      int64_t the_session_id,
-                     int64_t the_token);
+                     char *the_token);
 #ifdef DEBUG
 #define DBG(...) fprintf(stderr, __VA_ARGS__)
 #else

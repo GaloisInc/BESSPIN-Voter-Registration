@@ -595,7 +595,8 @@ voter_register_page(struct kreq *r)
 * as provided proper authorization for that page or if 
 */
 status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
-  int64_t sid, token;
+  int64_t sid;
+  char token[TOKEN_SIZE];
   if ( (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] == NULL) ||
       (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] == NULL) ) {
       DBG("require_offical: No Cookie. Not logged in.\n");
@@ -603,10 +604,11 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
       return NOT_AUTHORIZED;
   } else {
     sid   = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i;
-    token = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.i;
+    strcpy(token, r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
     struct electionofficialsession *p;
     struct electionofficialsession *sess;
     sess = db_electionofficialsession_get_officialcreds(r->arg, sid, token);
+
     if(sess == NULL) {
       DBG("require_official: old or invalid session token.\n");
       http_open(r, KHTTP_401);
@@ -705,13 +707,14 @@ voter_update_info_page(struct kreq *r)
 static void
 official_logout_page(struct kreq *r)
 {
-  int64_t sid, token;
+  int64_t sid;
+  char token[TOKEN_SIZE];
   if ( (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] == NULL) ||
        (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] == NULL) ) {
     DBG("official_logout_page: Invalid Election Official Session.\n");
   } else {
     sid   = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i;
-    token = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.i;
+    strcpy(token, r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
     db_electionofficialsession_delete_officialsession(r->arg, sid, token);
   }
   khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/index.html");
@@ -725,7 +728,8 @@ static void
 official_login_page(struct kreq *r)
 {
   const char *username, *password;
-  int64_t sid, token;
+  int64_t sid;
+  char token[TOKEN_SIZE];
   char buf[64];
 
 
@@ -736,16 +740,16 @@ official_login_page(struct kreq *r)
                                                  username,
                                                  password,
                                                  &sid,
-                                                 &token);
+                                                 token);
 
     if(OK == session_create) {
       /*  TODO: correct time */
-      khttp_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
+      khttp_epoch2str(time(NULL) + 60*60, buf, sizeof(buf));
       khttp_head(r, kresps[KRESP_SET_COOKIE],
-                "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
+                "%s=%s; %s HttpOnly; path=/; expires=%s",
                 valid_keys[VALID_ELECTIONOFFICIALSESSION_TOKEN].name, token, "", buf);
       khttp_head(r, kresps[KRESP_SET_COOKIE],
-                "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
+                "%s=%ld; %s HttpOnly; path=/; expires=%s",
                 valid_keys[VALID_ELECTIONOFFICIALSESSION_ID].name, sid, "", buf);
       khttp_head(r, kresps[KRESP_LOCATION], "%s", "/bvrs/election_official_home.html");
       http_open(r, KHTTP_302);
@@ -787,7 +791,8 @@ voter_login_page(struct kreq *r)
        (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
        (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate)) &&
        (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz)) ) {
-    int64_t sid, token;
+    int64_t sid;
+    char token[TOKEN_SIZE];
     struct voter *voter;
     status_t session_create = new_voter_session(r->arg,
                                                 lastname,
@@ -806,15 +811,15 @@ voter_login_page(struct kreq *r)
                                                 0 /*  not confidential */,
                                                 &voter,
                                                 &sid,
-                                                &token);
+                                                token);
     if (OK == session_create) {
       /*  TODO: correct time */
       khttp_epoch2str(time(NULL) + 60*5, buf, sizeof(buf));
       khttp_head(r, kresps[KRESP_SET_COOKIE],
-                 "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
+                 "%s=%s; %s HttpOnly; path=/; expires=%s",
                  valid_keys[VALID_VOTERUPDATESESSION_TOKEN].name, token, "", buf);
       khttp_head(r, kresps[KRESP_SET_COOKIE],
-                 "%s=%" PRId64 "; %s HttpOnly; path=/; expires=%s",
+                 "%s=%ld; %s HttpOnly; path=/; expires=%s",
                  valid_keys[VALID_VOTERUPDATESESSION_ID].name, sid, "", buf);
       http_open(r, KHTTP_200);
       empty_json(r);

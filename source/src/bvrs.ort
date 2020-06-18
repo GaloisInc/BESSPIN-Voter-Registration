@@ -98,7 +98,7 @@ struct voterupdatesession {
   field id int rowid comment "Unique identifier in the database.";
   field voter struct voterid comment "Voter attached to session.";
   field voterid:voter.id int comment "Voter identifier attached to session.";
-  field token int comment "Random cookie.";
+  field token text comment "Random cookie.";
   field ctime epoch comment "Creation time.";
   comment "A voter record update session.";
 
@@ -134,7 +134,7 @@ struct electionofficialsession {
   field electionofficial struct officialid comment "Election official attached to session.";
   field officialid:electionofficial.id int
     comment "Election official identifier attached to session.";
-  field token int comment "Random cookie.";
+  field token text comment "Random cookie.";
   field ctime epoch comment "Creation time.";
   comment "Authenticated election official session.";
 
