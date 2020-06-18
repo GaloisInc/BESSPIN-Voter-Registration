@@ -111,8 +111,17 @@ status_t
 new_session_info(char *the_token, time_t *the_time)
 {
     *the_time = time(NULL);
-    *the_token = random();
 
+    int length = TOKEN_SIZE;
+    char charset[] = "0123456789"
+                     "abcdefghijklmnopqrstuvwxyz"
+                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    while (length-- > 0) {
+        size_t index = (double) rand() / RAND_MAX * (sizeof charset - 1);
+        *the_token++ = charset[index];
+    }
+    *the_token = '\0';
     return OK;
 }
 
@@ -152,24 +161,26 @@ new_voter_session(bvrs_ctxt_t *ctxt,
     if (NULL != a_voter) {
         time_t ctime;
         int64_t a_session_id;
-        char *a_token;
+        char **a_token;
 
-        if (OK == new_session_info(a_token, &ctime)) {
+        if (OK == new_session_info(*a_token, &ctime)) {
 
             a_session_id = db_voterupdatesession_insert(ctxt,
                                                         a_voter->id,
-                                                        a_token,
+                                                        *a_token,
                                                         ctime);
             if (a_session_id > 0) {
                 *the_session_id = a_session_id;
-                the_token = a_token;
+                the_token = *a_token;
                 *the_voter = a_voter;
                 retstatus = OK;
             }
         } else {
             retstatus = ERROR;
+            DBG("new_voter_session:error creating session.");
         }
     } else {
+        DBG("new_voter_session: voter not found.");
         retstatus = NOT_FOUND;
     }
     return retstatus;

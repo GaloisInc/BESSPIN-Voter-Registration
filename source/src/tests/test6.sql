@@ -4,5 +4,5 @@ INSERT INTO voter VALUES (
 );
 
 INSERT INTO voterupdatesession VALUES (
-  0, 0, 1234, 23112000 -- a very old session
+  0, 0, "ASDFG", 23112000 -- a very old session
 );

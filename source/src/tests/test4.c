@@ -38,7 +38,8 @@ main(int argc, char **argv)
     assert(regok == OK);
 
     struct voter *voter;
-    int64_t sid, tok;
+    int64_t sid;
+    char* tok;
     status_t sessionok = new_voter_session(ctxt,
                                            "lastname",
                                            "firstname",
@@ -54,7 +55,7 @@ main(int argc, char **argv)
                                            &data[0],
                                            sizeof(data),
                                            0,
-                                           &voter, &sid, &tok);
+                                           &voter, &sid, tok);
     assert(sessionok == OK);
 
     status_t updateok = update_voter_information(ctxt,

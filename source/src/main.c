@@ -679,13 +679,13 @@ voter_update_info_page(struct kreq *r)
   int64_t voterid;
   status_t lookup;
   int64_t sid;
-  int64_t token;
+  char token[TOKEN_SIZE];
 
   // 1. Check cookie
   if ( (r->cookiemap[VALID_VOTERUPDATESESSION_ID] != NULL) &&
        (r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN] != NULL) ) {
     sid   = r->cookiemap[VALID_VOTERUPDATESESSION_ID]->parsed.i;
-    token = r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN]->parsed.i;
+    strcpy(token, r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN]->parsed.s);
     // 2. Get session
     lookup = lookup_voter_session(r->arg, sid, token, &voterid);
     if ( (OK == lookup) &&
