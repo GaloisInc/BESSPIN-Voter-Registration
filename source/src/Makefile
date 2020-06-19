@@ -66,6 +66,9 @@ db.h: bvrs.ort
 db.c: bvrs.ort
 	$(ORT_PREFIX)-c-source -Idjv -jv bvrs.ort > db.c
 
+hack_demo: hack_demo.o
+	$(CC) -o $@ hack_demo.o $(LDFLAGS)
+
 create_official: create_official.o $(OBJS) db.h
 	$(CC) -o $@ create_official.o $(OBJS) $(LDFLAGS)
 
