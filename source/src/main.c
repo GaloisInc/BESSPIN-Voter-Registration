@@ -606,12 +606,13 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
     struct electionofficialsession *p;
     struct electionofficialsession *sess;
     lookup_official_session(r->arg, sid, sess);
-    db_electionofficialsession_free(sess);
 
     char cookie_token[TOKEN_SIZE] = "";
     char verify_token[TOKEN_SIZE] = "";
     strcpy(verify_token, sess->token);
     strcpy(cookie_token, r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
+    db_electionofficialsession_free(sess);
+
     if(strncmp(verify_token, cookie_token, TOKEN_SIZE) != 0) {
       DBG("require_official: old or invalid session token.\n");
       http_open(r, KHTTP_401);
