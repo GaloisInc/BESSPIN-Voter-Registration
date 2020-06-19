@@ -161,17 +161,17 @@ new_voter_session(bvrs_ctxt_t *ctxt,
     if (NULL != a_voter) {
         time_t ctime;
         int64_t a_session_id;
-        char **a_token;
+        char a_token[TOKEN_SIZE] = "";
 
-        if (OK == new_session_info(*a_token, &ctime)) {
+        if (OK == new_session_info(a_token, &ctime)) {
 
             a_session_id = db_voterupdatesession_insert(ctxt,
                                                         a_voter->id,
-                                                        *a_token,
+                                                        a_token,
                                                         ctime);
             if (a_session_id > 0) {
                 *the_session_id = a_session_id;
-                the_token = *a_token;
+                the_token = a_token;
                 *the_voter = a_voter;
                 retstatus = OK;
             }
@@ -413,7 +413,7 @@ new_official_session(bvrs_ctxt_t *ctxt,
 
     if (NULL != official) {
         time_t ctime;
-        char *a_token;
+        char a_token[TOKEN_SIZE] = "";
         int64_t a_session_id;
 
         if (OK == new_session_info( a_token, &ctime)) {

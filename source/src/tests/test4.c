@@ -39,7 +39,7 @@ main(int argc, char **argv)
 
     struct voter *voter;
     int64_t sid;
-    char* tok;
+    char tok[TOKEN_SIZE] = "";
     status_t sessionok = new_voter_session(ctxt,
                                            "lastname",
                                            "firstname",

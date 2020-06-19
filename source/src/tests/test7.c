@@ -13,7 +13,7 @@ main(int argc, char **argv)
     assert(openok == OK);
 
     int64_t sid;
-    char *tok;
+    char tok[TOKEN_SIZE] = "";
     status_t sess_ok = new_official_session(ctxt, "love2vote", "love2vote", &sid, tok);
     assert(sess_ok == OK);
     
