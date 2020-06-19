@@ -138,6 +138,9 @@ struct electionofficialsession {
   field ctime epoch comment "Creation time.";
   comment "Authenticated election official session.";
 
+  search id: name officalbyid
+    comment "Find a token geven only the id";
+
   search id, token: name officialcreds
     comment "Find the session by ID/Token";
 

@@ -267,8 +267,8 @@ new_official_session(bvrs_ctxt_t *ctxt,
 */
 status_t
 lookup_official_session(bvrs_ctxt_t *ctx,
-                        int64_t *session_id,
-                        char *token);
+                        int64_t session_id,
+                        struct electionofficialsession *outsess);
 
 /* Explicitly end a session and remove it from the database.
  *

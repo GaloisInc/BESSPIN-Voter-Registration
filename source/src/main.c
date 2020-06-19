@@ -596,7 +596,6 @@ voter_register_page(struct kreq *r)
 */
 status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
   int64_t sid;
-  char token[TOKEN_SIZE];
   if ( (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] == NULL) ||
       (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] == NULL) ) {
       DBG("require_offical: No Cookie. Not logged in.\n");
@@ -604,16 +603,21 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
       return NOT_AUTHORIZED;
   } else {
     sid   = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i;
-    strcpy(token, r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
     struct electionofficialsession *p;
     struct electionofficialsession *sess;
-    sess = db_electionofficialsession_get_officialcreds(r->arg, sid, token);
+    lookup_official_session(r->arg, sid, sess);
+    db_electionofficialsession_free(sess);
 
-    if(sess == NULL) {
+    char cookie_token[TOKEN_SIZE] = "";
+    char verify_token[TOKEN_SIZE] = "";
+    strcpy(verify_token, sess->token);
+    strcpy(cookie_token, r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
+    if(strncmp(verify_token, cookie_token, TOKEN_SIZE) != 0) {
       DBG("require_official: old or invalid session token.\n");
       http_open(r, KHTTP_401);
       return NOT_AUTHORIZED;
     }
+
   }
   ppage(r);
   return OK;

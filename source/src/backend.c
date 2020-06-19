@@ -438,14 +438,12 @@ new_official_session(bvrs_ctxt_t *ctxt,
 
 status_t
 lookup_official_session(bvrs_ctxt_t *ctx,
-                        int64_t *session_id,
-                        char *token)
+                        int64_t session_id,
+                        struct electionofficialsession *outsession)
 {
     status_t ret = ERROR;
-    struct electionofficialsession *session;
-    session = db_electionofficialsession_get_officialcreds(ctx, *session_id, token);
-    if (NULL != session) {
-        db_electionofficialsession_free(session);
+    outsession = db_electionofficialsession_get_officalbyid(ctx, session_id);
+    if (NULL != outsession) {
         ret = OK;
     } else {
         ret = NOT_FOUND;
