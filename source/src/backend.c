@@ -422,7 +422,7 @@ new_official_session(bvrs_ctxt_t *ctxt,
 
             if (a_session_id > 0) {
                 *session_id = a_session_id;
-                token = a_token;
+                strcpy(token, a_token);
                 retstatus = OK;
             }
         } else {
@@ -436,20 +436,57 @@ new_official_session(bvrs_ctxt_t *ctxt,
     return retstatus;
 }
 
-status_t
-lookup_official_session(bvrs_ctxt_t *ctx,
-                        int64_t session_id,
-                        struct electionofficialsession *outsession)
+/*
+ * Fill out all headers then start the HTTP document body.
+ * No more headers after this point!
+ */
+void http_open(struct kreq *r, enum khttp code)
 {
-    status_t ret = ERROR;
-    outsession = db_electionofficialsession_get_officalbyid(ctx, session_id);
-    if (NULL != outsession) {
-        ret = OK;
-    } else {
-        ret = NOT_FOUND;
+  khttp_head(r, kresps[KRESP_STATUS],
+    "%s", khttps[code]);
+  khttp_head(r, kresps[KRESP_CONTENT_TYPE],
+    "%s", kmimetypes[r->mime]);
+  khttp_head(r, "X-Content-Type-Options", "nosniff");
+  khttp_head(r, "X-Frame-Options", "DENY");
+  khttp_head(r, "X-XSS-Protection", "1; mode=block");
+  khttp_body(r);
+  /*  khttp_puts, khttp_free ... */
+}
+
+
+/*
+* Takes a pointer to a page *ppage and checks if the client
+* as provided proper authorization for that page or if 
+*/
+status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
+  int64_t sid;
+  if ( (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] == NULL) ||
+      (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] == NULL) ) {
+      DBG("require_offical: No Cookie. Not logged in.\n");
+      http_open(r, KHTTP_401);
+      return NOT_AUTHORIZED;
+  } else {
+    sid   = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i;
+    struct electionofficialsession *p;
+    struct electionofficialsession *sess;
+    sess = db_electionofficialsession_get_officialbyid(r->arg, sid);
+    
+    char cookie_token[TOKEN_SIZE] = "";
+    char verify_token[TOKEN_SIZE] = "";
+    strcpy(verify_token, sess->token);
+    strcpy(cookie_token, r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
+    db_electionofficialsession_free(sess);
+    printf("cookie: %s\n", cookie_token);
+    printf("verify: %s\n", verify_token);
+    if(strncmp(verify_token, cookie_token, TOKEN_SIZE) != 0) {
+      DBG("require_official: old or invalid session token.\n");
+      http_open(r, KHTTP_401);
+      return NOT_AUTHORIZED;
     }
 
-    return ret;
+  }
+  ppage(r);
+  return OK;
 }
 
 

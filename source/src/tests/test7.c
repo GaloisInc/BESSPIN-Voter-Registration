@@ -1,6 +1,7 @@
 #include <backend.h>
 #include <assert.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "db.h"
 
@@ -16,9 +17,14 @@ main(int argc, char **argv)
     char tok[TOKEN_SIZE] = "";
     status_t sess_ok = new_official_session(ctxt, "love2vote", "love2vote", &sid, tok);
     assert(sess_ok == OK);
+    assert(sid > 0);
+    // printf("token[%lu]: %s\n", strlen(tok), tok);
+    assert(strlen(tok) == TOKEN_SIZE);
     
+    strcpy(tok, "");
     sess_ok = new_official_session(ctxt, "love2vote", "hate2vote", &sid, tok);
     assert(sess_ok != OK);
+    assert(strcmp(tok, "") == 0);
 
-    printf("[7] Test Passed.\n");
+    printf("[7] Test Passed - New Official Session.\n");
 }

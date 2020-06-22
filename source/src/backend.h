@@ -258,17 +258,20 @@ new_official_session(bvrs_ctxt_t *ctxt,
                      int64_t *session_id,
                      char *token);
 
-/* Validate election official session
-*
+
+/*
+* Takes a pointer to a page *ppage and checks if the client
+* as provided proper authorization for that page or if
 * Returns
-* OK if there is a active matching session
-* NOT_FOUND if there not a current / valid session matching cookie
-* ERROR if some internal error occurs
+*   OK on auth success
+*   NOT_AUTHORIZED on auth failure
 */
-status_t
-lookup_official_session(bvrs_ctxt_t *ctx,
-                        int64_t session_id,
-                        struct electionofficialsession *outsess);
+status_t require_official(void (*ppage)(struct kreq*), struct kreq *r);
+
+/*
+* Starts an HTTP response
+*/
+void http_open(struct kreq *r, enum khttp code);
 
 /* Explicitly end a session and remove it from the database.
  *
