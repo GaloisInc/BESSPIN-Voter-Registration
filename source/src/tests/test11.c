@@ -27,14 +27,14 @@ main(int argc, char **argv)
 
     sid.parsed.i = 1;
     r.cookiemap = calloc(VALID__MAX, sizeof(struct kpair*));
-    token.parsed.s = "ABCDEFGH12345678ABCDEFGH12345678";
+    token.parsed.s = "111111111111111111111111111111111111111111111111111111111111111111111111111111111";
     r.cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] = &sid;
     r.cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] = &token;
-    //printf("cookiemap before: %s\n", r.cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
+
     status_t status = require_official(dummy_page, &r);
     assert(status == OK);
     // Ensure that the guarded page is called
     assert(r.port == 345);
 
-    printf("[10] Test Passed - Require Official\n");
+    printf("[11] Test Passed - HACK Official\n");
 }

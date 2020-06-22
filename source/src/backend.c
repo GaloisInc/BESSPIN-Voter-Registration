@@ -470,14 +470,18 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
     struct electionofficialsession *p;
     struct electionofficialsession *sess;
     sess = db_electionofficialsession_get_officialbyid(r->arg, sid);
+    if(sess == NULL) {
+      http_open(r, KHTTP_401);
+      return NOT_AUTHORIZED;
+    }
     
     char cookie_token[TOKEN_SIZE] = "";
     char verify_token[TOKEN_SIZE] = "";
     strcpy(verify_token, sess->token);
     strcpy(cookie_token, r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
     db_electionofficialsession_free(sess);
-    printf("cookie: %s\n", cookie_token);
-    printf("verify: %s\n", verify_token);
+    DBG("cookie: %s\n", cookie_token);
+    DBG("verify: %s\n", verify_token);
     if(strncmp(verify_token, cookie_token, TOKEN_SIZE) != 0) {
       DBG("require_official: old or invalid session token.\n");
       http_open(r, KHTTP_401);
