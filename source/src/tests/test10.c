@@ -20,16 +20,12 @@ main(int argc, char **argv)
 
     struct kreq r;
     r.arg = ctxt;
-    struct kpair token;
-    struct kpair sid;
-    memset(&token, 0, sizeof(struct kpair));
-    memset(&sid, 0, sizeof(struct kpair));
 
-    sid.parsed.i = 1;
     r.cookiemap = calloc(VALID__MAX, sizeof(struct kpair*));
-    token.parsed.s = "ABCDEFGH12345678ABCDEFGH12345678";
-    r.cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] = &sid;
-    r.cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] = &token;
+    r.cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] = malloc(sizeof(struct kpair));
+    r.cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i = 1;
+    r.cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] = malloc(sizeof(struct kpair));
+    r.cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s = "ABCDEFGH12345678ABCDEFGH12345678";
     //printf("cookiemap before: %s\n", r.cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
     status_t status = require_official(dummy_page, &r);
     assert(status == OK);
