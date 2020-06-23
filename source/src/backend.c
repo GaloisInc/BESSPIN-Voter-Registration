@@ -471,8 +471,9 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
     struct electionofficialsession *sess;
     sess = db_electionofficialsession_get_officialbyid(r->arg, sid);
     if(sess == NULL) {
-      http_open(r, KHTTP_401);
-      return NOT_AUTHORIZED;
+        DBG("Invalid session: %ld\n", sid);
+        http_open(r, KHTTP_401);
+        return NOT_AUTHORIZED;
     }
     
     char tokens[2][TOKEN_SIZE] = {"", ""};

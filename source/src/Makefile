@@ -42,7 +42,7 @@ TESTS = tests/test0 tests/test1 tests/test2 tests/test3 tests/test4 \
 		tests/test10 tests/test11 \
 		tests/cgi_test0 tests/cgi_test1 tests/cgi_test2 tests/cgi_test3 \
 		tests/cgi_test4 tests/cgi_test5 tests/cgi_test6 tests/cgi_test7 \
-		tests/cgi_test8
+		tests/cgi_test8 tests/cgi_test9
 
 all: bvrs create_official
 

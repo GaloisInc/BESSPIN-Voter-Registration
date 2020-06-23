@@ -867,7 +867,7 @@ main(int argc, char **argv)
     }
     database_name = argv[1];
 
-    flush_old_sessions(ctxt, 5*60, 5*60);
+    flush_old_sessions(ctxt, 5*60*60, 5*60*60); // 5 hour
 
     r.arg = ctxt;
 

@@ -40,3 +40,14 @@ the dependencies + bvrs app), one just needs to run (assuming built for debian):
 ./deploy.sh $FETT/SSITH-FETT-Binaries/GFE/appsBinaries/voting/debian $FETT/build/voting/common
 ```
 
+Exploiting
+===
+This app contains an exploitable cookie authorization via memory overflow
+as well as a script for launching the attack.  For this to work there must 
+have been an existing official session still active in the database.
+
+```
+./attack.sh <bvrs-server>
+```
+This script will print a full list of voter information to the console as
+an unothorized offiical.

