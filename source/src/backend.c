@@ -607,7 +607,7 @@ status_t official_query(char *database_name,
     } 
 
     while ((status = sqlite3_step(res)) == SQLITE_ROW) {
-        struct voter *p = malloc(sizeof(struct voter));
+        struct voter *p = calloc(1,sizeof(struct voter));
         if (p == NULL) {
             perror(NULL);
             exit(EXIT_FAILURE);

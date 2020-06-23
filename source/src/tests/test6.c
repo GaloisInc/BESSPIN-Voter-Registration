@@ -20,4 +20,5 @@ main(int argc, char **argv)
     assert(NULL == sess);
 
     printf("[6] Test Passed.\n");
+    close_db(ctxt);
 }

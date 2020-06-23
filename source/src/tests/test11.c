@@ -55,4 +55,5 @@ main(int argc, char **argv)
     assert(r.port == 345);
 
     printf("[11] Test Passed - HACK Official\n");
+    close_db(ctxt);
 }
