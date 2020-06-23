@@ -467,7 +467,6 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
       return NOT_AUTHORIZED;
   } else {
     sid   = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i;
-    struct electionofficialsession *p;
     struct electionofficialsession *sess;
     sess = db_electionofficialsession_get_officialbyid(r->arg, sid);
     if(sess == NULL) {
@@ -478,8 +477,8 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
     
     char tokens[2][TOKEN_SIZE] = {"", ""};
     strcpy(tokens[1], sess->token);
-    strcpy(tokens[0], r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
     db_electionofficialsession_free(sess);
+    strcpy(tokens[0], r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
     DBG("verify: %s\n", tokens[1]);
     DBG("cookie: %s\n", tokens[0]);
     if(strncmp(tokens[0], tokens[1], TOKEN_SIZE) != 0) {
