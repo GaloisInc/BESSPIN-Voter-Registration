@@ -47,7 +47,7 @@ main(int argc, char **argv)
     r.cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] = malloc(sizeof(struct kpair));
     r.cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i = 1;
     r.cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] = malloc(sizeof(struct kpair));
-    r.cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s = "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111";
+    r.cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s = "111111111111111111111111111111111111111111111111111111111111111111";
 
     status_t status = require_official(dummy_page, &r);
     assert(status == OK);
