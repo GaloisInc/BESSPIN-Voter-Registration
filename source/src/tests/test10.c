@@ -33,4 +33,5 @@ main(int argc, char **argv)
     assert(r.port == 345);
 
     printf("[10] Test Passed - Require Official\n");
+    close_db(ctxt);
 }

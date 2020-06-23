@@ -27,4 +27,5 @@ main(int argc, char **argv)
     assert(strcmp(tok, "") == 0);
 
     printf("[7] Test Passed - New Official Session.\n");
+    close_db(ctxt);
 }

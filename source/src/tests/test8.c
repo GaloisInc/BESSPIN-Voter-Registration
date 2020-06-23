@@ -24,4 +24,5 @@ main(int argc, char **argv)
     assert(num == 2);
 
     printf("[8] Test Passed - Query Voter Database.\n");
+    close_db(ctxt);
 }

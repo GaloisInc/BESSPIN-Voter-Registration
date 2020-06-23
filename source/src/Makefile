@@ -19,7 +19,7 @@ endif
 
 ORT_PREFIX ?= ../../build/host/bin/ort
 OBJS = db.o backend.o
-CFLAGS += -fno-stack-protector -DDEBUG
+CFLAGS += -fno-stack-protector -O0 -DDEBUG
 CFLAGS += -I $(PREFIX)/include -g -Werror
 CFLAGS_TEST ?= 
 LDFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libkcgijson.a -l:libz.a

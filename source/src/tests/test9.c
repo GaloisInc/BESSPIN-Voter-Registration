@@ -19,4 +19,5 @@ main(int argc, char **argv)
     db_electionofficialsession_free(sess);
 
     printf("[9] Test Passed - DB Get Election Official Session By ID\n");
+    close_db(ctxt);
 }
