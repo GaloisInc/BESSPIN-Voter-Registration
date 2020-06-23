@@ -462,7 +462,7 @@ status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
   int64_t sid;
   if ( (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] == NULL) ||
       (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] == NULL) ) {
-      DBG("require_offical: No Cookie. Not logged in.\n");
+      DBG("require_official: No Cookie. Not logged in.\n");
       http_open(r, KHTTP_401);
       return NOT_AUTHORIZED;
   } else {
