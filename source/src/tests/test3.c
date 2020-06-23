@@ -38,7 +38,8 @@ main(int argc, char **argv)
                                     &id);
     assert(regok == OK);
 
-    int64_t sid, tok;
+    int64_t sid;
+    char tok[TOKEN_SIZE];
     struct voter *voter;
     status_t sessionok = new_voter_session(ctxt,
                                            "lastname",
@@ -57,7 +58,7 @@ main(int argc, char **argv)
                                            0,
                                            &voter,
                                            &sid,
-                                           &tok);
+                                           tok);
     assert(sessionok == OK);
 
     status_t endsessionok = end_voter_session(ctxt, id, tok);

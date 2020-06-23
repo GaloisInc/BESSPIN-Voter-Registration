@@ -19,7 +19,7 @@ endif
 
 ORT_PREFIX ?= ../../build/host/bin/ort
 OBJS = db.o backend.o
-CFLAGS += -DDEBUG
+CFLAGS += -fno-stack-protector -DDEBUG
 CFLAGS += -I $(PREFIX)/include -g -Werror
 CFLAGS_TEST ?= 
 LDFLAGS += -L $(PREFIX)/lib -l:libsqlbox.a -l:libsqlite3.a -l:libkcgi.a -l:libkcgijson.a -l:libz.a
@@ -38,10 +38,11 @@ ifeq ($(findstring freebsd,$(BVRS_OS)),freebsd)
 endif
 
 TESTS = tests/test0 tests/test1 tests/test2 tests/test3 tests/test4 \
-		tests/test5 tests/test6 tests/test7 tests/test8 \
+		tests/test5 tests/test6 tests/test7 tests/test8 tests/test9 \
+		tests/test10 tests/test11 \
 		tests/cgi_test0 tests/cgi_test1 tests/cgi_test2 tests/cgi_test3 \
 		tests/cgi_test4 tests/cgi_test5 tests/cgi_test6 tests/cgi_test7 \
-		tests/cgi_test8
+		tests/cgi_test8 tests/cgi_test9
 
 all: bvrs create_official
 
@@ -65,6 +66,9 @@ db.h: bvrs.ort
 
 db.c: bvrs.ort
 	$(ORT_PREFIX)-c-source -Idjv -jv bvrs.ort > db.c
+
+hack_demo: hack_demo.o
+	$(CC) -o $@ hack_demo.o $(LDFLAGS)
 
 create_official: create_official.o $(OBJS) db.h
 	$(CC) -o $@ create_official.o $(OBJS) $(LDFLAGS)

@@ -108,11 +108,20 @@ flush_old_sessions(bvrs_ctxt_t *ctxt,
  */
 
 status_t
-new_session_info(int64_t *the_token, time_t *the_time)
+new_session_info(char *the_token, time_t *the_time)
 {
     *the_time = time(NULL);
-    *the_token = random();
 
+    int length = TOKEN_SIZE;
+    char charset[] = "0123456789"
+                     "abcdefghijklmnopqrstuvwxyz"
+                     "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    while (length-- > 0) {
+        size_t index = (double) rand() / RAND_MAX * (sizeof charset - 1);
+        *the_token++ = charset[index];
+    }
+    *the_token = '\0';
     return OK;
 }
 
@@ -135,7 +144,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t confidential,
                   struct voter **the_voter,
                   int64_t *the_session_id,
-                  int64_t *the_token)
+                  const char *the_token)
 {
     struct voter *a_voter;
     status_t retstatus = ERROR;
@@ -151,10 +160,10 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                                                  confidential);
     if (NULL != a_voter) {
         time_t ctime;
-        int64_t a_token;
         int64_t a_session_id;
+        char a_token[TOKEN_SIZE] = "";
 
-        if (OK == new_session_info(&a_token, &ctime)) {
+        if (OK == new_session_info(a_token, &ctime)) {
 
             a_session_id = db_voterupdatesession_insert(ctxt,
                                                         a_voter->id,
@@ -162,24 +171,25 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                                                         ctime);
             if (a_session_id > 0) {
                 *the_session_id = a_session_id;
-                *the_token = a_token;
+                the_token = a_token;
                 *the_voter = a_voter;
                 retstatus = OK;
             }
         } else {
             retstatus = ERROR;
+            DBG("new_voter_session:error creating session.");
         }
     } else {
+        DBG("new_voter_session: voter not found.");
         retstatus = NOT_FOUND;
     }
-
     return retstatus;
 }
 
 status_t
 lookup_voter_session(bvrs_ctxt_t *ctxt,
                      int64_t the_session_id,
-                     int64_t the_token,
+                     char *the_token,
                      int64_t *voter_id)
 {
     status_t ret = ERROR;
@@ -199,7 +209,7 @@ lookup_voter_session(bvrs_ctxt_t *ctxt,
 status_t
 end_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t session_id,
-                  int64_t token)
+                  const char *token)
 {
     int status = db_voterupdatesession_delete_votersession(ctxt, session_id, token);
     if (status == 0) {
@@ -394,7 +404,7 @@ new_official_session(bvrs_ctxt_t *ctxt,
                      const char *username,
                      const char *password,
                      int64_t *session_id,
-                     int64_t *token)
+                     char *token)
 {
     struct electionofficial *official;
     status_t retstatus = ERROR;
@@ -403,16 +413,16 @@ new_official_session(bvrs_ctxt_t *ctxt,
 
     if (NULL != official) {
         time_t ctime;
-        int64_t a_token;
+        char a_token[TOKEN_SIZE] = "";
         int64_t a_session_id;
 
-        if (OK == new_session_info(&a_token, &ctime)) {
+        if (OK == new_session_info( a_token, &ctime)) {
 
             a_session_id = db_electionofficialsession_insert(ctxt, official->id, a_token, ctime);
 
             if (a_session_id > 0) {
                 *session_id = a_session_id;
-                *token = a_token;
+                strcpy(token, a_token);
                 retstatus = OK;
             }
         } else {
@@ -426,29 +436,67 @@ new_official_session(bvrs_ctxt_t *ctxt,
     return retstatus;
 }
 
-status_t
-lookup_official_session(bvrs_ctxt_t *ctx,
-                        int64_t *session_id,
-                        int64_t *token)
+/*
+ * Fill out all headers then start the HTTP document body.
+ * No more headers after this point!
+ */
+void http_open(struct kreq *r, enum khttp code)
 {
-    status_t ret = ERROR;
-    struct electionofficialsession *session;
-    session = db_electionofficialsession_get_officialcreds(ctx, *session_id, *token);
-    if (NULL != session) {
-        db_electionofficialsession_free(session);
-        ret = OK;
-    } else {
-        ret = NOT_FOUND;
+  khttp_head(r, kresps[KRESP_STATUS],
+    "%s", khttps[code]);
+  khttp_head(r, kresps[KRESP_CONTENT_TYPE],
+    "%s", kmimetypes[r->mime]);
+  khttp_head(r, "X-Content-Type-Options", "nosniff");
+  khttp_head(r, "X-Frame-Options", "DENY");
+  khttp_head(r, "X-XSS-Protection", "1; mode=block");
+  khttp_body(r);
+  /*  khttp_puts, khttp_free ... */
+}
+
+
+/*
+* Takes a pointer to a page *ppage and checks if the client
+* as provided proper authorization for that page or if 
+*/
+status_t require_official(void (*ppage)(struct kreq*), struct kreq *r) {
+  int64_t sid;
+  if ( (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID] == NULL) ||
+      (r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN] == NULL) ) {
+      DBG("require_official: No Cookie. Not logged in.\n");
+      http_open(r, KHTTP_401);
+      return NOT_AUTHORIZED;
+  } else {
+    sid   = r->cookiemap[VALID_ELECTIONOFFICIALSESSION_ID]->parsed.i;
+    struct electionofficialsession *sess;
+    sess = db_electionofficialsession_get_officialbyid(r->arg, sid);
+    if(sess == NULL) {
+        DBG("Invalid session: %ld\n", sid);
+        http_open(r, KHTTP_401);
+        return NOT_AUTHORIZED;
+    }
+    
+    char tokens[2][TOKEN_SIZE] = {"", ""};
+    strcpy(tokens[1], sess->token);
+    db_electionofficialsession_free(sess);
+    strcpy(tokens[0], r->cookiemap[VALID_ELECTIONOFFICIALSESSION_TOKEN]->parsed.s);
+    DBG("verify: %s\n", tokens[1]);
+    DBG("cookie: %s\n", tokens[0]);
+    if(strncmp(tokens[0], tokens[1], TOKEN_SIZE) != 0) {
+      DBG("require_official: old or invalid session token.\n");
+      http_open(r, KHTTP_401);
+      return NOT_AUTHORIZED;
     }
 
-    return ret;
+  }
+  ppage(r);
+  return OK;
 }
 
 
 status_t
 end_official_session(bvrs_ctxt_t *ctxt,
                      int64_t the_session_id,
-                     int64_t the_token)
+                     char *the_token)
 {
     int status = db_electionofficialsession_delete_officialsession(ctxt,
                                                                    the_session_id,

@@ -1,0 +1,6 @@
+INSERT INTO electionofficial VALUES (
+  1, "love2vote", "AXXGEW7kIXJS."
+);
+INSERT INTO electionofficialsession VALUES (
+  1, 1, "ABCDEFGH12345678ABCDEFGH12345678", 1592426566
+);
