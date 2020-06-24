@@ -12,6 +12,8 @@ TARGET_BUILD=${DIR}/../build/host
 BVRS_RISCV=${BVRS_RISCV:-0}
 BVRS_LLVM=${BVRS_LLVM:-0}
 BVRS_OS=${BVRS_OS:-linux-gnu}
+HOST=${HOST:-x86_64-unknown-linux-gnu}
+SQLITE_BUILD=""
 SQLITE_HOST=""
 PRINT_DEFS=${PRINT_DEFS:-0}
 
@@ -21,8 +23,8 @@ fi
 
 if [ "${BVRS_RISCV}" -eq 1 ]; then
     TARGET_BUILD=${DIR}/../build/target
-    export CFLAGS="-I ${TARGET_BUILD}/include"
-    export LDFLAGS="-L ${TARGET_BUILD}/lib"
+    export CFLAGS="-I${TARGET_BUILD}/include"
+    export LDFLAGS="-L${TARGET_BUILD}/lib"
     if [ "${BVRS_LLVM}" -eq 1 ]; then
       # assume RISC-V toolchain (CC, LD, AR) is set in environment already
       # anything specific to RISC-V cross-compilation with LLVM goes here
@@ -31,12 +33,13 @@ if [ "${BVRS_RISCV}" -eq 1 ]; then
       # RISC-V gcc toolchain
       PREFIX=riscv64-unknown-${BVRS_OS}
       export CC=${PREFIX}-gcc
-      export CFLAGS="-I ${TARGET_BUILD}/include"
-      export LFLAGS="-L ${TARGET_BUILD}/lib"
+      export CFLAGS="-I${TARGET_BUILD}/include"
+      export LFLAGS="-L${TARGET_BUILD}/lib"
       export LD=${PREFIX}-ld
       export AR=${PREFIX}-ar
     fi 
-    # YMMV with the build argument below
+    # YMMV with the build arguments below
+    SQLITE_BUILD="--build=${HOST}"
     SQLITE_HOST="--host=riscv64-unknown-${BVRS_OS}"
 elif [ "${BVRS_OS}" == "freebsd" ]; then
     # for FreeBSD's native (not RISC-V) LLVM toolchain, we need to include /usr/local
@@ -77,7 +80,7 @@ if [ -z ${HAVE_SQLITE+x} ]; then
     rm -rf build
     mkdir build
     cd build
-    ../configure --disable-readline --disable-editline --disable-tcl --prefix=${TARGET_BUILD} --enable-fts3 ${SQLITE_HOST}
+    ../configure --disable-readline --disable-editline --disable-tcl --prefix=${TARGET_BUILD} --enable-fts3 ${SQLITE_BUILD} ${SQLITE_HOST}
     make && make install
     popd
 fi
