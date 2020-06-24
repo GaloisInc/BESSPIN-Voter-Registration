@@ -112,7 +112,7 @@ new_session_info(char *the_token, time_t *the_time)
 {
     *the_time = time(NULL);
 
-    int length = TOKEN_SIZE;
+    int length = TOKEN_SIZE - 1;
     char charset[] = "0123456789"
                      "abcdefghijklmnopqrstuvwxyz"
                      "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

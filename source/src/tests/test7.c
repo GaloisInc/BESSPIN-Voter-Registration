@@ -19,7 +19,7 @@ main(int argc, char **argv)
     assert(sess_ok == OK);
     assert(sid > 0);
     // printf("token[%lu]: %s\n", strlen(tok), tok);
-    assert(strlen(tok) == TOKEN_SIZE);
+    assert(strlen(tok) == TOKEN_SIZE - 1);
     
     strcpy(tok, "");
     sess_ok = new_official_session(ctxt, "love2vote", "hate2vote", &sid, tok);
