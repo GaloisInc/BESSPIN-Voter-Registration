@@ -69,7 +69,7 @@ if [ -z ${HAVE_ZLIB+x} ]; then
     if [ -f "configure.log" ]; then
        make distclean
     fi
-    ./configure --prefix=${TARGET_BUILD}
+    ./configure --static --prefix=${TARGET_BUILD}
     make && make install
     popd
 fi
