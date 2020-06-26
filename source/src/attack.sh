@@ -7,7 +7,7 @@ if [ -z "$1" ]
 fi
 
 SERVER_LOC=$1
-echo "connecitng to: $SERVER_LOC"
+echo "connecting to: $SERVER_LOC"
 
 curl -v -L \
 -b "electionofficialsession-id=1;electionofficialsession-token=111111111111111111111111111111111111111111111111111111111111111111" \
