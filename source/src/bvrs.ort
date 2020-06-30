@@ -1,0 +1,154 @@
+# BESSPIN Voter Registration System (BVRS)
+# Copyright (C) 2020 Galois
+
+# This is a high-level description of the BVRS data model in the language of
+# openradtool ("ort"), https://kristaps.bsd.lv/openradtool/, an open source 
+# RAD tool that generates front-end JavaScript/TypeScript and back-end SQL and
+# C from a data model configuration. This has several benefits, including the
+# ability to specify (at a high level) enumerated types and reasonable handling
+# for passwords.
+
+# enumerated types
+
+# the registration status
+enum regstatus {
+  item ACTIVE comment "Active" jslabel "Active";
+  item INACTIVE comment "Inactive" jslabel "Active";
+  item PENDINGREVIEW comment "Pending Review" jslabel "Pending Review";
+};
+
+# the voting method used
+enum votingmethod {
+  item INPERSON comment "In Person" jslabel "In Person";
+  item MAIL comment "By Mail" jslabel "By Mail";
+  item OTHER comment "Other" jslabel "Other";
+};
+
+# the status of a mailed ballot
+enum ballotstatus {
+  item SENT comment "Sent" jslabel "Sent";
+  item RETURNED comment "Returned" jslabel "Returned";
+  item CANCELED comment "Canceled" jslabel "Canceled";
+  item LOST comment "Lost" jslabel "Lost";
+};
+
+
+# core structures
+
+# a voter record
+struct voter {
+  field id int rowid comment "Unique identifier in the database.";
+  field lastname text limit gt 0 comment "Last name";
+  field givennames text limit gt 0 comment "Given names";
+  field resaddress text limit gt 0 comment "Residence address";
+  field resaddress2 text limit gt 0 comment "Residence address line 2";
+  field reszip text limit gt 0 comment "Residence address zipcode";
+  field resstate text limit gt 0 comment "Residence address state";
+  field mailaddress text limit gt 0 comment "Mailing address";
+  field mailaddress2 text limit gt 0 comment "Mailing address line 2";
+  field mailzip text limit gt 0 comment "Mailing zipcode";
+  field mailstate text limit gt 0 comment "Mailing state";
+  field registeredparty text limit gt 0 comment "Registered party";
+  field birthdate date comment "Birth date";
+  field idinfo blob limit gt 0 comment "Identification information.";
+  field status enum regstatus comment "Registration status.";
+  field initialregtime date comment "Initial registration time.";
+  field lastupdatetime date comment "Last record update time.";
+  field confidential bit comment "Flag for voter confidentiality.";
+  comment "A registered voter.";
+
+  list lastname like, givennames like, birthdate, confidential:
+    name registration
+    comment "Search for a registered voter by name/birth date/confidential flag.";
+
+  search lastname like, givennames like, resaddress like, mailaddress like,
+         birthdate, idinfo, confidential:
+    limit 1
+    name registrationforupdate
+    comment "Search for matching data to update a registration.";
+
+  list lastname like, givennames like, resaddress like, mailaddress like,
+         birthdate gt, birthdate lt:
+    name officialsearch
+    comment "Search for a registered voter with ranges birthdate.";
+
+  insert;
+
+  delete id;
+
+  update lastname, givennames, resaddress, resaddress2, reszip,
+         resstate, mailaddress, mailaddress2, mailzip, mailstate,
+         registeredparty, birthdate, idinfo, status, lastupdatetime,
+         confidential:
+         id:
+    name info
+    comment "Update a voter registration record by id";
+
+  update confidential, lastupdatetime: id:
+    name confidential
+    comment "Update a voter registration confidentiality by id";
+
+  update status, lastupdatetime: id:
+    name status
+    comment "Update a voter registration status by id";
+};
+
+# a voter update session
+struct voterupdatesession {
+  field id int rowid comment "Unique identifier in the database.";
+  field voter struct voterid comment "Voter attached to session.";
+  field voterid:voter.id int comment "Voter identifier attached to session.";
+  field token text comment "Random cookie.";
+  field ctime epoch comment "Creation time.";
+  comment "A voter record update session.";
+
+  search id, token: name updatecreds
+    comment "Find the session by ID/Token";
+
+  list ctime lt: name byctime
+    comment "Find all sessions created before a given time";
+
+  insert;
+
+  delete id, token: name votersession
+    comment "Delete the session explicitly.";
+};
+
+# an election official record
+struct electionofficial {
+  field id int rowid comment "Unique identifier in the database.";
+  field username text unique limit gt 0 comment "Username";
+  field hash password limit gt 6 comment "Password (hashed)";
+  comment "An election official account.";
+
+insert;
+
+  search username, hash:
+    name credentials
+    comment "Search for an election official by username/password.";
+};
+
+# an election official session
+struct electionofficialsession {
+  field id int rowid comment "Unique identifier in the database.";
+  field electionofficial struct officialid comment "Election official attached to session.";
+  field officialid:electionofficial.id int
+    comment "Election official identifier attached to session.";
+  field token text comment "Random cookie.";
+  field ctime epoch comment "Creation time.";
+  comment "Authenticated election official session.";
+
+  search id: name officialbyid
+    comment "Find a token geven only the id";
+
+  search id, token: name officialcreds
+    comment "Find the session by ID/Token";
+
+  list ctime lt: name byctime
+    comment "Find all sessions created before a given time";
+
+  insert;
+
+  delete id, token: name officialsession
+    comment "Delete the session explicitly.";
+};

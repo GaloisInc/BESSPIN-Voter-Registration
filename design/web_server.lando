@@ -1,0 +1,18 @@
+subsystem Database Server
+All web server functionality necessary for the BVRS.
+
+// @note dmz we will use a standard web server, most likely nginx,
+// so this serves essentially as very high level documentation of
+// the functionality we'll need
+
+component Web Server (WS)
+  What is the content at this URL?
+  WS must support SSL/TLS.
+  WS must support execution of external programs (via CGI or similar mechanism).  
+  WS and external program execution mechanism must support submission of forms 
+    including attached files.
+  WS must log all connections and connection attempts.
+
+// Client relationships
+
+Web Server client Cryptography

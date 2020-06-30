@@ -1,0 +1,39 @@
+subsystem Logging
+A subsystem that supports the persistent logging of structured information.
+
+// @note dmz this may, in practice, be partially implemented by the logging 
+// functionality of whatever web server and database is used
+
+component Log Entry inherit String
+  A structured set of linear data that is to be written to a log.
+  Are these two log entries equivalent? 
+  Is this log entry verifiable wrt its well-formedness properties? 
+  
+component Secure Log Entry inherit Log Entry
+  Is this secure log entry verifiable wrt its security properties?
+
+component Log
+  A log is an (often persistent) sequence of events recorded about a
+  given system.
+  Create an empty log!
+  Write this entry to the log!
+  Import this log!
+  Is this log valid wrt its well-formedness properties?
+
+component Secure Log inherit Log
+  A secure log is a log that has evidence that specific security properties hold.
+  What kind of data integrity does this log have?
+  What kind of provenance does this log have?
+  What kind of confidentiality does this log have?
+  What kind of authentication and access control does this log have?
+  What non-repudiation properties does this log have?
+  May I have a log created conforming to the following security properties?
+  Is this secure log verifiable wrt its security properties?
+  Must stipulate what kinds of events are permitted in the log.
+
+// Client relationships
+
+Log client Log Entry
+Secure Log client Secure Log Entry
+Secure Log client Log
+Secure Log client Cryptography
