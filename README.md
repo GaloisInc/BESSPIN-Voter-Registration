@@ -40,6 +40,14 @@ the dependencies + bvrs app), one just needs to run (assuming built for debian):
 ./deploy.sh $FETT/SSITH-FETT-Binaries/GFE/appsBinaries/voting/debian $FETT/build/voting/common
 ```
 
+SSL
+===
+The cert and key must be installed according to voting.conf. 
+A [development certificate](source/conf/ssl) is provided for convience and
+is generated for `localhost`. No other DNS alias for it to work 
+properly.  In additon you need to install the FETT root CA in your 
+browsers root CA store. Located in SSITH-FETT-Target/apps/ssl/fettCA.pem
+
 Exploiting
 ===
 This app contains an exploitable cookie authorization via memory overflow
