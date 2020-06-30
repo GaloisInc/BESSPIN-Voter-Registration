@@ -42,9 +42,9 @@ the dependencies + bvrs app), one just needs to run (assuming built for debian):
 
 SSL
 ===
-The cert and key must be installed according to voting.conf.  This 
-certificate is for development only and is generated for `localhost`
-so you must use `localhost` and not any other DNS alias for it to work 
+The cert and key must be installed according to voting.conf. 
+A [development certificate](source/conf/ssl) is provided for convience and
+is generated for `localhost`. No other DNS alias for it to work 
 properly.  In additon you need to install the FETT root CA in your 
 browsers root CA store. Located in SSITH-FETT-Target/apps/ssl/fettCA.pem
 
