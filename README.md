@@ -13,14 +13,14 @@ the [design](design) directory.
 Building
 ===
 
-1. Fetch dependencies: `./sources/getdeps.sh`
+1. Fetch dependencies: `./source/getdeps.sh`
 2. Build dependencies 
-    -  for host: `./sources/builddeps.sh` 
-    -  for riscv target: `BVRS_OS=$OS BVRS_RISCV=1 ./sources/builddeps.sh`
+    -  for host: `cd source && /builddeps.sh` 
+    -  for riscv target: `cd source && BVRS_OS=$OS BVRS_RISCV=1 builddeps.sh`
        (`$OS` can be `linux-gnu`, `freebsd12.1`, etc.)
 3. Build BVRS CGI Handler: 
-    - for host: `cd sources/src && make`
-    - for riscv target: `cd sources/src && BVRS_RISCV=1 make`
+    - for host: `cd source/src && make`
+    - for riscv target: `cd source/src && BVRS_RISCV=1 make dist`
 
 "Deploying" to Target
 ===

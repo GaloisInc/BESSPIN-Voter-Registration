@@ -95,6 +95,6 @@ dist: bvrs bvrs.db
 	cp bvrs $(PREFIX)/bin
 	cp bvrs.db $(PREFIX)/share
 	cp ../conf/fastcgi.conf $(PREFIX)/share
-	cp ../conf/voting.conf $(PREFIX)/share
+	cp ../conf/sites/voting.conf $(PREFIX)/share
 
 alltests: $(TESTS)
