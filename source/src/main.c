@@ -591,19 +591,24 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
 
   time_t birthdate;
   size_t idinfo_sz;
-  enum regstatus status;
-  int64_t status_int;
+  int64_t confidential = 0;
   status_t ret = ERROR;
 
-  if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
+  if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME, &lastname)) &&
        (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
        (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESZIP, &reszip)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESSTATE, &resstate)) &&
        (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
-       (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate))  &&
-       (OK == get_int_param(r, VALID_VOTER_STATUS, &status_int))  &&
-       (OK == get_str_param(r, VALID_VOTER_REGISTEREDPARTY, &party))   &&
+       (OK == get_str_param(r, VALID_VOTER_MAILZIP, &mailzip)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILSTATE, &mailstate)) &&
+       (OK == get_str_param(r, VALID_VOTER_REGISTEREDPARTY, &party)) &&
+       (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate)) &&
        (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz))  ) {
-    status = (enum regstatus)status_int; // This is safe as kcgi has validated it.
+    // get the other parameters if they were set
+    get_str_param(r, VALID_VOTER_RESADDRESS2, &resaddress2);
+    get_str_param(r, VALID_VOTER_MAILADDRESS2, &mailaddress2);
+    get_int_param(r, VALID_VOTER_CONFIDENTIAL, &confidential);
     ret = update_voter_information(r->arg,
                                    voter_id,
                                    lastname,
@@ -620,8 +625,8 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
                                    birthdate,
                                    idinfo,
                                    idinfo_sz,
-                                   status,
-                                   0 /*  not confidential */);
+                                   REGSTATUS_PENDINGREVIEW,
+                                   confidential);
   }
 
   return ret;
