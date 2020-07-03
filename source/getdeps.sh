@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SQLITE_VERSION=3.22.0
-
 zlib_URL="https://www.zlib.net/zlib-1.2.11.tar.gz"
-sqlite_URL="https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=version-${SQLITE_VERSION}"
+sqlite_URL="https://www.sqlite.org/src/tarball/sqlite.tar.gz?r=version-3.22.0"
 kcgi_URL="https://github.com/kristapsdz/kcgi/archive/VERSION_0_12_1.tar.gz"
 sqlbox_URL="https://github.com/kristapsdz/sqlbox/archive/VERSION_0_1_12.tar.gz"
 openradtool_URL="https://github.com/kristapsdz/openradtool/archive/VERSION_0_8_14.tar.gz"
