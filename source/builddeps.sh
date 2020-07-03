@@ -48,7 +48,7 @@ fi
 if [ "${PRINT_DEFS}" -eq 1 ]; then
     echo "export CC=${CC}"
     echo "export CFLAGS=${CFLAGS}"
-    echo "export LFLAGS=${LFLAGS}"
+    echo "export LDFLAGS=${LDFLAGS}"
     echo "export LD=${LD}"
     echo "export AR=${AR}"
     exit 0
