@@ -23,6 +23,63 @@ function empty_table(){
 
 $(document).ready(function(){
 
+    var voter_session_active = 0;
+
+    // Voter - Update form
+    function voter_update(formData) {
+        $.ajax({
+            url  : 'voter_update_info',
+            type : "POST",
+            data : formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            xhrFields: { withCredentials: true },
+            success : function(result) {
+                voter_session_active = 0;
+                window.location.replace("voter_registration_confirmation.html");
+                return;
+            },
+            error: function(xhr, result, text) {
+                console.error("Error updating status: " + xhr.status);
+            }
+        });
+    }
+
+    // Voter - Voter update login form
+    $("form#voter_login_form").submit(function(e){
+        e.preventDefault();
+        clearError();
+        var formData = new FormData(this);
+        if(voter_session_active) {
+            voter_update(formData);
+            return;
+        }
+        $.ajax({
+            url  : 'voter_update_login',
+            type : "POST",
+            data : formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success : function(result) {
+                console.log("logged in voter update session");
+                // window.location.replace("voter_registration_update.html");
+                voter_session_active = 1;
+            },
+            error: function(xhr, result, text) {
+                if(xhr.status == 401) {
+                    console.error("Voter registration does not match.  See election official.");
+                    showError("Voter registration does not match.  See election official.");
+                    return;
+                } else if(xhr.status == 400) {
+                    console.error("400 error, Must fill in all fields");
+                    showError("Please fill-in all fields just as you registered previously.");
+                    return;
+                }
+            }
+        });
+    });
 
     // Offical - Voter update form
     $("form#offical_update_voters").submit(function(e){
