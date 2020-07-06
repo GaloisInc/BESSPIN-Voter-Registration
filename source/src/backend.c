@@ -144,7 +144,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t confidential,
                   struct voter **the_voter,
                   int64_t *the_session_id,
-                  const char *the_token)
+                  char *the_token)
 {
     struct voter *a_voter;
     status_t retstatus = ERROR;
@@ -171,7 +171,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                                                         ctime);
             if (a_session_id > 0) {
                 *the_session_id = a_session_id;
-                the_token = a_token;
+                strcpy(the_token, a_token);
                 *the_voter = a_voter;
                 retstatus = OK;
             }
