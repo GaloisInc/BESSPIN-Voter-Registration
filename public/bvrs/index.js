@@ -23,6 +23,8 @@ function empty_table(){
 
 $(document).ready(function(){
 
+    // Keeps local UI state since we're re-using the login
+    // form for the update form.
     var voter_session_active = 0;
 
     // Voter - Update form
@@ -63,8 +65,10 @@ $(document).ready(function(){
             cache: false,
             processData: false,
             success : function(result) {
+                // voter successfully logged in.  Let them know they
+                // Can now change things on this form.
+                showInfo("Voter verified. Now update the information below as you want saved.");
                 console.log("logged in voter update session");
-                // window.location.replace("voter_registration_update.html");
                 voter_session_active = 1;
             },
             error: function(xhr, result, text) {
@@ -218,6 +222,10 @@ function formatDate(epoch_time) {
 
 function clearError() {
     $("#errors").text("");    
+}
+
+function showInfo(msg){
+    $("#messages").text(msg);
 }
 
 function showError(msg){
