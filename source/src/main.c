@@ -640,6 +640,7 @@ voter_update_info_page(struct kreq *r)
        (r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN] != NULL) ) {
     sid   = r->cookiemap[VALID_VOTERUPDATESESSION_ID]->parsed.i;
     strcpy(token, r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN]->parsed.s);
+    DBG("Update Info SID: %ld, TOKEN: %s\n", sid, token);
     // 2. Get session
     lookup = lookup_voter_session(r->arg, sid, token, &voterid);
     if ( (OK == lookup) &&
