@@ -70,6 +70,10 @@ $(document).ready(function(){
                 showInfo("Voter verified. Now update the information below as you want saved.");
                 console.log("logged in voter update session");
                 voter_session_active = 1;
+                $('#extra-fields').html(
+                    '<label class=firstColLabel for="voter-confidential">Mark My Information as Confidential:</label>'
+                    + '<input class=formButton type="checkbox" value="1" id="voter-confidential" name="voter-confidential">'
+                    + '<br><br>');
             },
             error: function(xhr, result, text) {
                 if(xhr.status == 401) {
