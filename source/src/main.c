@@ -515,7 +515,10 @@ register_voter_common(struct kreq *r, enum regstatus status) {
     errors[error_count] = (struct field_error) { "voter-idinfo", "ID field required."};
     error_count++;
   }
+  // Optional params
   get_int_param(r, VALID_VOTER_CONFIDENTIAL, &confidential);
+  get_str_param(r, VALID_VOTER_RESADDRESS2, &resaddress2);
+  get_str_param(r, VALID_VOTER_MAILADDRESS2, &mailaddress2);
 
   if(0 == error_count) {
     int64_t voter_id;
@@ -588,17 +591,24 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
   const char *mailstate = "";
   const char *party = "";
   const char *idinfo = "";
-
   time_t birthdate;
   size_t idinfo_sz;
-  enum regstatus status;
-  int64_t status_int;
+  int64_t confidential = 0;
   status_t ret = ERROR;
+
+  // optional params
+  get_str_param(r, VALID_VOTER_RESADDRESS2, &resaddress2);
+  get_str_param(r, VALID_VOTER_MAILADDRESS2, &mailaddress2);
+  get_int_param(r, VALID_VOTER_CONFIDENTIAL, &confidential);
 
   if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
        (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
        (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESSTATE, &resstate)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESZIP, &reszip)) &&
        (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILZIP, &mailzip)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILSTATE, &mailstate)) &&
        (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate))  &&
        (OK == get_str_param(r, VALID_VOTER_REGISTEREDPARTY, &party))   &&
        (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz))  ) {
@@ -619,7 +629,7 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
                                    idinfo,
                                    idinfo_sz,
                                    REGSTATUS_PENDINGREVIEW,
-                                   0 /*  not confidential */);
+                                   confidential);
   }
 
   return ret;
@@ -738,15 +748,25 @@ voter_login_page(struct kreq *r)
   const char *mailstate = "";
   const char *idinfo = "";
 
+  // optional params
+  get_str_param(r, VALID_VOTER_RESADDRESS2, &resaddress2);
+  get_str_param(r, VALID_VOTER_MAILADDRESS2, &mailaddress2);
+
+  // required params
   if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
        (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
        (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESZIP, &reszip)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESSTATE, &resstate)) &&
        (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILZIP, &mailzip)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILSTATE, &mailstate)) &&
        (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate)) &&
        (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz)) ) {
     int64_t sid;
     char token[TOKEN_SIZE];
     struct voter *voter;
+
     status_t session_create = new_voter_session(r->arg,
                                                 lastname,
                                                 givennames,
