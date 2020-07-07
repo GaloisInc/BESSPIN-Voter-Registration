@@ -153,7 +153,13 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                                                  lastname,
                                                  givenname,
                                                  resaddr,
+                                                 resaddr2,
+                                                 reszip,
+                                                 resstate,
                                                  mailaddr,
+                                                 mailaddr2,
+                                                 mailzip,
+                                                 mailstate,
                                                  birthdate,
                                                  idinfo_sz,
                                                  idinfo,
@@ -177,10 +183,10 @@ new_voter_session(bvrs_ctxt_t *ctxt,
             }
         } else {
             retstatus = ERROR;
-            DBG("new_voter_session:error creating session.");
+            DBG("new_voter_session:error creating session.\n");
         }
     } else {
-        DBG("new_voter_session: voter not found.");
+        DBG("new_voter_session: voter not found.\n");
         retstatus = NOT_FOUND;
     }
     return retstatus;
