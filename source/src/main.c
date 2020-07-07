@@ -591,10 +591,9 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
   const char *mailstate = "";
   const char *party = "";
   const char *idinfo = "";
-  int64_t confidential;
-
   time_t birthdate;
   size_t idinfo_sz;
+  int64_t confidential = 0;
   status_t ret = ERROR;
 
   // optional params
@@ -767,6 +766,7 @@ voter_login_page(struct kreq *r)
     int64_t sid;
     char token[TOKEN_SIZE];
     struct voter *voter;
+
     status_t session_create = new_voter_session(r->arg,
                                                 lastname,
                                                 givennames,
