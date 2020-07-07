@@ -96,7 +96,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t confidential,
                   struct voter **the_voter,
                   int64_t *the_session_id,
-                  const char *the_token);
+                  char *the_token);
 
 /* Explicitly end a session and remove it from the database.
  *

@@ -600,10 +600,8 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
        (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
        (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
        (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate))  &&
-       (OK == get_int_param(r, VALID_VOTER_STATUS, &status_int))  &&
        (OK == get_str_param(r, VALID_VOTER_REGISTEREDPARTY, &party))   &&
        (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz))  ) {
-    status = (enum regstatus)status_int; // This is safe as kcgi has validated it.
     ret = update_voter_information(r->arg,
                                    voter_id,
                                    lastname,
@@ -620,7 +618,7 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
                                    birthdate,
                                    idinfo,
                                    idinfo_sz,
-                                   status,
+                                   REGSTATUS_PENDINGREVIEW,
                                    0 /*  not confidential */);
   }
 
@@ -640,6 +638,7 @@ voter_update_info_page(struct kreq *r)
        (r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN] != NULL) ) {
     sid   = r->cookiemap[VALID_VOTERUPDATESESSION_ID]->parsed.i;
     strcpy(token, r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN]->parsed.s);
+    DBG("Update Info SID: %ld, TOKEN: %s\n", sid, token);
     // 2. Get session
     lookup = lookup_voter_session(r->arg, sid, token, &voterid);
     if ( (OK == lookup) &&
