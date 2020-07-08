@@ -14,9 +14,9 @@ The BVRS stores two (optionally three) main types of data:
 - election official authentication information
 - (optional) election and ballot information
 
-[data_model.pdf](data_model.pdf) is the basic data model (shown below), and [data_model.graffle](data_model.graffle) is its OmniGraffle source document; as is typical for such representations, the fields above the lines comprise the primary key in a corresponding database table, and boldfaced fields are other tables' primary keys. This data model excludes the tables used within the web application framework for session tracking.
+[data_model.pdf](data_model.pdf) is the basic data model (shown below), and [data_model.graffle](data_model.graffle) is its OmniGraffle source document; as is typical for such representations, the fields above the lines comprise the primary key in a corresponding database table, and boldfaced fields are other tables' primary keys. 
 
 ![BVRS Data Model](data_model.png)
 
-The database schema is in [database_schema.md](database_schema.md). The security properties and threat model are in [security_properties_and_threat_model.md](security_properties_and_threat_model.md).
+This data model excludes the tables used within the web application framework for session tracking; however, those tables appear within the database schema in [database_schema.md](database_schema.md). The security properties and threat model are in [security_properties_and_threat_model.md](security_properties_and_threat_model.md).
 
