@@ -130,8 +130,10 @@ $(document).ready(function(){
     	e.preventDefault();
 
         console.log("Query Clicked");
+        // Clear previous errors
+        clearError();
 
-        //Preserve any checked items
+        // Preserve any checked items
         var checked = [];
         $("[name^=vsel_]:checked").each(function(){checked.push(this.id)});
 

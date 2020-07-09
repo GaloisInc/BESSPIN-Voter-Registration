@@ -93,8 +93,9 @@ th, td {
     padding: 0;
 	position: fixed;
     bottom: 0;
-    left: 0;
-    height: 25px;
+	left: 0;
+	padding-top: 5px;
+    height: 35px;
     width: 100%;
     background-color: #FDFDFD;
 }
