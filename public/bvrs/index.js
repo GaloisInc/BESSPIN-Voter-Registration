@@ -131,6 +131,10 @@ $(document).ready(function(){
 
         console.log("Query Clicked");
 
+        //Preserve any checked items
+        var checked = [];
+        $("[name^=vsel_]:checked").each(function(){checked.push(this.id)});
+
         $.ajax({
             url : 'official_query_voters', 
             type : "GET",
@@ -154,7 +158,8 @@ $(document).ready(function(){
                 	console.log(value);
                 	addVoterToTable(value);
                 });
-
+                // Restore checked items
+                $(checked).each(function(i,v ) { $("#" + v).attr("checked", "checked") });
             },
             error: function(xhr, result, text) {
                 // Handle Form Errors

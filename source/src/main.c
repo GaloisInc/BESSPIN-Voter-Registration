@@ -273,13 +273,13 @@ official_update_voters(struct kreq *r)
       }
     } else if(strcmp("mark-active", form_action) == 0) {
       for(int i=0; i<token_count; i++) {
-        if(!db_voter_update_status(r->arg, 1, time(NULL), voter_ids[i])) {
+        if(!db_voter_update_status(r->arg, REGSTATUS_ACTIVE, time(NULL), voter_ids[i])) {
           error = "Error updating status.";
         }
       }
     } else if(strcmp("mark-inactive", form_action) == 0) {
       for(int i=0; i<token_count; i++) {
-        if(!db_voter_update_status(r->arg, 0, time(NULL), voter_ids[i])) {
+        if(!db_voter_update_status(r->arg, REGSTATUS_INACTIVE, time(NULL), voter_ids[i])) {
           error = "Error updating status.";
         }
       }

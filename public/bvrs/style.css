@@ -116,7 +116,7 @@ th, td {
 #queryDataInner{
 	display: block;
 	position:fixed;
-	top: 250px;
+	top: 275px;
 	width: 100%;
 	left: 0;
 	height: calc(100% - 275px);
