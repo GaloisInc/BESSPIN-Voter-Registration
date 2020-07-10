@@ -17,12 +17,6 @@
 // 32 + NULL
 #define TOKEN_SIZE 33
 
-typedef enum tristate {
-  NOT_DEF,
-  ACTIVE,
-  INACTIVE
-} tristate_t;
-
 typedef enum status {
   ERROR,
   CONSTRAINT_VIOLATION,
@@ -237,8 +231,7 @@ status_t official_query(char *database_name,
                         time_t date_from,
                         time_t date_thru,
                         bool invert_date_selection,
-                        tristate_t active_status,
-                        tristate_t updated_status,
+                        bool select_active,
                         struct voter_q **voters
 );
 

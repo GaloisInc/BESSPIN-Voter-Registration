@@ -323,7 +323,6 @@ official_query_voters(struct kreq *r)
   time(&date_thru);
   bool invert_contains = false;
   bool select_active = false;
-  bool select_updated = false;
   bool invert_date_selection = false;
   status_t lookup;
   int error_count = 0;
@@ -336,7 +335,7 @@ official_query_voters(struct kreq *r)
 
   // Fetch boolean modifiers. All default to false
   get_bool_param2(r, "select-active", &select_active);
-  get_bool_param2(r, "select-updated", &select_updated);
+    DBG("AAAActive Status: %d\n", select_active);
   get_bool_param2(r, "invert-contains", &invert_contains);
   get_bool_param2(r, "date-invert", &invert_date_selection);
 
@@ -410,7 +409,6 @@ official_query_voters(struct kreq *r)
     "date-from: %ld\n"
     "date-thru: %ld\n"
     "date-invert: %d\n"
-    "select-updated: %d\n"
     "select-active: %d\n",
     field_name,
     field_contains,
@@ -419,13 +417,12 @@ official_query_voters(struct kreq *r)
     date_from,
     date_thru,
     invert_date_selection,
-    select_updated,
     select_active
   );
 
   lookup = official_query(database_name, field_name,
   field_contains, invert_contains, date_field, date_from, date_thru,
-  invert_date_selection, select_active, select_updated, &q);
+  invert_date_selection, select_active, &q);
 
   if (OK == lookup) {
       http_open(r, KHTTP_200);

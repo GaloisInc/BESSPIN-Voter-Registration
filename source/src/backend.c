@@ -522,8 +522,7 @@ status_t official_query(char *database_name,
                         time_t date_from,
                         time_t date_thru,
                         bool invert_date_selection,
-                        tristate_t active_status,
-                        tristate_t updated_status,
+                        bool select_active,
                         struct voter_q **q)
 {
     int max_parms = 9;
@@ -580,7 +579,6 @@ status_t official_query(char *database_name,
     }
 
     if(date_field != NULL && strlen(date_field) > 0) {
-
         if(invert_date_selection) {
             fragment = "%s NOT BETWEEN %d AND %d";
         } else {
@@ -592,13 +590,10 @@ status_t official_query(char *database_name,
         and = "AND";
     }
 
-    if(NOT_DEF != active_status) {
-        if(ACTIVE == active_status) {
-            fragment = "active = 0";
-        } else {
-            fragment = "active = 1";
-        }
+    if(select_active) {
+        fragment = "status = 0"; // 0 is Active in regstatus enum
         asprintf(&stmt, "%s %s %s", stmt, and, fragment);
+        and = "AND";
     }
 
     // TODO: How do we determine an updated record?
