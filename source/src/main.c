@@ -285,7 +285,7 @@ official_update_voters(struct kreq *r)
       }
     } else if(strcmp("delete", form_action) == 0) {
       for(int i=0; i<token_count; i++) {
-        if(db_voter_delete_by_id_eq(r->arg, voter_ids[i])) {
+        if(!db_voter_delete_by_id_eq(r->arg, voter_ids[i])) {
           error = "Error updating status.";
         }
       }
