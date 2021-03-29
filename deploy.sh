@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# This script is really tailored to deploying the built app to a FETT-Target
+# This script is really tailored to deploying the built app to a BESSPIN
 # repository. We need to know two destination paths, since we use git lfs for
 # binary storage: 1. The binary path (e.g.
-# SSITH-FETT-Target/SSITH-FETT-Binaries/GFE/appsBinaries/voting/$OS 2. The
-# "common" path (e.g. SSITH-FETT-Target/build/voting/common)
+# BESSPIN-Tool-Suite/BESSPIN-LFS/GFE/appsBinaries/voting/$OS 2. The
+# "common" path (e.g. BESSPIN-Tool-Suite/build/voting/common)
 #
 # The result will be that bvrs/kfcgi get installed in the binary path (1 above)
 # and that the empty database + nginx server/fastcgi configuration files are
