@@ -8,11 +8,11 @@ jobs:
       matrix:
         cfg:
           - flags: ""
-            image: "artifactory.galois.com:5008/fett-target:ci"
+            image: "galoisinc/besspin:tool-suite"
             targets: distclean all alltests
 
           - flags: "BVRS_OS=linux-gnu BVRS_RISCV=1"
-            image: "artifactory.galois.com:5008/fett-target:ci"
+            image: "galoisinc/besspin:tool-suite"
             targets: distclean all
 
           - flags: "BVRS_LLVM=1 CC=clang-10 LD=lld AR=llvm-ar-10"
