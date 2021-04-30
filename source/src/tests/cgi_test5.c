@@ -23,12 +23,12 @@ check_voter(void *fp)
       "voter-lastname=lastname&"
       "voter-givennames=NEW FIRST NAME&"
       "voter-resaddress=123 Primary St&"
-      "voter-resaddress2=&"
-      "voter-reszip=00000&"
+      "voter-resaddress2=1234 resaddress2&"
+      "voter-reszip=12345&"
       "voter-resstate=ZZ&"
       "voter-mailaddress=123 Secondary St&"
-      "voter-mailaddress2=&"
-      "voter-mailzip=00000&"
+      "voter-mailaddress2=1234 mailaddress2&"
+      "voter-mailzip=12345&"
       "voter-mailstate=ZZ&"
       "voter-registeredparty=NPP&"
       "voter-idinfo=blob1";
@@ -48,7 +48,7 @@ check_voter(void *fp)
 }
 
 static int
-parent(void *fp)
+update_voter(void *fp)
 {
   CURL *curl;
   long http;
@@ -57,15 +57,14 @@ parent(void *fp)
       "voter-lastname=lastname&"
       "voter-givennames=NEW FIRST NAME&"
       "voter-resaddress=123 Primary St&"
-      "voter-resaddress2=&"
-      "voter-reszip=00000&"
+      "voter-resaddress2=1234 resaddress2&"
+      "voter-reszip=12345&"
       "voter-resstate=ZZ&"
       "voter-mailaddress=123 Secondary St&"
-      "voter-mailaddress2=&"
-      "voter-mailzip=00000&"
+      "voter-mailaddress2=1234 mailaddress2&"
+      "voter-mailzip=12345&"
       "voter-mailstate=ZZ&"
       "voter-registeredparty=NPP&"
-      "voter-status=0&"
       "voter-idinfo=blob1";
 
   curl = curl_easy_init();
@@ -85,10 +84,10 @@ parent(void *fp)
 int
 main(int argc, char **argv)
 {
-  assert(EXIT_SUCCESS == kcgi_regress_fcgi(parent, NULL, child, argv[1]) ?
+  assert(EXIT_SUCCESS == kcgi_regress_fcgi(update_voter, NULL, child, argv[1]) ?
          EXIT_SUCCESS : EXIT_FAILURE);
-  printf("\n[cgi5] Part 1 done.\n");
+  printf("\n[cgi5] - Update Voter Info.\n");
   assert(EXIT_SUCCESS == kcgi_regress_fcgi(check_voter, NULL, child, argv[1]) ?
          EXIT_SUCCESS : EXIT_FAILURE);
-  printf("\n[cgi5] Part 2 done.\n");
+  printf("\n[cgi5] - Verify Voter Info Update.\n");
 }

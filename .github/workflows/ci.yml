@@ -1,0 +1,31 @@
+name: CI
+on: [push]
+
+jobs:
+  ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        cfg:
+          - flags: ""
+            image: "galoisinc/besspin:tool-suite"
+            targets: distclean all alltests
+
+          - flags: "BVRS_OS=linux-gnu BVRS_RISCV=1"
+            image: "galoisinc/besspin:tool-suite"
+            targets: distclean all
+
+          - flags: "BVRS_LLVM=1 CC=clang-10 LD=lld AR=llvm-ar-10"
+            image: "teeks99/clang-ubuntu:10"
+            targets: distclean all alltests
+
+    runs-on: self-hosted
+    container:
+      image: "${{ matrix.cfg.image }}"
+      options: "--user root"
+    steps:
+      - uses: actions/checkout@v2
+      - run: apt update -y && DEBIAN_FRONTEND=noninteractive apt install -y bmake libcurl4-openssl-dev curl tcl pkg-config libexpat1-dev
+      - run: ./source/getdeps.sh
+      - run: ${{ matrix.cfg.flags }} ./source/builddeps.sh
+      - run: cd source/src && ${{ matrix.cfg.flags }} make ${{ matrix.cfg.targets }}

@@ -23,21 +23,15 @@ fi
 
 if [ "${BVRS_RISCV}" -eq 1 ]; then
     TARGET_BUILD=${DIR}/../build/target
+
+    # RISC-V gcc toolchain
+    PREFIX=riscv64-unknown-${BVRS_OS}
+    export CC=${PREFIX}-gcc
     export CFLAGS="-I${TARGET_BUILD}/include"
     export LDFLAGS="-L${TARGET_BUILD}/lib"
-    if [ "${BVRS_LLVM}" -eq 1 ]; then
-      # assume RISC-V toolchain (CC, LD, AR) is set in environment already
-      # anything specific to RISC-V cross-compilation with LLVM goes here
-      echo CC=${CC} LD=${LD} AR=${AR}
-    else
-      # RISC-V gcc toolchain
-      PREFIX=riscv64-unknown-${BVRS_OS}
-      export CC=${PREFIX}-gcc
-      export CFLAGS="-I${TARGET_BUILD}/include"
-      export LFLAGS="-L${TARGET_BUILD}/lib"
-      export LD=${PREFIX}-ld
-      export AR=${PREFIX}-ar
-    fi 
+    export LD=${PREFIX}-ld
+    export AR=${PREFIX}-ar
+
     # YMMV with the build arguments below
     SQLITE_BUILD="--build=${HOST}"
     SQLITE_HOST="--host=riscv64-unknown-${BVRS_OS}"
@@ -54,7 +48,7 @@ fi
 if [ "${PRINT_DEFS}" -eq 1 ]; then
     echo "export CC=${CC}"
     echo "export CFLAGS=${CFLAGS}"
-    echo "export LFLAGS=${LFLAGS}"
+    echo "export LDFLAGS=${LDFLAGS}"
     echo "export LD=${LD}"
     echo "export AR=${AR}"
     exit 0

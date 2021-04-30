@@ -273,19 +273,19 @@ official_update_voters(struct kreq *r)
       }
     } else if(strcmp("mark-active", form_action) == 0) {
       for(int i=0; i<token_count; i++) {
-        if(!db_voter_update_status(r->arg, 1, time(NULL), voter_ids[i])) {
+        if(!db_voter_update_status(r->arg, REGSTATUS_ACTIVE, time(NULL), voter_ids[i])) {
           error = "Error updating status.";
         }
       }
     } else if(strcmp("mark-inactive", form_action) == 0) {
       for(int i=0; i<token_count; i++) {
-        if(!db_voter_update_status(r->arg, 0, time(NULL), voter_ids[i])) {
+        if(!db_voter_update_status(r->arg, REGSTATUS_INACTIVE, time(NULL), voter_ids[i])) {
           error = "Error updating status.";
         }
       }
     } else if(strcmp("delete", form_action) == 0) {
       for(int i=0; i<token_count; i++) {
-        if(db_voter_delete_by_id_eq(r->arg, voter_ids[i])) {
+        if(!db_voter_delete_by_id_eq(r->arg, voter_ids[i])) {
           error = "Error updating status.";
         }
       }
@@ -323,7 +323,6 @@ official_query_voters(struct kreq *r)
   time(&date_thru);
   bool invert_contains = false;
   bool select_active = false;
-  bool select_updated = false;
   bool invert_date_selection = false;
   status_t lookup;
   int error_count = 0;
@@ -336,7 +335,7 @@ official_query_voters(struct kreq *r)
 
   // Fetch boolean modifiers. All default to false
   get_bool_param2(r, "select-active", &select_active);
-  get_bool_param2(r, "select-updated", &select_updated);
+    DBG("AAAActive Status: %d\n", select_active);
   get_bool_param2(r, "invert-contains", &invert_contains);
   get_bool_param2(r, "date-invert", &invert_date_selection);
 
@@ -410,7 +409,6 @@ official_query_voters(struct kreq *r)
     "date-from: %ld\n"
     "date-thru: %ld\n"
     "date-invert: %d\n"
-    "select-updated: %d\n"
     "select-active: %d\n",
     field_name,
     field_contains,
@@ -419,13 +417,12 @@ official_query_voters(struct kreq *r)
     date_from,
     date_thru,
     invert_date_selection,
-    select_updated,
     select_active
   );
 
   lookup = official_query(database_name, field_name,
   field_contains, invert_contains, date_field, date_from, date_thru,
-  invert_date_selection, select_active, select_updated, &q);
+  invert_date_selection, select_active, &q);
 
   if (OK == lookup) {
       http_open(r, KHTTP_200);
@@ -515,7 +512,10 @@ register_voter_common(struct kreq *r, enum regstatus status) {
     errors[error_count] = (struct field_error) { "voter-idinfo", "ID field required."};
     error_count++;
   }
+  // Optional params
   get_int_param(r, VALID_VOTER_CONFIDENTIAL, &confidential);
+  get_str_param(r, VALID_VOTER_RESADDRESS2, &resaddress2);
+  get_str_param(r, VALID_VOTER_MAILADDRESS2, &mailaddress2);
 
   if(0 == error_count) {
     int64_t voter_id;
@@ -588,22 +588,27 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
   const char *mailstate = "";
   const char *party = "";
   const char *idinfo = "";
-
   time_t birthdate;
   size_t idinfo_sz;
-  enum regstatus status;
-  int64_t status_int;
+  int64_t confidential = 0;
   status_t ret = ERROR;
+
+  // optional params
+  get_str_param(r, VALID_VOTER_RESADDRESS2, &resaddress2);
+  get_str_param(r, VALID_VOTER_MAILADDRESS2, &mailaddress2);
+  get_int_param(r, VALID_VOTER_CONFIDENTIAL, &confidential);
 
   if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
        (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
        (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESSTATE, &resstate)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESZIP, &reszip)) &&
        (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILZIP, &mailzip)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILSTATE, &mailstate)) &&
        (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate))  &&
-       (OK == get_int_param(r, VALID_VOTER_STATUS, &status_int))  &&
        (OK == get_str_param(r, VALID_VOTER_REGISTEREDPARTY, &party))   &&
        (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz))  ) {
-    status = (enum regstatus)status_int; // This is safe as kcgi has validated it.
     ret = update_voter_information(r->arg,
                                    voter_id,
                                    lastname,
@@ -620,8 +625,8 @@ do_voter_updateinfo(struct kreq *r, int64_t voter_id)
                                    birthdate,
                                    idinfo,
                                    idinfo_sz,
-                                   status,
-                                   0 /*  not confidential */);
+                                   REGSTATUS_PENDINGREVIEW,
+                                   confidential);
   }
 
   return ret;
@@ -640,6 +645,7 @@ voter_update_info_page(struct kreq *r)
        (r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN] != NULL) ) {
     sid   = r->cookiemap[VALID_VOTERUPDATESESSION_ID]->parsed.i;
     strcpy(token, r->cookiemap[VALID_VOTERUPDATESESSION_TOKEN]->parsed.s);
+    DBG("Update Info SID: %ld, TOKEN: %s\n", sid, token);
     // 2. Get session
     lookup = lookup_voter_session(r->arg, sid, token, &voterid);
     if ( (OK == lookup) &&
@@ -739,15 +745,25 @@ voter_login_page(struct kreq *r)
   const char *mailstate = "";
   const char *idinfo = "";
 
+  // optional params
+  get_str_param(r, VALID_VOTER_RESADDRESS2, &resaddress2);
+  get_str_param(r, VALID_VOTER_MAILADDRESS2, &mailaddress2);
+
+  // required params
   if ( (OK == get_str_param(r, VALID_VOTER_LASTNAME,   &lastname)) &&
        (OK == get_str_param(r, VALID_VOTER_GIVENNAMES, &givennames)) &&
        (OK == get_str_param(r, VALID_VOTER_RESADDRESS, &resaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESZIP, &reszip)) &&
+       (OK == get_str_param(r, VALID_VOTER_RESSTATE, &resstate)) &&
        (OK == get_str_param(r, VALID_VOTER_MAILADDRESS, &mailaddress)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILZIP, &mailzip)) &&
+       (OK == get_str_param(r, VALID_VOTER_MAILSTATE, &mailstate)) &&
        (OK == get_int_param(r, VALID_VOTER_BIRTHDATE, &birthdate)) &&
        (OK == get_blob_param(r, VALID_VOTER_IDINFO, &idinfo, &idinfo_sz)) ) {
     int64_t sid;
     char token[TOKEN_SIZE];
     struct voter *voter;
+
     status_t session_create = new_voter_session(r->arg,
                                                 lastname,
                                                 givennames,

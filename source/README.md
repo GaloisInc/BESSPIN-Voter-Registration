@@ -1,4 +1,4 @@
-SSITH-FETT-Voting Sources
+BESSPIN-Voter-Registration Sources
 ===
 
 This directory contains the source of the Voting app (BVRS) sources and some

@@ -18,6 +18,7 @@ else
 endif
 
 ORT_PREFIX ?= ../../build/host/bin/ort
+SQLITE_PREFIX ?= ../../build/host/bin/sqlite3
 OBJS = db.o backend.o
 CFLAGS += -fno-stack-protector -O0 -DDEBUG
 CFLAGS += -I$(PREFIX)/include -g -Werror
@@ -80,13 +81,13 @@ bvrs.sql: bvrs.ort
 	$(ORT_PREFIX)-sql bvrs.ort > bvrs.sql
 
 bvrs.db: bvrs.sql
-	sqlite3 bvrs.db < bvrs.sql
+	$(SQLITE_PREFIX) bvrs.db < bvrs.sql
 
 tests/%: bvrs bvrs.sql
 	@mkdir -p out
 	@rm -f out/$(@F).db
-	@sqlite3 out/$(@F).db < bvrs.sql
-	@if [ -f tests/$(@F).sql ]; then sqlite3 out/$(@F).db < tests/$(@F).sql; fi
+	@$(PREFIX)/bin/sqlite3 out/$(@F).db < bvrs.sql
+	@if [ -f tests/$(@F).sql ]; then $(PREFIX)/bin/sqlite3 out/$(@F).db < tests/$(@F).sql; fi
 	@$(CC)	$(OBJS) tests/$(@F).c -I $(PWD) $(CFLAGS) $(CFLAGS_TEST) $(LDFLAGS) $(LDFLAGS_TEST) -o out/$(@F)
 	@./out/$(@F) out/$(@F).db
 
@@ -95,6 +96,6 @@ dist: bvrs bvrs.db
 	cp bvrs $(PREFIX)/bin
 	cp bvrs.db $(PREFIX)/share
 	cp ../conf/fastcgi.conf $(PREFIX)/share
-	cp ../conf/voting.conf $(PREFIX)/share
+	cp ../conf/sites/voting.conf $(PREFIX)/share
 
 alltests: $(TESTS)

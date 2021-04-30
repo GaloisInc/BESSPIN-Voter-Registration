@@ -61,8 +61,9 @@ struct voter {
     name registration
     comment "Search for a registered voter by name/birth date/confidential flag.";
 
-  search lastname like, givennames like, resaddress like, mailaddress like,
-         birthdate, idinfo, confidential:
+  search lastname like, givennames like, resaddress like, resaddress2 like,
+         reszip like, resstate like, mailaddress like, mailaddress2 like,
+         mailzip like, mailstate like, birthdate, idinfo, confidential:
     limit 1
     name registrationforupdate
     comment "Search for matching data to update a registration.";

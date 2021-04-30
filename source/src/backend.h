@@ -17,12 +17,6 @@
 // 32 + NULL
 #define TOKEN_SIZE 33
 
-typedef enum tristate {
-  NOT_DEF,
-  ACTIVE,
-  INACTIVE
-} tristate_t;
-
 typedef enum status {
   ERROR,
   CONSTRAINT_VIOLATION,
@@ -96,7 +90,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t confidential,
                   struct voter **the_voter,
                   int64_t *the_session_id,
-                  const char *the_token);
+                  char *the_token);
 
 /* Explicitly end a session and remove it from the database.
  *
@@ -237,8 +231,7 @@ status_t official_query(char *database_name,
                         time_t date_from,
                         time_t date_thru,
                         bool invert_date_selection,
-                        tristate_t active_status,
-                        tristate_t updated_status,
+                        bool select_active,
                         struct voter_q **voters
 );
 

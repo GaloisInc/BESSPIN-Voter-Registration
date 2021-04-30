@@ -144,7 +144,7 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                   int64_t confidential,
                   struct voter **the_voter,
                   int64_t *the_session_id,
-                  const char *the_token)
+                  char *the_token)
 {
     struct voter *a_voter;
     status_t retstatus = ERROR;
@@ -153,7 +153,13 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                                                  lastname,
                                                  givenname,
                                                  resaddr,
+                                                 resaddr2,
+                                                 reszip,
+                                                 resstate,
                                                  mailaddr,
+                                                 mailaddr2,
+                                                 mailzip,
+                                                 mailstate,
                                                  birthdate,
                                                  idinfo_sz,
                                                  idinfo,
@@ -171,16 +177,16 @@ new_voter_session(bvrs_ctxt_t *ctxt,
                                                         ctime);
             if (a_session_id > 0) {
                 *the_session_id = a_session_id;
-                the_token = a_token;
+                strcpy(the_token, a_token);
                 *the_voter = a_voter;
                 retstatus = OK;
             }
         } else {
             retstatus = ERROR;
-            DBG("new_voter_session:error creating session.");
+            DBG("new_voter_session:error creating session.\n");
         }
     } else {
-        DBG("new_voter_session: voter not found.");
+        DBG("new_voter_session: voter not found.\n");
         retstatus = NOT_FOUND;
     }
     return retstatus;
@@ -516,8 +522,7 @@ status_t official_query(char *database_name,
                         time_t date_from,
                         time_t date_thru,
                         bool invert_date_selection,
-                        tristate_t active_status,
-                        tristate_t updated_status,
+                        bool select_active,
                         struct voter_q **q)
 {
     int max_parms = 9;
@@ -574,7 +579,6 @@ status_t official_query(char *database_name,
     }
 
     if(date_field != NULL && strlen(date_field) > 0) {
-
         if(invert_date_selection) {
             fragment = "%s NOT BETWEEN %d AND %d";
         } else {
@@ -586,13 +590,10 @@ status_t official_query(char *database_name,
         and = "AND";
     }
 
-    if(NOT_DEF != active_status) {
-        if(ACTIVE == active_status) {
-            fragment = "active = 0";
-        } else {
-            fragment = "active = 1";
-        }
+    if(select_active) {
+        fragment = "status = 0"; // 0 is Active in regstatus enum
         asprintf(&stmt, "%s %s %s", stmt, and, fragment);
+        and = "AND";
     }
 
     // TODO: How do we determine an updated record?

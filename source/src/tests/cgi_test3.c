@@ -27,7 +27,7 @@ parent(void *fp)
                    "voter-reszip=00000&"
                    "voter-resstate=ZZ&"
                    "voter-mailaddress=1234 mailaddress&"
-                   "voter-mailaddress2=1234 resaddress2&"
+                   "voter-mailaddress2=1234 mailaddress2&"
                    "voter-mailzip=00000&"
                    "voter-mailstate=ZZ&"
                    "voter-idinfo=blob1";
